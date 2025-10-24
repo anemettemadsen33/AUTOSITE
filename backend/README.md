@@ -1,66 +1,235 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AUTOSITE Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel 11 API + Filament v4 Admin Panel for the AUTOSITE automotive marketplace platform.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- 🔐 **Authentication**: Laravel Sanctum token-based API authentication
+- 🎨 **Admin Panel**: Filament v4 for complete content management
+- 📸 **Media Management**: Spatie Media Library for vehicle images
+- 🌍 **Multi-Language**: Spatie Translatable for content in 8 languages
+- 📊 **API Documentation**: L5 Swagger (OpenAPI) for complete API docs
+- 💱 **Exchange Rates**: Daily currency rates from European Central Bank
+- 🔍 **Advanced Search**: Filterable vehicle listings with 14 parameters
+- 📦 **RESTful API**: Complete API for frontend integration
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2+
+- Composer 2.x
+- MySQL 8.0+ / MariaDB 10.3+ (or SQLite for development)
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. Install Dependencies
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Environment Configuration
 
-## Laravel Sponsors
+```bash
+# Copy environment file
+cp .env.example .env
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Generate application key
+php artisan key:generate
 
-### Premium Partners
+# Configure database in .env
+# For development (SQLite):
+DB_CONNECTION=sqlite
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# For production (MySQL):
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=autosite
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
 
-## Contributing
+### 3. Database Setup
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+# Run migrations
+php artisan migrate
 
-## Code of Conduct
+# Seed database with demo data
+php artisan db:seed
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Storage Link
 
-## Security Vulnerabilities
+```bash
+# Create symbolic link for file storage
+php artisan storage:link
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 5. Start Development Server
+
+```bash
+php artisan serve
+```
+
+The API will be available at: `http://localhost:8000`
+
+### 6. Access Admin Panel
+
+After seeding, access Filament admin at:
+- **URL**: `http://localhost:8000/admin`
+- **Email**: `admin@autosite.com`
+- **Password**: `password`
+
+## API Endpoints
+
+Complete API documentation is available in:
+- **Swagger UI**: `http://localhost:8000/api/documentation` (after L5 Swagger setup)
+- **Documentation**: See `/docs/API_ENDPOINTS.md`
+
+### Key Endpoints
+
+#### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/logout` - User logout
+- `GET /api/auth/user` - Get authenticated user
+
+#### Vehicles
+- `GET /api/vehicles` - List vehicles (with filters)
+- `GET /api/vehicles/{slug}` - Get vehicle details
+- `POST /api/vehicles` - Create vehicle (auth required)
+- `PUT /api/vehicles/{id}` - Update vehicle (auth required)
+- `DELETE /api/vehicles/{id}` - Delete vehicle (auth required)
+
+#### Settings
+- `GET /api/settings/public` - Get public settings
+- `GET /api/exchange-rates` - Get current exchange rates
+
+## Development
+
+### Running Tests
+
+```bash
+# Run all tests
+php artisan test
+
+# Run with coverage
+php artisan test --coverage
+```
+
+### Code Quality
+
+```bash
+# Clear caches
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+
+# Optimize for production
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+```
+
+### Scheduled Tasks
+
+The application includes scheduled tasks (e.g., fetching exchange rates):
+
+```bash
+# Run scheduler (in development)
+php artisan schedule:run
+
+# In production, add to crontab:
+* * * * * cd /path/to/backend && php artisan schedule:run >> /dev/null 2>&1
+```
+
+### Queue Workers
+
+For background jobs:
+
+```bash
+# Run queue worker
+php artisan queue:work
+
+# In production, use Supervisor or systemd
+```
+
+## Project Structure
+
+```
+backend/
+├── app/
+│   ├── Filament/              # Filament admin resources
+│   │   └── Resources/
+│   ├── Http/
+│   │   ├── Controllers/       # API controllers
+│   │   ├── Middleware/
+│   │   ├── Requests/          # Form request validators
+│   │   └── Resources/         # API resources
+│   ├── Models/                # Eloquent models
+│   ├── Services/              # Business logic services
+│   └── Jobs/                  # Queue jobs
+├── database/
+│   ├── migrations/            # Database migrations
+│   ├── seeders/               # Database seeders
+│   └── factories/             # Model factories
+├── routes/
+│   ├── api.php               # API routes
+│   └── web.php               # Web routes
+└── config/                    # Configuration files
+```
+
+## Configuration
+
+### CORS
+
+Configure CORS in `config/cors.php` to allow frontend access:
+
+```php
+'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
+'supports_credentials' => true,
+```
+
+### Sanctum
+
+Sanctum configuration in `config/sanctum.php`:
+
+```php
+'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,localhost:3000')),
+```
+
+### Media Library
+
+Media conversions are configured in the Vehicle model for:
+- Thumbnail (300x200)
+- Medium (800x600)
+- Large (1200x900)
+
+## Troubleshooting
+
+### Common Issues
+
+**Issue**: 500 error on API requests
+- Solution: Check storage permissions: `chmod -R 775 storage bootstrap/cache`
+
+**Issue**: CORS errors
+- Solution: Verify `FRONTEND_URL` in .env and CORS configuration
+
+**Issue**: Images not uploading
+- Solution: Run `php artisan storage:link` and check disk configuration
+
+**Issue**: Migrations fail
+- Solution: Check database credentials and connection
+
+## Support
+
+- **Documentation**: `/docs` folder
+- **API Docs**: `/docs/API_ENDPOINTS.md`
+- **Database Schema**: `/docs/DATABASE_SCHEMA.md`
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proprietary - AUTOSITE Platform
