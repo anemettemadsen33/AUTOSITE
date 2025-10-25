@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('comparisons', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
+            $table->integer('order')->default(0); // max 4 vehicles
             $table->timestamps();
+            
+            $table->unique(['user_id', 'vehicle_id']);
+            $table->index('user_id');
+            $table->index('vehicle_id');
         });
     }
 

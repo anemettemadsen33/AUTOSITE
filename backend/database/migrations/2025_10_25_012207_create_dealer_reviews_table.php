@@ -13,7 +13,20 @@ return new class extends Migration
     {
         Schema::create('dealer_reviews', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('dealer_id')->constrained()->onDelete('cascade');
+            $table->integer('rating')->unsigned(); // 1-5
+            $table->text('comment')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->timestamp('moderated_at')->nullable();
+            $table->foreignId('moderated_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
+            $table->softDeletes();
+            
+            $table->index('user_id');
+            $table->index('dealer_id');
+            $table->index('rating');
+            $table->index('status');
         });
     }
 
