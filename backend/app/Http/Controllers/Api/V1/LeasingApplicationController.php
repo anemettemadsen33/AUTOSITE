@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\LeasingApplication;
 use App\Models\Vehicle;
+use App\Mail\LeasingApplicationConfirmation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 
 class LeasingApplicationController extends Controller
 {
@@ -41,6 +43,14 @@ class LeasingApplicationController extends Controller
             ] + $request->all());
             $application->calculateLeasingTerms();
             $application->save();
+
+            // Send confirmation email
+            try {
+                Mail::to($application->email)->send(new LeasingApplicationConfirmation($application));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send leasing confirmation email: ' . $e->getMessage());
+            }
+
             return response()->json(['success' => true, 'data' => $application], 201);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
