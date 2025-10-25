@@ -64,25 +64,34 @@ export default function BuyNowModal({ isOpen, onClose, vehicle }: BuyNowModalPro
     setLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // TODO: Send to backend to generate invoice
-      console.log('Order submitted:', {
-        buyerType,
-        vehicle: {
-          id: vehicle.id,
-          title: vehicle.title,
-          price: vehicle.price,
+      const payload = {
+        vehicle_id: vehicle.id,
+        buyer_type: buyerType,
+        ...formData
+      };
+
+      // Call API
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1'}/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        formData
+        body: JSON.stringify(payload)
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create order');
+      }
 
       setSuccess(true);
       
       // Show success message
       setTimeout(() => {
-        alert(`✅ Comandă înregistrată!\n\nVeți primi factura proforma pe email cu detaliile bancare pentru plata.\n\nVehicul: ${vehicle.title}\nPreț: €${vehicle.price.toLocaleString()}`);
+        alert(`✅ Comandă înregistrată!\n\nFactură: ${data.data.invoice_number}\n\nVeți primi factura proforma pe email cu detaliile bancare pentru plata.\n\nVehicul: ${vehicle.title}\nPreț: €${vehicle.price.toLocaleString()}`);
         onClose();
         setSuccess(false);
         // Reset form
@@ -95,8 +104,9 @@ export default function BuyNowModal({ isOpen, onClose, vehicle }: BuyNowModalPro
         });
       }, 1000);
 
-    } catch (error) {
-      alert('❌ Eroare la trimiterea comenzii. Vă rugăm încercați din nou.');
+    } catch (error: any) {
+      alert('❌ Eroare la trimiterea comenzii: ' + (error.message || 'Vă rugăm încercați din nou.'));
+      console.error('Order submission error:', error);
     } finally {
       setLoading(false);
     }

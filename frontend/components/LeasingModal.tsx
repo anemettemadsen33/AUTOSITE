@@ -90,23 +90,37 @@ export default function LeasingModal({ isOpen, onClose, vehicle }: LeasingModalP
     setLoading(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log('Leasing application:', {
-        buyerType,
-        vehicle,
-        leasingTerms: {
-          downPayment: vehicle.price * (downPayment / 100),
-          term,
-          apr,
-          monthlyPayment: calculateMonthlyPayment(),
+      const payload = {
+        vehicle_id: vehicle.id,
+        applicant_type: buyerType,
+        down_payment_percentage: downPayment,
+        term_months: term,
+        apr: apr,
+        ...formData
+      };
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1'}/leasing-applications`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        formData
+        body: JSON.stringify(payload)
       });
 
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to submit application');
+      }
+
+      console.log('Leasing application submitted:', data);
       setStep('documents');
-    } catch (error) {
-      alert('❌ Eroare la trimiterea cererii. Încercați din nou.');
+      
+    } catch (error: any) {
+      alert('❌ Eroare la trimiterea cererii: ' + (error.message || 'Încercați din nou.'));
+      console.error('Leasing submission error:', error);
     } finally {
       setLoading(false);
     }

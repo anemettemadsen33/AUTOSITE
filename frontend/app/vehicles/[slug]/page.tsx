@@ -8,6 +8,8 @@ import api from '@/lib/api';
 import { Vehicle } from '@/lib/types';
 import { formatPrice, formatMileage } from '@/lib/utils';
 import { useAuthStore } from '@/lib/store';
+import BuyNowModal from '@/components/BuyNowModal';
+import LeasingModal from '@/components/LeasingModal';
 import {
   CalendarIcon,
   CogIcon,
@@ -28,6 +30,8 @@ export default function VehicleDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showTestDriveModal, setShowTestDriveModal] = useState(false);
+  const [showBuyNowModal, setShowBuyNowModal] = useState(false);
+  const [showLeasingModal, setShowLeasingModal] = useState(false);
   const { isAuthenticated, user } = useAuthStore();
 
   useEffect(() => {
@@ -82,6 +86,22 @@ export default function VehicleDetailPage() {
       return;
     }
     setShowTestDriveModal(true);
+  };
+
+  const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      window.location.href = '/login';
+      return;
+    }
+    setShowBuyNowModal(true);
+  };
+
+  const handleLeasing = () => {
+    if (!isAuthenticated) {
+      window.location.href = '/login';
+      return;
+    }
+    setShowLeasingModal(true);
   };
 
   if (loading) {
@@ -293,6 +313,18 @@ export default function VehicleDetailPage() {
               {/* CTA Buttons */}
               <div className="space-y-3">
                 <button 
+                  onClick={handleBuyNow}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2"
+                >
+                  <span>💳</span> Cumpără Acum
+                </button>
+                <button 
+                  onClick={handleLeasing}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2"
+                >
+                  <span>📊</span> Aplică pentru Leasing
+                </button>
+                <button 
                   onClick={handleMessage}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
                 >
@@ -375,6 +407,36 @@ export default function VehicleDetailPage() {
               </form>
             </div>
           </div>
+        )}
+
+        {/* Buy Now Modal */}
+        {showBuyNowModal && vehicle && (
+          <BuyNowModal
+            isOpen={showBuyNowModal}
+            onClose={() => setShowBuyNowModal(false)}
+            vehicle={{
+              id: vehicle.id,
+              title: `${vehicle.make} ${vehicle.model}`,
+              price: vehicle.price,
+              make: vehicle.make,
+              model: vehicle.model
+            }}
+          />
+        )}
+
+        {/* Leasing Modal */}
+        {showLeasingModal && vehicle && (
+          <LeasingModal
+            isOpen={showLeasingModal}
+            onClose={() => setShowLeasingModal(false)}
+            vehicle={{
+              id: vehicle.id,
+              title: `${vehicle.make} ${vehicle.model}`,
+              price: vehicle.price,
+              make: vehicle.make,
+              model: vehicle.model
+            }}
+          />
         )}
       </div>
     </div>
