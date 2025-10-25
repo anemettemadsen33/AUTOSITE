@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -50,7 +51,18 @@ class OrderController extends Controller
             $order->calculateTotals();
             $order->save();
 
-            // Send confirmation email
+            // Generate PDF Invoice
+            try {
+                $pdf = Pdf::loadView('pdf.invoice', ['order' => $order]);
+                $pdfPath = 'invoices/' . $order->invoice_number . '.pdf';
+                $pdf->save(storage_path('app/public/' . $pdfPath));
+                $order->invoice_path = $pdfPath;
+                $order->save();
+            } catch (\Exception $e) {
+                \Log::error('Failed to generate PDF: ' . $e->getMessage());
+            }
+
+            // Send confirmation email with PDF
             try {
                 Mail::to($order->email)->send(new OrderConfirmation($order));
             } catch (\Exception $e) {

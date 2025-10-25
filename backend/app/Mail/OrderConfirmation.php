@@ -43,6 +43,16 @@ class OrderConfirmation extends Mailable
 
     public function attachments(): array
     {
-        return [];
+        $attachments = [];
+        
+        // Attach PDF invoice if exists
+        if ($this->order->invoice_path && file_exists(storage_path('app/public/' . $this->order->invoice_path))) {
+            $attachments[] = \Illuminate\Mail\Mailables\Attachment::fromPath(
+                storage_path('app/public/' . $this->order->invoice_path)
+            )->as('Factura-' . $this->order->invoice_number . '.pdf')
+             ->withMime('application/pdf');
+        }
+        
+        return $attachments;
     }
 }
