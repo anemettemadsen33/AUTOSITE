@@ -7,6 +7,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import { Vehicle } from '@/lib/types';
 import { formatPrice, formatMileage } from '@/lib/utils';
+import { useAuthStore } from '@/lib/store';
 import {
   CalendarIcon,
   CogIcon,
@@ -14,7 +15,9 @@ import {
   PhoneIcon,
   EnvelopeIcon,
   CheckBadgeIcon,
+  HeartIcon,
 } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 
 export default function VehicleDetailPage() {
   const params = useParams();
@@ -22,10 +25,15 @@ export default function VehicleDetailPage() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
+  const { isAuthenticated, user } = useAuthStore();
 
   useEffect(() => {
     if (slug) {
       fetchVehicle();
+      checkIfFavorite();
     }
   }, [slug]);
 
@@ -38,6 +46,42 @@ export default function VehicleDetailPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const checkIfFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    setIsFavorite(favorites.some((v: Vehicle) => v.slug === slug));
+  };
+
+  const toggleFavorite = () => {
+    if (!vehicle) return;
+    
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    if (isFavorite) {
+      const newFavorites = favorites.filter((v: Vehicle) => v.id !== vehicle.id);
+      localStorage.setItem('favorites', JSON.stringify(newFavorites));
+      setIsFavorite(false);
+    } else {
+      favorites.push(vehicle);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      setIsFavorite(true);
+    }
+  };
+
+  const handleMessage = () => {
+    if (!isAuthenticated) {
+      window.location.href = '/login';
+      return;
+    }
+    setShowMessageModal(true);
+  };
+
+  const handleTestDrive = () => {
+    if (!isAuthenticated) {
+      window.location.href = '/login';
+      return;
+    }
+    setShowTestDriveModal(true);
   };
 
   if (loading) {
@@ -191,8 +235,20 @@ export default function VehicleDetailPage() {
           <div className="lg:col-span-1">
             {/* Price Card */}
             <div className="bg-white rounded-xl shadow-sm p-6 mb-6 sticky top-20">
-              <div className="text-3xl font-bold text-blue-600 mb-6">
-                {formatPrice(vehicle.price, vehicle.currency)}
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-3xl font-bold text-blue-600">
+                  {formatPrice(vehicle.price, vehicle.currency)}
+                </div>
+                <button
+                  onClick={toggleFavorite}
+                  className="p-2 rounded-full hover:bg-gray-100 transition"
+                >
+                  {isFavorite ? (
+                    <HeartIconSolid className="w-7 h-7 text-red-600" />
+                  ) : (
+                    <HeartIcon className="w-7 h-7 text-gray-400" />
+                  )}
+                </button>
               </div>
 
               {/* Dealer Info */}
@@ -236,16 +292,90 @@ export default function VehicleDetailPage() {
 
               {/* CTA Buttons */}
               <div className="space-y-3">
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition">
+                <button 
+                  onClick={handleMessage}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+                >
                   Trimite Mesaj
                 </button>
-                <button className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 py-3 rounded-lg font-semibold transition">
+                <button 
+                  onClick={handleTestDrive}
+                  className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 py-3 rounded-lg font-semibold transition"
+                >
                   Programează Test Drive
                 </button>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Message Modal */}
+        {showMessageModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full">
+              <h3 className="text-xl font-bold mb-4">Trimite Mesaj</h3>
+              <form onSubmit={(e) => { e.preventDefault(); alert('Mesaj trimis!'); setShowMessageModal(false); }}>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg p-3 mb-4"
+                  rows={4}
+                  placeholder="Scrie mesajul tău aici..."
+                  required
+                />
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold"
+                  >
+                    Trimite
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowMessageModal(false)}
+                    className="flex-1 border border-gray-300 hover:bg-gray-50 py-2 rounded-lg font-semibold"
+                  >
+                    Anulează
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Test Drive Modal */}
+        {showTestDriveModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full">
+              <h3 className="text-xl font-bold mb-4">Programează Test Drive</h3>
+              <form onSubmit={(e) => { e.preventDefault(); alert('Test Drive programat!'); setShowTestDriveModal(false); }}>
+                <input
+                  type="date"
+                  className="w-full border border-gray-300 rounded-lg p-3 mb-3"
+                  required
+                />
+                <input
+                  type="time"
+                  className="w-full border border-gray-300 rounded-lg p-3 mb-4"
+                  required
+                />
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold"
+                  >
+                    Confirmă
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowTestDriveModal(false)}
+                    className="flex-1 border border-gray-300 hover:bg-gray-50 py-2 rounded-lg font-semibold"
+                  >
+                    Anulează
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

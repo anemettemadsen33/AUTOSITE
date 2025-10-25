@@ -26,6 +26,7 @@ export default function VehiclesPage() {
     transmission: searchParams.get('transmission') || '',
     body_type: searchParams.get('body_type') || '',
     condition: searchParams.get('condition') || '',
+    query: searchParams.get('query') || '',
   });
 
   const [showFilters, setShowFilters] = useState(false);
@@ -72,6 +73,7 @@ export default function VehiclesPage() {
       transmission: '',
       body_type: '',
       condition: '',
+      query: '',
     });
     setPage(1);
   };

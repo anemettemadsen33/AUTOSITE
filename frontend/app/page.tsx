@@ -29,7 +29,9 @@ export default function Home() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    window.location.href = `/vehicles?search=${encodeURIComponent(searchQuery)}`;
+    if (searchQuery.trim()) {
+      window.location.href = `/vehicles?query=${encodeURIComponent(searchQuery)}`;
+    }
   };
 
   return (
