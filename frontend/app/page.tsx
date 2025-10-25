@@ -1,122 +1,150 @@
-import { AppShell } from '@/components/layout/AppShell';
-import { HeroSection } from '@/components/sections/HeroSection';
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import VehicleCard from '@/components/ui/VehicleCard';
+import api from '@/lib/api';
+import { Vehicle } from '@/lib/types';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export default function Home() {
+  const [featuredVehicles, setFeaturedVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    fetchFeaturedVehicles();
+  }, []);
+
+  const fetchFeaturedVehicles = async () => {
+    try {
+      const response = await api.get('/vehicles?is_featured=1&per_page=6');
+      setFeaturedVehicles(response.data.data || []);
+    } catch (error) {
+      console.error('Error fetching vehicles:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    window.location.href = `/vehicles?search=${encodeURIComponent(searchQuery)}`;
+  };
+
   return (
-    <AppShell>
-      <HeroSection
-        title="Find Your Perfect Vehicle"
-        subtitle="Discover premium vehicles from verified dealers across Europe"
-        ctaText="Explore Listings"
-        ctaHref="/listings"
-      />
-      
-      {/* Featured Brands Section */}
-      <section className="py-16 bg-gray-50 dark:bg-surface-dark">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
-              Featured Brands
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Browse vehicles from the world&apos;s most trusted automotive brands
+    <div>
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              Găsește Mașina Perfectă
+            </h1>
+            <p className="text-xl mb-8 text-blue-100">
+              Peste 1000+ vehicule verificate de la dealeri de încredere
             </p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {['BMW', 'Mercedes-Benz', 'Audi', 'Volkswagen', 'Tesla', 'Toyota'].map((brand) => (
-              <div
-                key={brand}
-                className="card card-hover p-6 flex items-center justify-center aspect-square"
-              >
-                <span className="text-lg font-heading font-semibold text-center">
-                  {brand}
-                </span>
+
+            {/* Search Bar */}
+            <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
+              <div className="bg-white rounded-xl shadow-2xl p-2 flex">
+                <input
+                  type="text"
+                  placeholder="Caută după marcă, model sau tip..."
+                  className="flex-1 px-4 py-3 text-gray-900 outline-none rounded-lg"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg flex items-center space-x-2 transition"
+                >
+                  <MagnifyingGlassIcon className="w-5 h-5" />
+                  <span>Caută</span>
+                </button>
               </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Vehicles */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Vehicule Recomandate
+              </h2>
+              <p className="text-gray-600">Cele mai bune oferte selectate pentru tine</p>
+            </div>
+            <Link
+              href="/vehicles"
+              className="text-blue-600 hover:text-blue-700 font-semibold"
+            >
+              Vezi toate →
+            </Link>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white rounded-xl shadow-sm h-96 animate-pulse" />
+              ))}
+            </div>
+          ) : featuredVehicles.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredVehicles.map((vehicle) => (
+                <VehicleCard key={vehicle.id} vehicle={vehicle} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-white rounded-xl">
+              <p className="text-gray-500">Nu există vehicule recomandate momentan.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            Caută după Categorie
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {['SUV', 'Sedan', 'Hatchback', 'Coupe', 'Break', 'Cabrio', 'Monovolum', 'Pick-up'].map((category) => (
+              <Link
+                key={category}
+                href={`/vehicles?body_type=${category.toLowerCase()}`}
+                className="bg-white border-2 border-gray-200 rounded-xl p-6 text-center hover:border-blue-600 hover:shadow-lg transition"
+              >
+                <div className="text-4xl mb-2">🚗</div>
+                <h3 className="font-semibold text-gray-900">{category}</h3>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
-              How It Works
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Find your perfect vehicle in three simple steps
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 text-accent mb-4">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-heading font-semibold mb-2">Search</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Browse thousands of vehicles with advanced filters
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 text-accent mb-4">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-heading font-semibold mb-2">Compare</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Compare up to 4 vehicles side by side
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 text-accent mb-4">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-heading font-semibold mb-2">Connect</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Contact verified dealers and schedule test drives
-              </p>
-            </div>
-          </div>
+      {/* CTA Section */}
+      <section className="bg-blue-600 text-white py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">
+            Ești dealer auto?
+          </h2>
+          <p className="text-xl mb-8 text-blue-100">
+            Alătură-te platformei noastre și vinde mai rapid
+          </p>
+          <Link
+            href="/register"
+            className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+          >
+            Înregistrează-te ca Dealer
+          </Link>
         </div>
       </section>
-
-      {/* Newsletter Section */}
-      <section className="py-16 bg-gradient-to-br from-primary to-accent">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4">
-              Stay Updated
-            </h2>
-            <p className="text-gray-200 mb-8">
-              Subscribe to our newsletter for the latest listings and exclusive deals
-            </p>
-            <form className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
-              />
-              <button
-                type="submit"
-                className="px-8 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                Subscribe
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
-    </AppShell>
+    </div>
   );
 }
 

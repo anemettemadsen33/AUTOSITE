@@ -5,11 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ExchangeRate;
 use App\Models\Vehicle;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class VehicleController extends Controller
 {
+    use AuthorizesRequests;
+    
     /**
      * List vehicles with filters and pagination
      */
@@ -175,6 +180,9 @@ class VehicleController extends Controller
      */
     public function store(Request $request)
     {
+        // Authorize using policy
+        $this->authorize('create', Vehicle::class);
+        
         $validated = $request->validate([
             'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
@@ -188,15 +196,11 @@ class VehicleController extends Controller
             'title' => 'required|array',
             'description' => 'nullable|array',
             'features' => 'nullable|array',
+            'location_country' => 'nullable|string|max:2',
+            'location_city' => 'nullable|string|max:255',
         ]);
 
         $user = $request->user();
-
-        if (!in_array($user->role, ['dealer', 'admin'])) {
-            return response()->json([
-                'message' => 'Unauthorized. Only dealers and admins can create vehicles.',
-            ], 403);
-        }
 
         $slug = Str::slug($validated['make'] . ' ' . $validated['model'] . ' ' . $validated['year'] . ' ' . uniqid());
 
@@ -220,13 +224,9 @@ class VehicleController extends Controller
     public function update(Request $request, $id)
     {
         $vehicle = Vehicle::findOrFail($id);
-        $user = $request->user();
-
-        if ($vehicle->user_id !== $user->id && !$user->isAdmin()) {
-            return response()->json([
-                'message' => 'Unauthorized',
-            ], 403);
-        }
+        
+        // Authorize using policy
+        $this->authorize('update', $vehicle);
 
         $validated = $request->validate([
             'make' => 'sometimes|string|max:255',
@@ -253,13 +253,9 @@ class VehicleController extends Controller
     public function destroy(Request $request, $id)
     {
         $vehicle = Vehicle::findOrFail($id);
-        $user = $request->user();
-
-        if ($vehicle->user_id !== $user->id && !$user->isAdmin()) {
-            return response()->json([
-                'message' => 'Unauthorized',
-            ], 403);
-        }
+        
+        // Authorize using policy
+        $this->authorize('delete', $vehicle);
 
         $vehicle->delete();
 

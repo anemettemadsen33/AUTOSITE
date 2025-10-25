@@ -1,0 +1,63 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      sqlite:
+        image: nouchka/sqlite3:latest
+        
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo, sqlite
+        coverage: none
+        
+    - name: Copy .env
+      run: |
+        cd backend
+        cp .env.example .env
+        
+    - name: Install Dependencies
+      run: |
+        cd backend
+        composer install --prefer-dist --no-progress --no-suggest
+        
+    - name: Generate key
+      run: |
+        cd backend
+        php artisan key:generate
+        
+    - name: Create Database
+      run: |
+        cd backend
+        touch database/database.sqlite
+        
+    - name: Run Migrations
+      run: |
+        cd backend
+        php artisan migrate --force
+        
+    - name: Run Tests
+      run: |
+        cd backend
+        php artisan test
+        
+    - name: Upload Coverage
+      if: success()
+      run: echo "Tests passed successfully!"

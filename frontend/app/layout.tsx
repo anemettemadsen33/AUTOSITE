@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
-  title: "AUTOSITE - Premium Automotive Marketplace",
-  description: "Discover premium vehicles from verified dealers across Europe. Search, compare, and find your perfect car with multi-language and multi-currency support.",
-  keywords: ["automotive", "cars", "marketplace", "vehicles", "dealers", "buy car", "sell car"],
+  title: "AutoSite - Platformă Premium Auto",
+  description: "Găsește mașina perfectă din mii de anunțuri verificate",
 };
 
 export default function RootLayout({
@@ -13,17 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@100..900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="antialiased font-body">
-        {children}
+    <html lang="ro">
+      <body className={`${inter.variable} font-sans flex flex-col min-h-screen`}>
+        <Navbar />
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

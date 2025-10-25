@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Vehicle extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, HasTranslations, InteractsWithMedia;
+    use HasFactory, SoftDeletes, HasTranslations, InteractsWithMedia, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -159,5 +161,17 @@ class Vehicle extends Model implements HasMedia
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+    
+    /**
+     * Activity Log Configuration
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['make', 'model', 'year', 'price', 'mileage', 'is_published'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => "Vehicle {$eventName}");
     }
 }

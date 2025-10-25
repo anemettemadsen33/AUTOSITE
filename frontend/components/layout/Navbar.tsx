@@ -1,131 +1,77 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useAuthStore } from '@/lib/store';
+import { MagnifyingGlassIcon, UserIcon, HeartIcon } from '@heroicons/react/24/outline';
 
-export function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function Navbar() {
+  const { isAuthenticated, user, logout } = useAuthStore();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:border-gray-800 dark:bg-surface/95">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+    <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-primary">
-                <span className="text-xl font-bold text-white">A</span>
-              </div>
-              <span className="text-xl font-heading font-bold gradient-text">AUTOSITE</span>
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xl">A</span>
+            </div>
+            <span className="text-xl font-bold text-gray-900">AutoSite</span>
+          </Link>
+
+          {/* Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            <Link href="/vehicles" className="text-gray-700 hover:text-blue-600 transition">
+              Vehicule
+            </Link>
+            <Link href="/dealers" className="text-gray-700 hover:text-blue-600 transition">
+              Dealeri
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-sm font-medium hover:text-accent transition-colors">
-              Home
+          {/* Right side */}
+          <div className="flex items-center space-x-4">
+            <Link href="/vehicles" className="p-2 text-gray-600 hover:text-blue-600 transition">
+              <MagnifyingGlassIcon className="w-6 h-6" />
             </Link>
-            <Link href="/listings" className="text-sm font-medium hover:text-accent transition-colors">
-              Listings
-            </Link>
-            <Link href="/brands" className="text-sm font-medium hover:text-accent transition-colors">
-              Brands
-            </Link>
-            <Link href="/dealers" className="text-sm font-medium hover:text-accent transition-colors">
-              Dealers
-            </Link>
-            <Link href="/about" className="text-sm font-medium hover:text-accent transition-colors">
-              About
-            </Link>
-          </nav>
-
-          {/* Right side - Locale & Currency selectors */}
-          <div className="hidden md:flex items-center space-x-4">
-            {/* Locale Selector Placeholder */}
-            <select className="text-sm border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-surface-dark">
-              <option value="en">EN</option>
-              <option value="ro">RO</option>
-              <option value="de">DE</option>
-              <option value="es">ES</option>
-            </select>
             
-            {/* Currency Selector Placeholder */}
-            <select className="text-sm border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-surface-dark">
-              <option value="EUR">EUR</option>
-              <option value="USD">USD</option>
-              <option value="RON">RON</option>
-              <option value="GBP">GBP</option>
-            </select>
+            {isAuthenticated ? (
+              <>
+                <Link href="/favorites" className="p-2 text-gray-600 hover:text-blue-600 transition">
+                  <HeartIcon className="w-6 h-6" />
+                </Link>
+                <div className="flex items-center space-x-3">
+                  <Link href="/dashboard" className="flex items-center space-x-2 text-gray-700 hover:text-blue-600">
+                    <UserIcon className="w-6 h-6" />
+                    <span className="hidden md:inline">{user?.name}</span>
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="text-sm text-gray-600 hover:text-red-600 transition"
+                  >
+                    Ieșire
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-gray-700 hover:text-blue-600 transition"
+                >
+                  Autentificare
+                </Link>
+                <Link
+                  href="/register"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Înregistrare
+                </Link>
+              </>
+            )}
           </div>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {isMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
         </div>
-
-        {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-800">
-            <nav className="flex flex-col space-y-4">
-              <Link href="/" className="text-sm font-medium hover:text-accent transition-colors">
-                Home
-              </Link>
-              <Link href="/listings" className="text-sm font-medium hover:text-accent transition-colors">
-                Listings
-              </Link>
-              <Link href="/brands" className="text-sm font-medium hover:text-accent transition-colors">
-                Brands
-              </Link>
-              <Link href="/dealers" className="text-sm font-medium hover:text-accent transition-colors">
-                Dealers
-              </Link>
-              <Link href="/about" className="text-sm font-medium hover:text-accent transition-colors">
-                About
-              </Link>
-              <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-800">
-                <select className="flex-1 text-sm border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-surface-dark">
-                  <option value="en">EN</option>
-                  <option value="ro">RO</option>
-                  <option value="de">DE</option>
-                  <option value="es">ES</option>
-                </select>
-                <select className="flex-1 text-sm border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-surface-dark">
-                  <option value="EUR">EUR</option>
-                  <option value="USD">USD</option>
-                  <option value="RON">RON</option>
-                  <option value="GBP">GBP</option>
-                </select>
-              </div>
-            </nav>
-          </div>
-        )}
       </div>
-    </header>
+    </nav>
   );
 }
