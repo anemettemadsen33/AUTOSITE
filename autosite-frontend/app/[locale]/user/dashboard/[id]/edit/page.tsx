@@ -6,11 +6,6 @@ import { getVehicle, type Vehicle } from '@/lib/vehicles';
 import VehicleForm from '@/components/VehicleForm';
 import { Spinner } from '@/components/ui';
 
-export const metadata = {
-  title: 'Edit Vehicle | AutoMarket',
-  description: 'Edit your vehicle listing details',
-};
-
 export default function EditVehiclePage() {
   const params = useParams();
   const id = parseInt(params.id as string);

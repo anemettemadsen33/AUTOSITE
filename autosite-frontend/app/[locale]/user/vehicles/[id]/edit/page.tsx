@@ -61,7 +61,7 @@ export default function EditVehiclePage() {
           city: data.city,
           status: data.status,
         });
-      } catch (err) {
+      } catch {
         toast.error('Failed to load vehicle');
         router.push('/user/vehicles');
       } finally {

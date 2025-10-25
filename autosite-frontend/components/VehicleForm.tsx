@@ -160,7 +160,7 @@ export default function VehicleForm({ vehicle, mode }: VehicleFormProps) {
     });
   };
 
-  const currencyOptions = settings?.available_currencies?.map(curr => ({
+  const currencyOptions = settings?.currencies?.map(curr => ({
     value: curr,
     label: curr,
   })) || [
@@ -169,17 +169,17 @@ export default function VehicleForm({ vehicle, mode }: VehicleFormProps) {
     { value: 'RON', label: 'RON' },
   ];
 
-  const fuelOptions = settings?.available_filters?.fuel_type?.map(fuel => ({
+  const fuelOptions = settings?.available_filters?.fuel_types?.map(fuel => ({
     value: fuel,
     label: fuel,
   })) || [];
 
-  const transmissionOptions = settings?.available_filters?.transmission?.map(trans => ({
+  const transmissionOptions = settings?.available_filters?.transmissions?.map(trans => ({
     value: trans,
     label: trans,
   })) || [];
 
-  const bodyTypeOptions = settings?.available_filters?.body_type?.map(body => ({
+  const bodyTypeOptions = settings?.available_filters?.body_types?.map(body => ({
     value: body,
     label: body,
   })) || [];

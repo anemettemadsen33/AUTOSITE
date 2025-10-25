@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('sender_id');
             $table->index('receiver_id');
             $table->index('thread_id');

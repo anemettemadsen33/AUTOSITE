@@ -29,7 +29,7 @@ return new class extends Migration
             $table->timestamp('verification_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('verified');
             $table->index('country');
             $table->index('city');

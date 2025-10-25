@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('moderated_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('user_id');
             $table->index('dealer_id');
             $table->index('rating');

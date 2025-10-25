@@ -9,7 +9,7 @@ use Spatie\Translatable\HasTranslations;
 
 class Dealer extends Model
 {
-    use HasFactory, SoftDeletes, HasTranslations;
+    use HasFactory, HasTranslations, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

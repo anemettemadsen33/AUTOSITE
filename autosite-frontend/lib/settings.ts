@@ -2,6 +2,7 @@ import api from './api';
 
 export interface PublicSettings {
   site_name: string;
+  default_currency?: string;
   currencies: string[];
   locales: string[];
   frontend_url: string;

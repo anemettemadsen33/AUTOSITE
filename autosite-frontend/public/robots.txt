@@ -1,0 +1,12 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /user
+Disallow: /auth
+Disallow: /api
+
+# Host
+Host: https://automarket.com
+
+# Sitemaps
+Sitemap: https://automarket.com/sitemap.xml

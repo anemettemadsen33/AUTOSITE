@@ -10,11 +10,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { login } from '@/lib/auth';
 import { Button, Input } from '@/components/ui';
 
-export const metadata = {
-  title: 'Login | AutoMarket',
-  description: 'Sign in to your AutoMarket account to manage your vehicle listings',
-};
-
 interface LoginFormData {
   email: string;
   password: string;

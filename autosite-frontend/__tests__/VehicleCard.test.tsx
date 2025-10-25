@@ -1,8 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { useRouter } from 'next/navigation'
 import VehicleCard from '@/components/vehicles/VehicleCard'
 import { useFavoritesStore } from '@/stores/favoritesStore'
 
 jest.mock('@/stores/favoritesStore')
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+}))
 
 describe('VehicleCard', () => {
   const mockVehicle = {
@@ -71,7 +75,7 @@ describe('VehicleCard', () => {
 
   it('navigates to vehicle detail on card click', () => {
     const mockPush = jest.fn()
-    require('next/navigation').useRouter.mockReturnValue({
+    ;(useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
     })
 

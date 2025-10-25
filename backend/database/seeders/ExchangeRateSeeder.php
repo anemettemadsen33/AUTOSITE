@@ -13,7 +13,7 @@ class ExchangeRateSeeder extends Seeder
     public function run(): void
     {
         $today = now()->toDateString();
-        
+
         $rates = [
             ['base_currency' => 'EUR', 'target_currency' => 'USD', 'rate' => 1.095600, 'date' => $today, 'source' => 'ECB'],
             ['base_currency' => 'EUR', 'target_currency' => 'GBP', 'rate' => 0.856700, 'date' => $today, 'source' => 'ECB'],
@@ -30,7 +30,7 @@ class ExchangeRateSeeder extends Seeder
                 [
                     'base_currency' => $rate['base_currency'],
                     'target_currency' => $rate['target_currency'],
-                    'date' => $rate['date']
+                    'date' => $rate['date'],
                 ],
                 $rate
             );

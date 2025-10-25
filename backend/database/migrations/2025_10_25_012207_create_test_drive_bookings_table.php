@@ -26,7 +26,7 @@ return new class extends Migration
             $table->text('dealer_notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->index('user_id');
             $table->index('vehicle_id');
             $table->index('dealer_id');

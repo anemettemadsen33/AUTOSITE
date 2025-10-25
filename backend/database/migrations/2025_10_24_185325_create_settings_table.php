@@ -20,7 +20,7 @@ return new class extends Migration
             $table->boolean('is_public')->default(false);
             $table->string('description')->nullable();
             $table->timestamps();
-            
+
             $table->index('key');
             $table->index('group');
             $table->index('is_public');

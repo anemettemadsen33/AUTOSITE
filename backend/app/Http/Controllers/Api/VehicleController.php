@@ -81,9 +81,9 @@ class VehicleController extends Controller
             $search = $request->query;
             $query->where(function ($q) use ($search) {
                 $q->where('make', 'like', "%{$search}%")
-                  ->orWhere('model', 'like', "%{$search}%")
-                  ->orWhere('title->en', 'like', "%{$search}%")
-                  ->orWhere('description->en', 'like', "%{$search}%");
+                    ->orWhere('model', 'like', "%{$search}%")
+                    ->orWhere('title->en', 'like', "%{$search}%")
+                    ->orWhere('description->en', 'like', "%{$search}%");
             });
         }
 
@@ -122,6 +122,7 @@ class VehicleController extends Controller
                     'EUR',
                     $request->currency
                 );
+
                 return $vehicle;
             });
         }
@@ -159,7 +160,7 @@ class VehicleController extends Controller
             ->where('id', '!=', $vehicle->id)
             ->where(function ($q) use ($vehicle) {
                 $q->where('make', $vehicle->make)
-                  ->orWhere('body_type', $vehicle->body_type);
+                    ->orWhere('body_type', $vehicle->body_type);
             })
             ->limit(4)
             ->get();
@@ -178,7 +179,7 @@ class VehicleController extends Controller
         $validated = $request->validate([
             'make' => 'required|string|max:255',
             'model' => 'required|string|max:255',
-            'year' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'year' => 'required|integer|min:1900|max:'.(date('Y') + 1),
             'price' => 'required|numeric|min:0',
             'mileage' => 'required|integer|min:0',
             'fuel' => 'required|in:petrol,diesel,electric,hybrid,plugin_hybrid,other',
@@ -192,13 +193,13 @@ class VehicleController extends Controller
 
         $user = $request->user();
 
-        if (!in_array($user->role, ['dealer', 'admin'])) {
+        if (! in_array($user->role, ['dealer', 'admin'])) {
             return response()->json([
                 'message' => 'Unauthorized. Only dealers and admins can create vehicles.',
             ], 403);
         }
 
-        $slug = Str::slug($validated['make'] . ' ' . $validated['model'] . ' ' . $validated['year'] . ' ' . uniqid());
+        $slug = Str::slug($validated['make'].' '.$validated['model'].' '.$validated['year'].' '.uniqid());
 
         $vehicle = Vehicle::create(array_merge($validated, [
             'user_id' => $user->id,
@@ -222,7 +223,7 @@ class VehicleController extends Controller
         $vehicle = Vehicle::findOrFail($id);
         $user = $request->user();
 
-        if ($vehicle->user_id !== $user->id && !$user->isAdmin()) {
+        if ($vehicle->user_id !== $user->id && ! $user->isAdmin()) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -231,7 +232,7 @@ class VehicleController extends Controller
         $validated = $request->validate([
             'make' => 'sometimes|string|max:255',
             'model' => 'sometimes|string|max:255',
-            'year' => 'sometimes|integer|min:1900|max:' . (date('Y') + 1),
+            'year' => 'sometimes|integer|min:1900|max:'.(date('Y') + 1),
             'price' => 'sometimes|numeric|min:0',
             'mileage' => 'sometimes|integer|min:0',
             'title' => 'sometimes|array',
@@ -255,7 +256,7 @@ class VehicleController extends Controller
         $vehicle = Vehicle::findOrFail($id);
         $user = $request->user();
 
-        if ($vehicle->user_id !== $user->id && !$user->isAdmin()) {
+        if ($vehicle->user_id !== $user->id && ! $user->isAdmin()) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
