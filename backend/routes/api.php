@@ -51,6 +51,12 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:60,1'])->group(functi
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::put('/auth/profile', [AuthController::class, 'updateProfile']);
 
+    // Favorites routes
+    Route::get('/favorites', [\App\Http\Controllers\Api\V1\FavoriteController::class, 'index']);
+    Route::post('/favorites/toggle', [\App\Http\Controllers\Api\V1\FavoriteController::class, 'toggle']);
+    Route::get('/favorites/check/{vehicleId}', [\App\Http\Controllers\Api\V1\FavoriteController::class, 'check']);
+    Route::delete('/favorites/{vehicleId}', [\App\Http\Controllers\Api\V1\FavoriteController::class, 'destroy']);
+
     // Vehicle management - requires permissions
     Route::middleware(['permission:create-vehicles'])->group(function () {
         Route::post('/vehicles', [VehicleController::class, 'store']);
