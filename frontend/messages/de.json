@@ -1,0 +1,102 @@
+{
+  "common": {
+    "search": "Suche",
+    "filter": "Filter",
+    "sort": "Sortieren",
+    "clear": "Löschen",
+    "apply": "Anwenden",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "noResults": "Keine Ergebnisse"
+  },
+  "nav": {
+    "home": "Startseite",
+    "listings": "Angebote",
+    "brands": "Marken",
+    "dealers": "Händler",
+    "about": "Über uns",
+    "faq": "FAQ",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Finden Sie Ihr Perfektes Fahrzeug",
+    "subtitle": "Entdecken Sie Premium-Fahrzeuge von verifizierten Händlern in ganz Europa",
+    "cta": "Angebote Erkunden"
+  },
+  "search": {
+    "placeholder": "Suche nach Marke, Modell oder Stichwort...",
+    "voiceSearch": "Sprachsuche",
+    "suggestions": "Vorschläge"
+  },
+  "filters": {
+    "make": "Marke",
+    "model": "Modell",
+    "year": "Jahr",
+    "price": "Preis",
+    "mileage": "Kilometerstand",
+    "fuel": "Kraftstoffart",
+    "transmission": "Getriebe",
+    "bodyType": "Karosserietyp",
+    "condition": "Zustand",
+    "location": "Standort",
+    "features": "Ausstattung",
+    "clearAll": "Alle Filter löschen",
+    "activeFilters": "Aktive Filter"
+  },
+  "vehicle": {
+    "new": "Neu",
+    "used": "Gebraucht",
+    "certified": "Zertifiziert",
+    "featured": "Empfohlen",
+    "verified": "Verifizierter Händler",
+    "addToFavorites": "Zu Favoriten hinzufügen",
+    "removeFromFavorites": "Aus Favoriten entfernen",
+    "addToCompare": "Zum Vergleich hinzufügen",
+    "removeFromCompare": "Aus Vergleich entfernen",
+    "viewDetails": "Details ansehen",
+    "contactDealer": "Händler kontaktieren",
+    "bookTestDrive": "Probefahrt buchen",
+    "specifications": "Spezifikationen",
+    "features": "Ausstattung",
+    "description": "Beschreibung",
+    "similarVehicles": "Ähnliche Fahrzeuge"
+  },
+  "dealer": {
+    "verifiedDealer": "Verifizierter Händler",
+    "rating": "Bewertung",
+    "reviews": "Bewertungen",
+    "inventory": "Aktuelles Angebot",
+    "viewProfile": "Profil ansehen",
+    "location": "Standort",
+    "contact": "Kontakt"
+  },
+  "currency": {
+    "label": "Währung",
+    "EUR": "EUR",
+    "USD": "USD",
+    "RON": "RON",
+    "GBP": "GBP"
+  },
+  "locale": {
+    "label": "Sprache",
+    "en": "Englisch",
+    "ro": "Rumänisch",
+    "de": "Deutsch",
+    "es": "Spanisch"
+  },
+  "footer": {
+    "about": "Über AUTOSITE",
+    "description": "Premium-Automobilmarktplatz, der Käufer mit verifizierten Händlern in ganz Europa verbindet.",
+    "quickLinks": "Schnelllinks",
+    "legal": "Rechtliches",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "termsOfService": "Nutzungsbedingungen",
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "E-Mail eingeben",
+    "subscribe": "Abonnieren",
+    "followUs": "Folgen Sie uns",
+    "copyright": "© 2025 AUTOSITE. Alle Rechte vorbehalten."
+  }
+}
