@@ -24,7 +24,7 @@ class VehicleController extends Controller
             ->published()
             ->latest('published_at');
 
-        // Apply filters
+        // BASIC FILTERS
         if ($request->has('make')) {
             $query->where('make', $request->make);
         }
@@ -52,6 +52,10 @@ class VehicleController extends Controller
         if ($request->has('mileage_max')) {
             $query->where('mileage', '<=', $request->mileage_max);
         }
+        
+        if ($request->has('mileage_min')) {
+            $query->where('mileage', '>=', $request->mileage_min);
+        }
 
         if ($request->has('fuel')) {
             $query->where('fuel', $request->fuel);
@@ -75,6 +79,75 @@ class VehicleController extends Controller
 
         if ($request->has('location_city')) {
             $query->where('location_city', $request->location_city);
+        }
+        
+        // ADVANCED FILTERS
+        // Power (HP) range
+        if ($request->has('power_min')) {
+            $query->where('power_hp', '>=', $request->power_min);
+        }
+        
+        if ($request->has('power_max')) {
+            $query->where('power_hp', '<=', $request->power_max);
+        }
+        
+        // Engine size range
+        if ($request->has('engine_min')) {
+            $query->where('engine_size', '>=', $request->engine_min);
+        }
+        
+        if ($request->has('engine_max')) {
+            $query->where('engine_size', '<=', $request->engine_max);
+        }
+        
+        // Colors
+        if ($request->has('exterior_color')) {
+            $query->where('exterior_color', $request->exterior_color);
+        }
+        
+        if ($request->has('interior_color')) {
+            $query->where('interior_color', $request->interior_color);
+        }
+        
+        // Doors
+        if ($request->has('doors')) {
+            $query->where('doors', $request->doors);
+        }
+        
+        // Seats
+        if ($request->has('seats')) {
+            $query->where('seats', $request->seats);
+        }
+        
+        if ($request->has('seats_min')) {
+            $query->where('seats', '>=', $request->seats_min);
+        }
+        
+        // Date posted filter
+        if ($request->has('posted_days')) {
+            $days = (int) $request->posted_days;
+            $query->where('created_at', '>=', now()->subDays($days));
+        }
+        
+        // Distance from location (requires lat/lng)
+        if ($request->has('lat') && $request->has('lng') && $request->has('radius_km')) {
+            $lat = $request->lat;
+            $lng = $request->lng;
+            $radius = $request->radius_km;
+            
+            // Haversine formula for distance calculation
+            $query->whereRaw(
+                "(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) <= ?",
+                [$lat, $lng, $lat, $radius]
+            );
+        }
+        
+        // Features filter (JSON contains)
+        if ($request->has('features')) {
+            $features = is_array($request->features) ? $request->features : explode(',', $request->features);
+            foreach ($features as $feature) {
+                $query->whereJsonContains('features', trim($feature));
+            }
         }
 
         if ($request->has('is_featured')) {

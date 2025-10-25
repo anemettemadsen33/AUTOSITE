@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DealerController;
 use App\Http\Controllers\Api\ExchangeRateController;
+use App\Http\Controllers\Api\MediaController;
+use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\VehicleController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +39,9 @@ Route::prefix('v1')->middleware(['throttle:100,1', 'cacheResponse:3600'])->group
     // Exchange rates (CACHED)
     Route::get('/exchange/latest', [ExchangeRateController::class, 'latest']);
     Route::post('/exchange/convert', [ExchangeRateController::class, 'convert'])->middleware('doNotCacheResponse');
+    
+    // Reviews (public - read only)
+    Route::get('/dealers/{dealerId}/reviews', [ReviewController::class, 'index']);
 });
 
 // Protected routes (60 requests per minute for authenticated users)
@@ -57,4 +63,27 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:60,1'])->group(functi
     Route::middleware(['permission:delete-vehicles'])->group(function () {
         Route::delete('/vehicles/{id}', [VehicleController::class, 'destroy']);
     });
+    
+    // Media uploads
+    Route::post('/vehicles/{vehicle}/images', [MediaController::class, 'uploadVehicleImages']);
+    Route::delete('/vehicles/{vehicle}/images/{mediaId}', [MediaController::class, 'deleteVehicleImage']);
+    Route::post('/vehicles/{vehicle}/images/reorder', [MediaController::class, 'reorderVehicleImages']);
+    Route::post('/dealer/logo', [MediaController::class, 'uploadDealerLogo']);
+    Route::post('/user/avatar', [MediaController::class, 'uploadAvatar']);
+    
+    // Analytics
+    Route::get('/analytics/dealer/dashboard', [AnalyticsController::class, 'dealerDashboard']);
+    Route::get('/analytics/vehicle/{vehicleId}', [AnalyticsController::class, 'vehicleStats']);
+    Route::get('/analytics/platform', [AnalyticsController::class, 'platformStats'])->middleware('role:admin');
+    
+    // Reviews
+    Route::post('/dealers/{dealerId}/reviews', [ReviewController::class, 'store']);
+    Route::put('/reviews/{reviewId}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{reviewId}', [ReviewController::class, 'destroy']);
+    Route::post('/reviews/{reviewId}/respond', [ReviewController::class, 'respond']);
+    Route::post('/reviews/{reviewId}/approve', [ReviewController::class, 'approve'])->middleware('role:admin');
+    Route::post('/reviews/{reviewId}/reject', [ReviewController::class, 'reject'])->middleware('role:admin');
 });
+
+// Public media routes
+Route::get('/vehicles/{vehicle}/images', [MediaController::class, 'getVehicleImages']);

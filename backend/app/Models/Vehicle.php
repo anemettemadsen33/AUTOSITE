@@ -16,6 +16,27 @@ class Vehicle extends Model implements HasMedia
     use HasFactory, SoftDeletes, HasTranslations, InteractsWithMedia, LogsActivity;
 
     /**
+     * Register media collections
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('images')
+            ->useFallbackUrl('/images/no-car.png')
+            ->useFallbackPath(public_path('/images/no-car.png'))
+            ->registerMediaConversions(function () {
+                $this->addMediaConversion('thumb')
+                    ->width(400)
+                    ->height(300)
+                    ->sharpen(10);
+                    
+                $this->addMediaConversion('large')
+                    ->width(1200)
+                    ->height(900)
+                    ->sharpen(10);
+            });
+    }
+
+    /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [

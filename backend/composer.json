@@ -9,6 +9,7 @@
         "php": "^8.2",
         "darkaonline/l5-swagger": "^9.0",
         "filament/filament": "^4.0",
+        "intervention/image": "^3.11",
         "laravel/framework": "^11.31",
         "laravel/pulse": "^1.4",
         "laravel/sanctum": "^4.2",
