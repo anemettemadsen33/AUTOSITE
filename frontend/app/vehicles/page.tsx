@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import VehicleCard from '@/components/ui/VehicleCard';
 import api from '@/lib/api';
 import { Vehicle, PaginatedResponse } from '@/lib/types';
-import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import { AdjustmentsHorizontalIcon, FunnelIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ALL_BRANDS, getModelsForBrand, fuelTypes, transmissionTypes, bodyTypes, conditions } from '@/lib/car-data';
 
-export default function VehiclesPage() {
+function VehiclesContent() {
   const searchParams = useSearchParams();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +23,7 @@ export default function VehiclesPage() {
     price_max: searchParams.get('price_max') || '',
     year_min: searchParams.get('year_min') || '',
     year_max: searchParams.get('year_max') || '',
+    mileage_max: searchParams.get('mileage_max') || '',
     fuel_type: searchParams.get('fuel') || '',
     transmission: searchParams.get('transmission') || '',
     body_type: searchParams.get('body_type') || '',
@@ -36,6 +38,16 @@ export default function VehiclesPage() {
   useEffect(() => {
     fetchVehicles();
   }, [page, filters]);
+
+  useEffect(() => {
+    // Update available models when make changes
+    if (filters.make) {
+      const models = getModelsForBrand(filters.make);
+      setAvailableModels(models);
+    } else {
+      setAvailableModels([]);
+    }
+  }, [filters.make]);
 
   const fetchVehicles = async () => {
     setLoading(true);
@@ -59,7 +71,14 @@ export default function VehiclesPage() {
   };
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    setFilters((prev) => {
+      const newFilters = { ...prev, [key]: value };
+      // Reset model when make changes
+      if (key === 'make' && value !== prev.make) {
+        newFilters.model = '';
+      }
+      return newFilters;
+    });
     setPage(1);
   };
 
@@ -71,12 +90,14 @@ export default function VehiclesPage() {
       price_max: '',
       year_min: '',
       year_max: '',
+      mileage_max: '',
       fuel_type: '',
       transmission: '',
       body_type: '',
       condition: '',
       query: '',
     });
+    setAvailableModels([]);
     setPage(1);
   };
 
@@ -95,134 +116,195 @@ export default function VehiclesPage() {
 
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Filters Sidebar */}
-          <aside className={`lg:w-64 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-20">
+          <aside className={`lg:w-80 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sticky top-24 border border-gray-100 dark:border-gray-700">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-bold text-lg">Filtre</h2>
+                <div className="flex items-center space-x-2">
+                  <FunnelIcon className="w-5 h-5 text-blue-600" />
+                  <h2 className="font-black text-xl text-gray-900 dark:text-white">Filtre Avansate</h2>
+                </div>
                 <button
                   onClick={resetFilters}
-                  className="text-sm text-blue-600 hover:text-blue-700"
+                  className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 font-semibold flex items-center space-x-1 hover:underline"
                 >
-                  Resetează
+                  <XMarkIcon className="w-4 h-4" />
+                  <span>Reset</span>
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-5 max-h-[calc(100vh-200px)] overflow-y-auto pr-2 custom-scrollbar">
                 {/* Make */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                    <span className="mr-2">🏭</span>
                     Marcă
                   </label>
                   <select
                     value={filters.make}
                     onChange={(e) => handleFilterChange('make', e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                   >
                     <option value="">Toate mărcile</option>
-                    <option value="BMW">BMW</option>
-                    <option value="Mercedes-Benz">Mercedes-Benz</option>
-                    <option value="Audi">Audi</option>
-                    <option value="Volkswagen">Volkswagen</option>
-                    <option value="Tesla">Tesla</option>
-                    <option value="Toyota">Toyota</option>
-                    <option value="Porsche">Porsche</option>
+                    {ALL_BRANDS.map((make) => (
+                      <option key={make} value={make}>{make}</option>
+                    ))}
                   </select>
                 </div>
 
+                {/* Model - Dynamic based on make */}
+                {filters.make && (
+                  <div className="animate-fadeIn">
+                    <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                      <span className="mr-2">🚗</span>
+                      Model
+                    </label>
+                    <select
+                      value={filters.model}
+                      onChange={(e) => handleFilterChange('model', e.target.value)}
+                      className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
+                    >
+                      <option value="">Toate modelele</option>
+                      {availableModels.map((model) => (
+                        <option key={model} value={model}>{model}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 {/* Price Range */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                    <span className="mr-2">💰</span>
                     Preț (EUR)
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-3">
                     <input
                       type="number"
                       placeholder="Min"
                       value={filters.price_min}
                       onChange={(e) => handleFilterChange('price_min', e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                     />
                     <input
                       type="number"
                       placeholder="Max"
                       value={filters.price_max}
                       onChange={(e) => handleFilterChange('price_max', e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                     />
                   </div>
                 </div>
 
                 {/* Year Range */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                    <span className="mr-2">📅</span>
                     An fabricație
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-3">
                     <input
                       type="number"
                       placeholder="Min"
                       value={filters.year_min}
                       onChange={(e) => handleFilterChange('year_min', e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                     />
                     <input
                       type="number"
                       placeholder="Max"
                       value={filters.year_max}
                       onChange={(e) => handleFilterChange('year_max', e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                     />
                   </div>
                 </div>
 
+                {/* Mileage */}
+                <div>
+                  <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                    <span className="mr-2">🛣️</span>
+                    Kilometraj maxim
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="ex: 100000"
+                    value={filters.mileage_max}
+                    onChange={(e) => handleFilterChange('mileage_max', e.target.value)}
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
+                  />
+                </div>
+
                 {/* Fuel Type */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                    <span className="mr-2">⛽</span>
                     Combustibil
                   </label>
                   <select
                     value={filters.fuel_type}
                     onChange={(e) => handleFilterChange('fuel_type', e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                   >
                     <option value="">Toate tipurile</option>
-                    <option value="petrol">Benzină</option>
-                    <option value="diesel">Diesel</option>
-                    <option value="electric">Electric</option>
-                    <option value="hybrid">Hibrid</option>
+                    {fuelTypes.map((fuel) => (
+                      <option key={fuel.value} value={fuel.value}>{fuel.label}</option>
+                    ))}
                   </select>
                 </div>
 
                 {/* Transmission */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                    <span className="mr-2">⚙️</span>
                     Transmisie
                   </label>
                   <select
                     value={filters.transmission}
                     onChange={(e) => handleFilterChange('transmission', e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                   >
                     <option value="">Toate tipurile</option>
-                    <option value="manual">Manuală</option>
-                    <option value="automatic">Automată</option>
+                    {transmissionTypes.map((trans) => (
+                      <option key={trans.value} value={trans.value}>{trans.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Body Type */}
+                <div>
+                  <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                    <span className="mr-2">🏎️</span>
+                    Caroserie
+                  </label>
+                  <select
+                    value={filters.body_type}
+                    onChange={(e) => handleFilterChange('body_type', e.target.value)}
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
+                  >
+                    <option value="">Toate tipurile</option>
+                    {bodyTypes.map((body) => (
+                      <option key={body.value} value={body.value}>
+                        {body.icon} {body.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 {/* Condition */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                    <span className="mr-2">✨</span>
                     Stare
                   </label>
                   <select
                     value={filters.condition}
                     onChange={(e) => handleFilterChange('condition', e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                   >
                     <option value="">Toate</option>
-                    <option value="new">Nou</option>
-                    <option value="used">Second Hand</option>
-                    <option value="certified">Certificat</option>
+                    {conditions.map((cond) => (
+                      <option key={cond.value} value={cond.value}>{cond.label}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -292,5 +374,19 @@ export default function VehiclesPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VehiclesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 pt-24 pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">Loading...</div>
+        </div>
+      </div>
+    }>
+      <VehiclesContent />
+    </Suspense>
   );
 }

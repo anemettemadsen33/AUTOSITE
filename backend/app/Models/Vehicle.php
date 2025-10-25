@@ -143,16 +143,6 @@ class Vehicle extends Model implements HasMedia
     }
 
     /**
-     * Register media collections
-     */
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('images')
-            ->useFallbackUrl('/images/placeholder-vehicle.jpg')
-            ->useFallbackPath(public_path('/images/placeholder-vehicle.jpg'));
-    }
-
-    /**
      * Scope: Published vehicles
      */
     public function scopePublished($query)
