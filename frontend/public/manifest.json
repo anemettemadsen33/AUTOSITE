@@ -1,0 +1,41 @@
+{
+  "name": "AutoSite - Premium Auto Marketplace",
+  "short_name": "AutoSite",
+  "description": "Find your dream car - Premium auto marketplace with dark mode",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["automotive", "shopping"],
+  "shortcuts": [
+    {
+      "name": "Browse Vehicles",
+      "short_name": "Vehicles",
+      "description": "View all available vehicles",
+      "url": "/vehicles",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Favorites",
+      "short_name": "Favorites",
+      "description": "View your saved vehicles",
+      "url": "/favorites",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}
