@@ -1,0 +1,102 @@
+{
+  "common": {
+    "search": "Căutare",
+    "filter": "Filtru",
+    "sort": "Sortare",
+    "clear": "Șterge",
+    "apply": "Aplică",
+    "save": "Salvează",
+    "cancel": "Anulează",
+    "loading": "Se încarcă...",
+    "error": "Eroare",
+    "noResults": "Niciun rezultat"
+  },
+  "nav": {
+    "home": "Acasă",
+    "listings": "Anunțuri",
+    "brands": "Mărci",
+    "dealers": "Dealeri",
+    "about": "Despre",
+    "faq": "Întrebări",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Găsește Vehiculul Perfect",
+    "subtitle": "Descoperă vehicule premium de la dealeri verificați din Europa",
+    "cta": "Explorează Anunțurile"
+  },
+  "search": {
+    "placeholder": "Caută după marcă, model sau cuvânt cheie...",
+    "voiceSearch": "Căutare vocală",
+    "suggestions": "Sugestii"
+  },
+  "filters": {
+    "make": "Marcă",
+    "model": "Model",
+    "year": "An",
+    "price": "Preț",
+    "mileage": "Kilometraj",
+    "fuel": "Tip Combustibil",
+    "transmission": "Transmisie",
+    "bodyType": "Tip Caroserie",
+    "condition": "Stare",
+    "location": "Locație",
+    "features": "Caracteristici",
+    "clearAll": "Șterge toate filtrele",
+    "activeFilters": "Filtre active"
+  },
+  "vehicle": {
+    "new": "Nou",
+    "used": "Second-hand",
+    "certified": "Certificat",
+    "featured": "Recomandat",
+    "verified": "Dealer Verificat",
+    "addToFavorites": "Adaugă la favorite",
+    "removeFromFavorites": "Elimină din favorite",
+    "addToCompare": "Adaugă la comparație",
+    "removeFromCompare": "Elimină din comparație",
+    "viewDetails": "Vezi detalii",
+    "contactDealer": "Contactează dealerul",
+    "bookTestDrive": "Rezervă test drive",
+    "specifications": "Specificații",
+    "features": "Caracteristici",
+    "description": "Descriere",
+    "similarVehicles": "Vehicule similare"
+  },
+  "dealer": {
+    "verifiedDealer": "Dealer Verificat",
+    "rating": "Rating",
+    "reviews": "Recenzii",
+    "inventory": "Stoc curent",
+    "viewProfile": "Vezi profilul",
+    "location": "Locație",
+    "contact": "Contact"
+  },
+  "currency": {
+    "label": "Monedă",
+    "EUR": "EUR",
+    "USD": "USD",
+    "RON": "RON",
+    "GBP": "GBP"
+  },
+  "locale": {
+    "label": "Limbă",
+    "en": "Engleză",
+    "ro": "Română",
+    "de": "Germană",
+    "es": "Spaniolă"
+  },
+  "footer": {
+    "about": "Despre AUTOSITE",
+    "description": "Piață auto premium care conectează cumpărătorii cu dealeri verificați din Europa.",
+    "quickLinks": "Link-uri Rapide",
+    "legal": "Legal",
+    "privacyPolicy": "Politica de Confidențialitate",
+    "termsOfService": "Termeni și Condiții",
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "Introdu email-ul",
+    "subscribe": "Abonează-te",
+    "followUs": "Urmărește-ne",
+    "copyright": "© 2025 AUTOSITE. Toate drepturile rezervate."
+  }
+}
