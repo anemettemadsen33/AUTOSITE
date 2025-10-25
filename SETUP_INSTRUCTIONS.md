@@ -42,9 +42,21 @@ npm install
 cd ..
 ```
 
+**Tip**: You can use subshells to avoid manual directory navigation:
+```bash
+(cd backend && npm install)
+(cd frontend && npm install)
+(cd autosite-frontend && npm install)
+```
+
 ## PostCSS and Tailwind CSS Configuration
 
-This project uses **Tailwind CSS v4** with the modern `@tailwindcss/postcss` plugin. The configurations are already set up correctly in both frontend applications:
+This project uses different Tailwind CSS versions depending on the application:
+
+- **Frontend applications** (frontend/ and autosite-frontend/): Use **Tailwind CSS v4** with the modern `@tailwindcss/postcss` plugin
+- **Backend application**: Uses **Tailwind CSS v3** with traditional `tailwindcss` and `autoprefixer` plugins
+
+The configurations are already set up correctly:
 
 ### Frontend PostCSS Configuration
 **File**: `frontend/postcss.config.mjs`
@@ -69,6 +81,19 @@ const config = {
 
 export default config;
 ```
+
+### Backend PostCSS Configuration (Tailwind CSS v3)
+**File**: `backend/postcss.config.js`
+```javascript
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+```
+
+**Note**: The backend uses Tailwind CSS v3.4.18 with traditional plugins, while frontend applications use Tailwind CSS v4 with @tailwindcss/postcss.
 
 ## Running the Applications
 
@@ -141,6 +166,7 @@ AUTOSITE/
 
 ## Notes
 
-- The project uses **Tailwind CSS v4**, which uses `@tailwindcss/postcss` instead of the traditional `tailwindcss` and `autoprefixer` plugin setup
+- **Frontend applications** (frontend/ and autosite-frontend/) use **Tailwind CSS v4** with the `@tailwindcss/postcss` plugin
+- **Backend application** uses **Tailwind CSS v3** with the traditional `tailwindcss` and `autoprefixer` plugin setup
 - All dependencies are tracked via `package-lock.json` files for consistency
 - Node modules are excluded from git via `.gitignore`
