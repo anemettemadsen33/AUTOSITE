@@ -13,7 +13,16 @@ return new class extends Migration
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->id();
+            $table->string('base_currency', 3)->default('EUR');
+            $table->string('target_currency', 3);
+            $table->decimal('rate', 10, 6);
+            $table->date('date');
+            $table->string('source')->default('ECB'); // European Central Bank
             $table->timestamps();
+            
+            $table->index('target_currency');
+            $table->index('date');
+            $table->unique(['base_currency', 'target_currency', 'date']);
         });
     }
 
