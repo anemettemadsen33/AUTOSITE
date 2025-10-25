@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { getVehicles, type VehicleListResponse, type Vehicle } from '@/lib/vehicles';
+import { getVehicles, type Vehicle } from '@/lib/vehicles';
 import { getPublicSettings } from '@/lib/settings';
 import { useSettingsStore } from '@/stores/settingsStore';
 import Filters, { type VehicleFilterValues } from '@/components/Filters';

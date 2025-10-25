@@ -31,6 +31,7 @@ export interface Vehicle {
   status: string;
   published_at?: string;
   dealer?: {
+    id: number;
     name: string;
     email?: string;
     phone?: string;
@@ -58,6 +59,8 @@ export interface VehicleFilters {
   page?: number;
   per_page?: number;
 }
+
+export type VehicleFilterValues = Partial<VehicleFilters>;
 
 export interface VehicleListResponse {
   data: Vehicle[];
