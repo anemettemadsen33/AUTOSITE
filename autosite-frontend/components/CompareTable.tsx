@@ -72,6 +72,7 @@ export default function CompareTable({ vehicles, onRemove }: CompareTableProps) 
                   {/* Vehicle Image */}
                   {vehicle.images && vehicle.images.length > 0 && (
                     <div className="relative w-full h-40 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={vehicle.images[0].url}
                         alt={getTitle(vehicle)}

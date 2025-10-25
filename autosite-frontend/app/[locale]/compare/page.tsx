@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCompareStore } from '@/stores/compareStore';
 import CompareTable from '@/components/CompareTable';

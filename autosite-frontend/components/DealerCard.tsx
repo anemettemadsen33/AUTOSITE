@@ -16,6 +16,7 @@ export default function DealerCard({ dealer }: DealerCardProps) {
       {/* Dealer Logo/Header */}
       <div className="h-32 bg-gradient-to-br from-blue-500 to-blue-700 dark:from-blue-700 dark:to-blue-900 flex items-center justify-center p-4">
         {dealer.logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={dealer.logo}
             alt={dealer.name}
