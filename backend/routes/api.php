@@ -87,3 +87,20 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:60,1'])->group(functi
 
 // Public media routes
 Route::get('/vehicles/{vehicle}/images', [MediaController::class, 'getVehicleImages']);
+
+// Orders & Leasing Applications
+Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+    // Orders
+    Route::get('/orders', [\App\Http\Controllers\Api\V1\OrderController::class, 'index']);
+    Route::post('/orders', [\App\Http\Controllers\Api\V1\OrderController::class, 'store']);
+    Route::get('/orders/{id}', [\App\Http\Controllers\Api\V1\OrderController::class, 'show']);
+    Route::put('/orders/{id}', [\App\Http\Controllers\Api\V1\OrderController::class, 'update']);
+    Route::delete('/orders/{id}', [\App\Http\Controllers\Api\V1\OrderController::class, 'destroy']);
+    
+    // Leasing Applications
+    Route::get('/leasing-applications', [\App\Http\Controllers\Api\V1\LeasingApplicationController::class, 'index']);
+    Route::post('/leasing-applications', [\App\Http\Controllers\Api\V1\LeasingApplicationController::class, 'store']);
+    Route::get('/leasing-applications/{id}', [\App\Http\Controllers\Api\V1\LeasingApplicationController::class, 'show']);
+    Route::post('/leasing-applications/{id}/documents', [\App\Http\Controllers\Api\V1\LeasingApplicationController::class, 'uploadDocuments']);
+    Route::delete('/leasing-applications/{id}', [\App\Http\Controllers\Api\V1\LeasingApplicationController::class, 'destroy']);
+});
