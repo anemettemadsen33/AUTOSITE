@@ -1,0 +1,102 @@
+{
+  "common": {
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "clear": "Clear",
+    "apply": "Apply",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "Error",
+    "noResults": "No results found"
+  },
+  "nav": {
+    "home": "Home",
+    "listings": "Listings",
+    "brands": "Brands",
+    "dealers": "Dealers",
+    "about": "About",
+    "faq": "FAQ",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Find Your Perfect Vehicle",
+    "subtitle": "Discover premium vehicles from verified dealers across Europe",
+    "cta": "Explore Listings"
+  },
+  "search": {
+    "placeholder": "Search by make, model, or keyword...",
+    "voiceSearch": "Voice search",
+    "suggestions": "Suggestions"
+  },
+  "filters": {
+    "make": "Make",
+    "model": "Model",
+    "year": "Year",
+    "price": "Price",
+    "mileage": "Mileage",
+    "fuel": "Fuel Type",
+    "transmission": "Transmission",
+    "bodyType": "Body Type",
+    "condition": "Condition",
+    "location": "Location",
+    "features": "Features",
+    "clearAll": "Clear all filters",
+    "activeFilters": "Active filters"
+  },
+  "vehicle": {
+    "new": "New",
+    "used": "Used",
+    "certified": "Certified Pre-Owned",
+    "featured": "Featured",
+    "verified": "Verified Dealer",
+    "addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites",
+    "addToCompare": "Add to compare",
+    "removeFromCompare": "Remove from compare",
+    "viewDetails": "View details",
+    "contactDealer": "Contact dealer",
+    "bookTestDrive": "Book test drive",
+    "specifications": "Specifications",
+    "features": "Features",
+    "description": "Description",
+    "similarVehicles": "Similar vehicles"
+  },
+  "dealer": {
+    "verifiedDealer": "Verified Dealer",
+    "rating": "Rating",
+    "reviews": "Reviews",
+    "inventory": "Current inventory",
+    "viewProfile": "View profile",
+    "location": "Location",
+    "contact": "Contact"
+  },
+  "currency": {
+    "label": "Currency",
+    "EUR": "EUR",
+    "USD": "USD",
+    "RON": "RON",
+    "GBP": "GBP"
+  },
+  "locale": {
+    "label": "Language",
+    "en": "English",
+    "ro": "Romanian",
+    "de": "German",
+    "es": "Spanish"
+  },
+  "footer": {
+    "about": "About AUTOSITE",
+    "description": "Premium automotive marketplace connecting buyers with verified dealers across Europe.",
+    "quickLinks": "Quick Links",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "followUs": "Follow Us",
+    "copyright": "© 2025 AUTOSITE. All rights reserved."
+  }
+}
