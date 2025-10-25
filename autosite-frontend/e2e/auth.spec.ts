@@ -53,7 +53,7 @@ test.describe('User Authentication Flow', () => {
     await expect(page).not.toHaveURL(/.*dashboard/);
   });
 
-  test('user can logout', async ({ page, context }) => {
+  test('user can logout', async ({ page }) => {
     // Login first
     await page.goto('/en/auth/login');
     await page.fill('[name="email"]', 'test@example.com');

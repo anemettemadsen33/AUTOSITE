@@ -11,7 +11,7 @@ use Spatie\Translatable\HasTranslations;
 
 class Vehicle extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, HasTranslations, InteractsWithMedia;
+    use HasFactory, HasTranslations, InteractsWithMedia, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

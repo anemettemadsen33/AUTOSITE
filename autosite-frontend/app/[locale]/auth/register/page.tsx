@@ -10,11 +10,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { register as registerUser } from '@/lib/auth';
 import { Button, Input } from '@/components/ui';
 
-export const metadata = {
-  title: 'Create Account | AutoMarket',
-  description: 'Register for a free AutoMarket account to start selling vehicles across Europe',
-};
-
 interface RegisterFormData {
   name: string;
   email: string;

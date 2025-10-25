@@ -31,6 +31,7 @@ export default function Header() {
 
   useEffect(() => {
     // This is intentional for theme hydration to prevent flash of wrong theme
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

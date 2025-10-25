@@ -10,11 +10,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { Button, Spinner } from '@/components/ui';
 
-export const metadata = {
-  title: 'My Vehicles | AutoMarket',
-  description: 'Manage your vehicle listings on AutoMarket',
-};
-
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
   const { user } = useAuthStore();

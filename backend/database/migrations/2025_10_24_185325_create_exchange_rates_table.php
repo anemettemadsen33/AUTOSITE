@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('date');
             $table->string('source')->default('ECB'); // European Central Bank
             $table->timestamps();
-            
+
             $table->index('target_currency');
             $table->index('date');
             $table->unique(['base_currency', 'target_currency', 'date']);

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 interface PublicSettings {
   site_name: string;
+  default_currency?: string;
   currencies: string[];
   locales: string[];
   frontend_url: string;

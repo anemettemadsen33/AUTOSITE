@@ -42,7 +42,7 @@ class ExchangeRate extends Model
     public function scopeCurrencyPair($query, $base, $target)
     {
         return $query->where('base_currency', $base)
-                     ->where('target_currency', $target);
+            ->where('target_currency', $target);
     }
 
     /**
@@ -58,7 +58,7 @@ class ExchangeRate extends Model
             ->currencyPair($from, $to)
             ->first();
 
-        if (!$rate) {
+        if (! $rate) {
             return $amount;
         }
 
