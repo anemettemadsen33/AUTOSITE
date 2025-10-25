@@ -13,15 +13,19 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Public routes
+// Public routes with strict rate limiting for auth endpoints
 Route::prefix('v1')->group(function () {
-    // Auth routes
-    Route::post('/auth/register', [AuthController::class, 'register']);
-    Route::post('/auth/login', [AuthController::class, 'login']);
+    // Auth routes with rate limiting (5 attempts per minute)
+    Route::middleware('throttle:5,1')->group(function () {
+        Route::post('/auth/register', [AuthController::class, 'register']);
+        Route::post('/auth/login', [AuthController::class, 'login']);
+    });
 
-    // Public vehicle routes
-    Route::get('/vehicles', [VehicleController::class, 'index']);
-    Route::get('/vehicles/{slug}', [VehicleController::class, 'show']);
+    // Public vehicle routes with moderate rate limiting (60 per minute)
+    Route::middleware('throttle:60,1')->group(function () {
+        Route::get('/vehicles', [VehicleController::class, 'index']);
+        Route::get('/vehicles/{slug}', [VehicleController::class, 'show']);
+    });
 
     // Public dealer routes
     Route::get('/dealers', [DealerController::class, 'index']);
@@ -36,8 +40,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/exchange/convert', [ExchangeRateController::class, 'convert']);
 });
 
-// Protected routes
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+// Protected routes with higher rate limits (120 per minute for authenticated users)
+Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     // Auth routes
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);
