@@ -1,0 +1,32 @@
+@'
+# OS/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Laravel
+/vendor/
+/node_modules/
+.env
+.env.*
+/bootstrap/cache/*.php
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/public/storage
+
+# Frontend (Vite/React)
+autosite-frontend/node_modules/
+autosite-frontend/.env
+autosite-frontend/.env.*
+dist/
+build/
+
+# Misc
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+'@ | Set-Content .gitignore -Encoding UTF8

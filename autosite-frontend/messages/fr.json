@@ -1,0 +1,70 @@
+{
+  "common": {
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "reset": "Réinitialiser",
+    "showMore": "Afficher Plus",
+    "showLess": "Afficher Moins",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "noResults": "Aucun résultat trouvé"
+  },
+  "nav": {
+    "home": "Accueil",
+    "vehicles": "Véhicules",
+    "about": "À propos",
+    "contact": "Contact",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "logout": "Déconnexion",
+    "dashboard": "Tableau de bord"
+  },
+  "auth": {
+    "name": "Nom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "loginTitle": "Connexion à AutoMarket",
+    "registerTitle": "Créer un compte",
+    "loginButton": "Connexion",
+    "registerButton": "S'inscrire",
+    "forgotPassword": "Mot de passe oublié?",
+    "noAccount": "Pas de compte?",
+    "hasAccount": "Vous avez déjà un compte?"
+  },
+  "vehicle": {
+    "make": "Marque",
+    "model": "Modèle",
+    "year": "Année",
+    "mileage": "Kilométrage",
+    "price": "Prix",
+    "fuel": "Carburant",
+    "transmission": "Transmission",
+    "bodyType": "Type de carrosserie",
+    "color": "Couleur",
+    "location": "Localisation",
+    "country": "Pays",
+    "city": "Ville",
+    "description": "Description",
+    "details": "Détails",
+    "contactDealer": "Contacter le concessionnaire",
+    "viewDetails": "Voir les détails",
+    "publishedAt": "Publié"
+  },
+  "filters": {
+    "title": "Filtres",
+    "priceRange": "Fourchette de prix",
+    "yearRange": "Plage d'années",
+    "mileageRange": "Plage de kilométrage",
+    "from": "De",
+    "to": "À",
+    "km": "km"
+  },
+  "dashboard": {
+    "myVehicles": "Mes véhicules",
+    "addVehicle": "Ajouter un véhicule",
+    "editVehicle": "Modifier le véhicule",
+    "deleteVehicle": "Supprimer le véhicule",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce véhicule?"
+  }
+}

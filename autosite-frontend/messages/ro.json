@@ -1,0 +1,70 @@
+{
+  "common": {
+    "search": "Căutare",
+    "filter": "Filtrează",
+    "reset": "Resetare",
+    "showMore": "Arată Mai Mult",
+    "showLess": "Arată Mai Puțin",
+    "loading": "Se încarcă...",
+    "error": "A apărut o eroare",
+    "noResults": "Nu s-au găsit rezultate"
+  },
+  "nav": {
+    "home": "Acasă",
+    "vehicles": "Vehicule",
+    "about": "Despre",
+    "contact": "Contact",
+    "login": "Autentificare",
+    "register": "Înregistrare",
+    "logout": "Deconectare",
+    "dashboard": "Panou"
+  },
+  "auth": {
+    "name": "Nume",
+    "email": "Email",
+    "password": "Parolă",
+    "confirmPassword": "Confirmă Parola",
+    "loginTitle": "Autentificare AutoMarket",
+    "registerTitle": "Creare Cont",
+    "loginButton": "Autentificare",
+    "registerButton": "Înregistrare",
+    "forgotPassword": "Ai uitat parola?",
+    "noAccount": "Nu ai cont?",
+    "hasAccount": "Ai deja cont?"
+  },
+  "vehicle": {
+    "make": "Marcă",
+    "model": "Model",
+    "year": "An",
+    "mileage": "Kilometraj",
+    "price": "Preț",
+    "fuel": "Combustibil",
+    "transmission": "Transmisie",
+    "bodyType": "Caroserie",
+    "color": "Culoare",
+    "location": "Locație",
+    "country": "Țară",
+    "city": "Oraș",
+    "description": "Descriere",
+    "details": "Detalii",
+    "contactDealer": "Contactează Dealerul",
+    "viewDetails": "Vezi Detalii",
+    "publishedAt": "Publicat"
+  },
+  "filters": {
+    "title": "Filtre",
+    "priceRange": "Interval Preț",
+    "yearRange": "Interval An",
+    "mileageRange": "Interval Kilometraj",
+    "from": "De la",
+    "to": "Până la",
+    "km": "km"
+  },
+  "dashboard": {
+    "myVehicles": "Vehiculele Mele",
+    "addVehicle": "Adaugă Vehicul",
+    "editVehicle": "Editează Vehicul",
+    "deleteVehicle": "Șterge Vehicul",
+    "confirmDelete": "Sigur doriți să ștergeți acest vehicul?"
+  }
+}

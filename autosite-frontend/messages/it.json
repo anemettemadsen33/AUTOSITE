@@ -1,0 +1,70 @@
+{
+  "common": {
+    "search": "Cerca",
+    "filter": "Filtra",
+    "reset": "Ripristina",
+    "showMore": "Mostra di più",
+    "showLess": "Mostra di meno",
+    "loading": "Caricamento...",
+    "error": "Si è verificato un errore",
+    "noResults": "Nessun risultato trovato"
+  },
+  "nav": {
+    "home": "Home",
+    "vehicles": "Veicoli",
+    "about": "Chi siamo",
+    "contact": "Contatti",
+    "login": "Accedi",
+    "register": "Registrati",
+    "logout": "Esci",
+    "dashboard": "Dashboard"
+  },
+  "auth": {
+    "name": "Nome",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Conferma password",
+    "loginTitle": "Accedi ad AutoMarket",
+    "registerTitle": "Crea account",
+    "loginButton": "Accedi",
+    "registerButton": "Registrati",
+    "forgotPassword": "Password dimenticata?",
+    "noAccount": "Non hai un account?",
+    "hasAccount": "Hai già un account?"
+  },
+  "vehicle": {
+    "make": "Marca",
+    "model": "Modello",
+    "year": "Anno",
+    "mileage": "Chilometraggio",
+    "price": "Prezzo",
+    "fuel": "Carburante",
+    "transmission": "Trasmissione",
+    "bodyType": "Tipo di carrozzeria",
+    "color": "Colore",
+    "location": "Posizione",
+    "country": "Paese",
+    "city": "Città",
+    "description": "Descrizione",
+    "details": "Dettagli",
+    "contactDealer": "Contatta il rivenditore",
+    "viewDetails": "Vedi dettagli",
+    "publishedAt": "Pubblicato"
+  },
+  "filters": {
+    "title": "Filtri",
+    "priceRange": "Fascia di prezzo",
+    "yearRange": "Intervallo di anni",
+    "mileageRange": "Intervallo di chilometraggio",
+    "from": "Da",
+    "to": "A",
+    "km": "km"
+  },
+  "dashboard": {
+    "myVehicles": "I miei veicoli",
+    "addVehicle": "Aggiungi veicolo",
+    "editVehicle": "Modifica veicolo",
+    "deleteVehicle": "Elimina veicolo",
+    "confirmDelete": "Sei sicuro di voler eliminare questo veicolo?"
+  }
+}

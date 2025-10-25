@@ -1,0 +1,191 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "AM AutoMarket" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: AM
+        - generic [ref=e8]: AutoMarket
+      - navigation [ref=e9]:
+        - link "Home" [ref=e10] [cursor=pointer]:
+          - /url: /
+        - link "Vehicles" [ref=e11] [cursor=pointer]:
+          - /url: /vehicles
+        - link "Pricing" [ref=e12] [cursor=pointer]:
+          - /url: /pricing
+        - link "Blog" [ref=e13] [cursor=pointer]:
+          - /url: /blog
+        - link "About" [ref=e14] [cursor=pointer]:
+          - /url: /about
+        - link "Contact" [ref=e15] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=e16]:
+        - combobox "Select language" [ref=e17]:
+          - option "English" [selected]
+          - option "Română"
+          - option "Deutsch"
+          - option "Français"
+          - option "Italiano"
+          - option "Español"
+          - option "Polski"
+          - option "Magyar"
+        - button "Toggle theme" [ref=e18]:
+          - img [ref=e19]
+        - link "Login" [ref=e21] [cursor=pointer]:
+          - /url: /login
+        - link "Register" [ref=e22] [cursor=pointer]:
+          - /url: /register
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - heading "AutoMarket" [level=1] [ref=e26]
+        - paragraph [ref=e27]: Find your perfect vehicle from dealers across Europe
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - heading "Filters" [level=2] [ref=e31]
+          - button "Show Advanced" [ref=e32]
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - generic [ref=e35]: Year
+            - generic [ref=e36]:
+              - spinbutton [ref=e38]
+              - spinbutton [ref=e40]
+          - generic [ref=e41]:
+            - generic [ref=e42]: Price Range
+            - generic [ref=e43]:
+              - spinbutton [ref=e45]
+              - spinbutton [ref=e47]
+          - generic [ref=e48]:
+            - generic [ref=e49]: Mileage Range
+            - generic [ref=e50]:
+              - spinbutton [ref=e52]
+              - spinbutton [ref=e54]
+        - generic [ref=e55]:
+          - button "Filters" [ref=e56]
+          - button "filters.reset" [ref=e57]
+      - paragraph [ref=e59]: Failed to load vehicles
+      - paragraph [ref=e61]: 0 vehicles found
+      - paragraph [ref=e63]: No results found
+  - contentinfo [ref=e64]:
+    - generic [ref=e65]:
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - heading "AutoMarket" [level=3] [ref=e68]
+          - paragraph [ref=e69]: Your trusted international auto marketplace. Find quality vehicles from verified dealers across Europe.
+        - generic [ref=e70]:
+          - heading "Quick Links" [level=3] [ref=e71]
+          - list [ref=e72]:
+            - listitem [ref=e73]:
+              - link "Home" [ref=e74] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e75]:
+              - link "Vehicles" [ref=e76] [cursor=pointer]:
+                - /url: /vehicles
+            - listitem [ref=e77]:
+              - link "About" [ref=e78] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e79]:
+              - link "Contact" [ref=e80] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e81]:
+          - heading "Contact" [level=3] [ref=e82]
+          - generic [ref=e83]:
+            - link "Facebook" [ref=e84] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e85]
+            - link "Twitter" [ref=e87] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e88]
+            - link "Instagram" [ref=e90] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e91]
+      - paragraph [ref=e94]: © 2025 AutoMarket. All rights reserved.
+  - generic [active]:
+    - generic [ref=e97]:
+      - generic [ref=e98]:
+        - generic [ref=e99]:
+          - navigation [ref=e100]:
+            - button "previous" [disabled] [ref=e101]:
+              - img "previous" [ref=e102]
+            - generic [ref=e104]:
+              - generic [ref=e105]: 1/
+              - text: "1"
+            - button "next" [disabled] [ref=e106]:
+              - img "next" [ref=e107]
+          - img
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - img [ref=e111]
+            - generic "Latest available version is detected (16.0.0)." [ref=e113]: Next.js 16.0.0
+            - generic [ref=e114]: Turbopack
+          - img
+      - dialog "Build Error" [ref=e116]:
+        - generic [ref=e119]:
+          - generic [ref=e120]:
+            - generic [ref=e121]:
+              - generic [ref=e123]: Build Error
+              - generic [ref=e124]:
+                - button "Copy Error Info" [ref=e125] [cursor=pointer]:
+                  - img [ref=e126]
+                - link "Go to related documentation" [ref=e128] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/app/api-reference/directives/use-client
+                  - img [ref=e129]
+                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e131] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                  - img [ref=e132]
+            - generic [ref=e141]: Ecmascript file had an error
+          - generic [ref=e143]:
+            - generic [ref=e145]:
+              - img [ref=e147]
+              - generic [ref=e150]: ./app/[locale]/auth/login/page.tsx (13:14)
+              - button "Open in editor" [ref=e151] [cursor=pointer]:
+                - img [ref=e153]
+            - generic [ref=e156]:
+              - generic [ref=e157]: Ecmascript file had an error
+              - generic [ref=e158]: 11 |
+              - text: import
+              - generic [ref=e159]: "{"
+              - text: Button, Input
+              - generic [ref=e160]: "}"
+              - text: from '@/components/ui';
+              - generic [ref=e161]: 12 |
+              - text: ">"
+              - generic [ref=e162]: 13 |
+              - text: export const
+              - generic [ref=e163]: metadata
+              - text: =
+              - generic [ref=e164]: "{"
+              - generic [ref=e165]: "|"
+              - text: ^^^^^^^^
+              - generic [ref=e166]: 14 |
+              - generic [ref=e167]: title
+              - text: ":"
+              - generic [ref=e168]: "'Login | AutoMarket'"
+              - text: ","
+              - generic [ref=e169]: 15 |
+              - generic [ref=e170]: description
+              - text: ":"
+              - generic [ref=e171]: "'Sign in to your AutoMarket account to manage your vehicle listings'"
+              - text: ","
+              - generic [ref=e172]: 16 |
+              - generic [ref=e173]: "}"
+              - text: ;
+              - generic [ref=e174]:
+                - text: "You are attempting to export \"metadata\" from a component marked with \"use client\", which is disallowed. Either remove the export, or the \"use client\" directive. Read more:"
+                - link "https://nextjs.org/docs/app/api-reference/directives/use-client" [ref=e175] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/app/api-reference/directives/use-client
+                - text: "Import traces: Client Component Browser: ./app/[locale]/auth/login/page.tsx [Client Component Browser] ./app/[locale]/auth/login/page.tsx [Server Component] Client Component SSR: ./app/[locale]/auth/login/page.tsx [Client Component SSR] ./app/[locale]/auth/login/page.tsx [Server Component]"
+        - generic [ref=e176]: "1"
+        - generic [ref=e177]: "2"
+    - generic [ref=e182] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e183]:
+        - img [ref=e184]
+      - button "Open issues overlay" [ref=e188]:
+        - generic [ref=e189]:
+          - generic [ref=e190]: "0"
+          - generic [ref=e191]: "1"
+        - generic [ref=e192]: Issue
+  - alert [ref=e193]
+```
