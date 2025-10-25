@@ -2,15 +2,24 @@
 
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/store';
-import { MagnifyingGlassIcon, UserIcon, HeartIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { useThemeStore } from '@/lib/theme-store';
+import { MagnifyingGlassIcon, UserIcon, HeartIcon, Bars3Icon, XMarkIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuthStore();
+  const { theme, toggleTheme } = useThemeStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    // Apply theme on mount
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
   return (
-    <nav className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 shadow-2xl border-b border-blue-800/50 sticky top-0 z-50 backdrop-blur-lg bg-opacity-95">
+    <nav className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 shadow-2xl border-b border-blue-800/50 dark:border-blue-900/50 sticky top-0 z-50 backdrop-blur-lg bg-opacity-95">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -40,10 +49,35 @@ export default function Navbar() {
             >
               Dealeri
             </Link>
+            <Link 
+              href="/leasing" 
+              className="px-6 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 font-medium backdrop-blur-sm"
+            >
+              Leasing
+            </Link>
+            <Link 
+              href="/about" 
+              className="px-6 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 font-medium backdrop-blur-sm"
+            >
+              Despre Noi
+            </Link>
           </div>
 
           {/* Right side */}
           <div className="flex items-center space-x-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="hidden md:flex p-2.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300"
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? (
+                <MoonIcon className="w-6 h-6" />
+              ) : (
+                <SunIcon className="w-6 h-6" />
+              )}
+            </button>
+
             <Link 
               href="/vehicles" 
               className="hidden md:flex p-2.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300"
@@ -116,6 +150,19 @@ export default function Navbar() {
               <Link href="/dealers" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
                 Dealeri
               </Link>
+              <Link href="/leasing" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
+                Leasing
+              </Link>
+              <Link href="/about" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
+                Despre Noi
+              </Link>
+              <button
+                onClick={toggleTheme}
+                className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition text-left flex items-center"
+              >
+                {theme === 'light' ? <MoonIcon className="w-5 h-5 mr-2" /> : <SunIcon className="w-5 h-5 mr-2" />}
+                {theme === 'light' ? 'Mod Întunecat' : 'Mod Luminos'}
+              </button>
               {isAuthenticated ? (
                 <>
                   <Link href="/favorites" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">

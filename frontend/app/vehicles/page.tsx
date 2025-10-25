@@ -29,6 +29,8 @@ export default function VehiclesPage() {
     query: searchParams.get('query') || '',
   });
 
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
