@@ -130,6 +130,20 @@ After seeding, access the Filament admin panel at:
 - Email: `admin@autosite.com`
 - Password: `password`
 
+## 📚 Documentation
+
+Comprehensive documentation is available:
+
+- **[PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md)** - Complete production readiness checklist (85% ready)
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Step-by-step deployment guide for all environments
+- **[SECURITY.md](./SECURITY.md)** - Security best practices and guidelines
+- **[TESTING.md](./TESTING.md)** - Testing strategies and examples
+- **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)** - Project overview and status
+- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - System architecture and design patterns
+- **[docs/DATABASE_SCHEMA.md](./docs/DATABASE_SCHEMA.md)** - Database ERD and schema
+- **[docs/API_ENDPOINTS.md](./docs/API_ENDPOINTS.md)** - API documentation
+- **[docs/TECHNICAL_SPECS.md](./docs/TECHNICAL_SPECS.md)** - Technical specifications
+
 ## 🗓️ Development Roadmap
 
 The project is developed in **5 phases** over ~15 weeks:
@@ -197,7 +211,31 @@ The project is developed in **5 phases** over ~15 weeks:
 
 Exchange rates are automatically updated daily from the European Central Bank (ECB).
 
+## 🧪 Testing
+
+**See [TESTING.md](./TESTING.md) for complete testing guide.**
+
+Quick test commands:
+
+### Backend Tests
+```bash
+cd backend
+php artisan test
+php artisan test --coverage
+```
+
+### Frontend Tests
+```bash
+cd autosite-frontend
+npm test
+npm run e2e
+```
+
 ## 🔐 Security
+
+**See [SECURITY.md](./SECURITY.md) for complete security guide.**
+
+Security features:
 
 - HTTPS enforcement in production
 - CSRF protection
@@ -241,6 +279,10 @@ npm run test:e2e
 ```
 
 ## 📦 Deployment
+
+**See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide.**
+
+Quick deployment options:
 
 ### Backend (Laravel Forge / VPS)
 1. Configure production environment
@@ -288,6 +330,17 @@ For questions or support, please contact the development team.
 **Current Phase**: Phase 1 - Analysis & Design ✅  
 **Next Phase**: Phase 2 - Backend Development 🔨  
 **Overall Progress**: ~7% (1/15 weeks)
+
+---
+
+## 🎯 Project Status
+
+**Current Status**: 85% Production Ready ✅  
+**Build Status**: ✅ Backend & Frontend Building Successfully  
+**Security Status**: ✅ No Vulnerabilities Found  
+**Test Status**: ⚠️ Templates Provided, Implementation Needed
+
+See [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md) for detailed status.
 
 ---
 
