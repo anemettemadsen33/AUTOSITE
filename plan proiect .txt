@@ -1,0 +1,197 @@
+Viziune & obiectiv
+Scop: platformă marketplace completă pentru vânzare și leasing de vehicule și echipamente (mașini, camioane, utilitare, utilaje, e-bike etc.), cu UX/UI premium, conversii ridicate și asistent AI integrat pentru suport conversțional și conversii.
+
+Public: private buyers, business buyers (dealers/companies), fleet managers, importatori, comercianți.
+Prioritizare (MVP → v1 → v2)
+MVP (lansare rapidă): listări, pagina de detaliu, formular contact, autentificare/cont utilizator, upload media, căutare & filtre esențiale, buton "Buy Now" (plată securizată), buton "Apply Leasing" (formular inițial), admin basic, responsive UI.
+
+v1 (funcționalități comerciale): integrare procesator plăți (Stripe/Adyen), leasing flow complet cu documente & contracte, KYC, dealer accounts, featured listings, messaging intern, statistici, SEO avansat, AI chat-asistent (RAG + handoff).
+
+v2 (scale & advanced): auctions, AR/3D preview, vehicle history reports, multi-operator leasing integrat, integrare B2B feeds (CSV/API), mobile app / PWA, machine learning pentru recomandări, analiza preț/piață.
+Lista completă de features (detaliată) A. Core marketplace
+Categorii extinse: cars, trucks, vans, machinery (excavators, forklifts), trailers, buses, e-bikes, motorcycles, parts & accessories.
+
+Structură categorii/subcategorii și taxonomii (brand, model, variant, year, fuel, capacity).
+Listing types: Private sale, Dealer sale, Auction, Fleet sale, New, Used.
+Media: multiple photos, 360º photos, video upload, 3D model viewer (glTF), image optimization + CDN (S3 + CloudFront/Cloudflare).
+
+Listing attributes per categorie (specifice): ex. pentru excavator — operating hours; pentru e-bike — battery specs.
+
+B. UX/UI avansat (design premium)
+
+Frontend stack recomandat: Next.js (React) + TypeScript + TailwindCSS / styled-components.
+Microinteractions (Framer Motion) și animații fluide (card hover, filter chips, transitions).
+Galerie media cu lightbox, swipe, zoom, keyboard navigation.
+
+3D model viewer & AR preview (model-viewer / Three.js / WebXR) pentru e-bikes și utilaje (opțional).
+
+Layout pagină listare: sticky CTA bar (Buy Now / Leasing), price breakdown, financing calculator, image gallery, key specs, seller panel (rating + reviews), map & distance, similar listings carousel.
+
+Dark + Light themes, accesibilitate (WCAG 2.1), responsive mobile-first, PWA ready.
+
+High-conversion CTAs: Buy Now (instant), Apply Leasing, Schedule Test Drive, Request Inspection, Message Seller, Save to Watchlist.
+
+C. Comenzi & Plăți
+
+Buy Now: formulare pentru persoane fizice/companie dupa completare generare factura cu detalii bancare(nume firma,nume beneficiar,numele banci,date de trasnfer.
+Support multiple currencies, tax/VAT handling pentru companii.
+Payment flows: full payment, deposit, split payments (for dealers).
+Invoicing automat (PDF), integrare e-signature (DocuSign / HelloSign) pentru contracte.
+
+D. Leasing & Financing
+
+Leasing calculator (inputs: price, deposit, term, APR).
+Apply Leasing flow: pre-apply -> credit check (3rd party) -> document upload -> underwriting -> contract.
+
+Integrări posibile cu furnizori de leasing/credit (APIs) sau trimitere lead către parteneri.
+Document management: upload contract, ID, proof of income/business docs, digital signature, signed copies.
+
+E. Formulare pentru persoane fizice vs companii (detaliu câmpuri)
+
+Persoană fizică: nume, prenume, CNP/ID, adresa, telefon, email, data nașterii, adresă de reședință, permis conducere (nr+categorie), document ID upload (front/back), proof of address (factură), employment status, income estimate.
+
+Companie: denumire firmă, număr înregistrare (CUI/HR), VAT number, adresă sediu, reprezentant legal (nume, telefon, email), funcție, contact financiar (billing contact), documente societate (certificate, împuterniciri), proof of solvency, bank details.
+
+Politici: opt-in pentru prelucrări date, checkbox GDPR & terms.
+
+F. AI Chat Support (asistent)
+
+Widget live chat (persistent) pe site, suport multilingual.
+Capabilities:
+FAQ retrieval + RAG (vector DB: Pinecone/Weaviate/FAISS).
+
+Conversational flows: help buying, leasing calculator, schedule test drive, dispute/report.
+Handoff to human agent (live chat) + ticket creation.
+
+Suggest CTA direct din chat (ex: "Aplică pentru leasing")
+Architectură:
+LLM provider (ex: OpenAI, Anthropic) or self-hosted LlamaX.
+
+Embeddings store + retriever.
+Conversation memory + user context (last viewed listings).
+Moderation filter + logging for privacy.
+Training data: site content, help center, past chats, listing spec templates, legal pages.
+Metrics: response accuracy, escalation rate, satisfaction score.
+
+G. Search & Filters
+
+Search engine: Elasticsearch / OpenSearch / Typesense.
+Faceted search & dynamic filters per categorie (year range, mileage, make, model, price range, location radius).
+Autosuggest, fuzzy matching, synonyms, tokenization for VIN & model codes.
+Geo-search (radius) + map view with clustering.
+
+H. User accounts & dealer portals
+
+User types: Buyer, Seller (private), Dealer (business), 
+Dealer dashboard: bulk upload (CSV/XML), API feed, credits/subscriptions, featured listings, analytics, leads management.
+
+Saved searches & alerts (email/push).
+Messaging system (in-app) + email notifications  
+Verification badges: verified seller, inspected listings.
+
+I. Moderation & Trust
+
+Auto-moderation: image/video validation, profanity detection, duplicate detection, spam scoring.
+Manual moderation queue with reasons, batch editing.
+Ratings & Reviews for sellers and listings.
+
+J. Analytics, reporting, SEO
+
+Analytics: Google Analytics / GA4, server-side events, conversion funnels.
+Admin reports: impressions, CTR, leads, sales, average selling price by category.
+SEO: structured data (schema.org/Vehicle), SSR for product pages, sitemap, canonical URLs, hreflang for multilanguage.
+
+K. Integrations & imports
+
+Dealer data import (CSV/XML), mobile.de / Autotrader feeds (where allowed), API for partners.
+CRM integration (HubSpot/Salesforce).
+Accounting & invoicing (QuickBooks, Xero).
+
+L. Security & Legal
+
+GDPR compliance, privacy policy, data retention.
+Rate limiting, CSP, XSS/CSRF protection, secure file scanning.
+Pen tests, vulnerability scans, WAF.
+
+M. DevOps & infra
+
+Infrastructure: Kubernetes (EKS/GKE) or serverless for certain services.
+CI/CD: GitHub Actions, staging/prod pipelines, feature branch preview deploys (Vercel/Netlify for frontend).
+Observability: Sentry (errors), Prometheus + Grafana (metrics), ELK/Cloudwatch (logs).
+Backups, DB replication, RPO/RTO planning.
+
+N. Mobile
+
+PWA (offline caching, push notifications), iOS & Android native apps later (React Native/Expo or native).
+Data model (escalat) — entități cheie
+
+User { id, type(buyer/seller/dealer/admin), name, email, phone, verified, company_id? }
+Company { id, name, reg_number, vat_number, address, documents }
+Listing { id, title, category, make, model, year, price, currency, location, seller_id, status, attributes(json), media[] }
+Media { id, listing_id, url, type(photo/video/3d) }
+Transaction { id, listing_id, buyer_id, seller_id, amount, status, payment_provider, escrow_id }
+LeaseApplication { id, listing_id, applicant_id, company_info?, status, documents[] }
+Message/Conversation { id, participants[], messages[] }
+ActivityLog / AuditTrail
+Reviews, Reports, AdminActions
+Flow-uri UX detalizate (exemple)
+Buy Now:
+Click Buy Now → price breakdown modal (fees, tax, delivery) → login/register → payment options ( bank transfer)  invoice + e-signature for handover → delivery scheduling.
+Apply Leasing:
+Click Apply Leasing → leasing calculator → short form (pre-check) → document upload → soft credit check (consent) → underwriting (manual/automatic) → contract offer → e-sign → downpayment minim 30%  + monthly schedule → activation.
+
+Contact Seller 
+UI/visual recomandări avansate
+Hero listing: large media carousel + 3D preview, price + badges (negotiable, inspected, certified).
+Sticky right/ bottom CTA panel cu preț și 2 butoane primare (Buy Now, Apply Leasing) + secundare.
+Advanced filter panel persistent (desktop) cu saved filters.
+Smooth transitions între pagini (route transitions).
+High-contrast microcopy pentru trust (return policy, inspection guarantee).
+Onboarding flows pentru dealer cu wizard (setup feed, pricing, KYC).
+Admin & Operations
+Moderation panel: bulk approve/edit, flag lists, comment history.
+Finance panel: payouts, refunds, invoices, fees.
+Customer support panel: unified inbox cu chat and ticketing.
+Marketplace settings: categories, fees, featured placement auctions.
+Testare, QA & Release
+Unit tests, E2E (Cypress / Playwright), integration tests 
+Load tests (k6) pentru pagini de căutare.
+Accessibility tests (axe).
+Release strategy: staging -> canary -> production.
+
+MVP 
+S1–S2: arhitectură, DB, auth, user accounts, basic listing CRUD, media upload
+S3–S4: listing pages, search basic, filters, responsive design, Dealer basic
+S5–S6: Buy Now (payments), forms (PF/Companii), admin basic, CI/CD
+S7–S8: QA, bugfix, analytics, prelansare, onboarding dealers
+v1 (
+Leasing flow, advanced search, dealer feeds, AI chat basic RAG, vehicle reports, email/
+3D/AR, auctions, mobile apps, multi-provider finance, ML recommendations, scale optimizations
+Estimări de efort (orientativ)
+
+MVP: 3–4 persoane full-time x 3 luni (~36–48 persomåneder cumulativ)
+v1: +3–4 luni Estimate depinde de complexitate, integrații third-party și reglementări locale.
+Metrici de succes (KPIs)
+Time-to-first-listing (pentru dealer)
+Conversion rate (view -> contact -> sale)
+Lead response time
+Churn dealers
+CSAT (chat satisfaction)
+Revenue / CAC
+Lista "many more" funcționalități suplimentare (idei pentru backlog)
+Live auctions & bidding
+Trade-in valuation tool
+Vehicle inspection network & scheduling
+Fleet management tools
+White-label dealer portals
+Bulk pricing rules & promotions
+Marketplace loans & insurance offers integrated
+Purchase protection insurance / warranty upsell
+Social sharing & viral crm integrations
+Următorii pași concreți (ce pot face pentru tine imediat)
+Să stabilim MVP scoperile exacte (ce categorii + ce țări/piață).
+Să creionăm user journeys pentru buyer & dealer și wireframes 1–2 pagini (listing + checkout + dealer dashboard).
+Doresc să pregătesc backlogul JIRA cu epics/US & estimări 
+
+Traduce planul într-un roadmap JIRA/Trello cu sprint-uri și taskuri detaliate.
+Genera wireframe-uri (textuale) pentru pagina listare, checkout și formular PF/Companii.
