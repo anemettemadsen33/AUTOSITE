@@ -57,6 +57,14 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:60,1'])->group(functi
     Route::get('/favorites/check/{vehicleId}', [\App\Http\Controllers\Api\V1\FavoriteController::class, 'check']);
     Route::delete('/favorites/{vehicleId}', [\App\Http\Controllers\Api\V1\FavoriteController::class, 'destroy']);
 
+    // Vehicle Image Management (NEW)
+    Route::post('/vehicles/{vehicle}/images', [\App\Http\Controllers\Api\V1\VehicleImageController::class, 'upload']);
+    Route::post('/vehicles/{vehicle}/images/single', [\App\Http\Controllers\Api\V1\VehicleImageController::class, 'uploadSingle']);
+    Route::get('/vehicles/{vehicle}/images', [\App\Http\Controllers\Api\V1\VehicleImageController::class, 'index']);
+    Route::delete('/vehicles/{vehicle}/images/{mediaId}', [\App\Http\Controllers\Api\V1\VehicleImageController::class, 'destroy']);
+    Route::post('/vehicles/{vehicle}/images/reorder', [\App\Http\Controllers\Api\V1\VehicleImageController::class, 'reorder']);
+    Route::post('/vehicles/{vehicle}/images/{mediaId}/primary', [\App\Http\Controllers\Api\V1\VehicleImageController::class, 'setPrimary']);
+
     // Vehicle management - requires permissions
     Route::middleware(['permission:create-vehicles'])->group(function () {
         Route::post('/vehicles', [VehicleController::class, 'store']);
