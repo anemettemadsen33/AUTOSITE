@@ -1,0 +1,65 @@
+name: Backend Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-tests.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-tests.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, gd
+        coverage: xdebug
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v4
+      with:
+        path: backend/vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      working-directory: backend
+      run: composer install --prefer-dist --no-progress
+
+    - name: Create .env file
+      working-directory: backend
+      run: |
+        cp .env.example .env
+        php artisan key:generate
+
+    - name: Create SQLite database
+      working-directory: backend
+      run: touch database/database.sqlite
+
+    - name: Run migrations
+      working-directory: backend
+      run: php artisan migrate --force
+
+    - name: Run tests
+      working-directory: backend
+      run: php artisan test --coverage
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v5
+      with:
+        files: backend/coverage.xml
+        flags: backend
+        fail_ci_if_error: false

@@ -1,0 +1,127 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-lint-and-test:
+    name: Backend - Lint & Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, gd
+        tools: composer:v2
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: backend/vendor
+        key: ${{ runner.os }}-composer-${{ hashFiles('backend/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Install dependencies
+      working-directory: backend
+      run: composer install --no-interaction --prefer-dist
+
+    - name: Check code style (Laravel Pint)
+      working-directory: backend
+      run: ./vendor/bin/pint --test
+
+    - name: Setup environment
+      working-directory: backend
+      run: |
+        cp .env.example .env
+        php artisan key:generate
+        touch database/database.sqlite
+
+    - name: Run migrations
+      working-directory: backend
+      run: php artisan migrate --force
+
+    - name: Run PHPUnit tests
+      working-directory: backend
+      run: php artisan test
+
+  frontend-lint-and-test:
+    name: Frontend - Lint & Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install dependencies
+      working-directory: frontend
+      run: npm ci --legacy-peer-deps
+
+    - name: Type check
+      working-directory: frontend
+      run: npm run type-check
+
+    - name: Lint
+      working-directory: frontend
+      run: npm run lint
+
+    - name: Run Jest tests
+      working-directory: frontend
+      run: npm test
+
+    - name: Build
+      working-directory: frontend
+      run: npm run build
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  deploy:
+    name: Deploy
+    needs: [backend-lint-and-test, frontend-lint-and-test]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy Backend
+      run: |
+        echo "Backend deployment would happen here"
+        # Add your deployment commands here
+        # e.g., SSH to server, docker push, etc.
+
+    - name: Deploy Frontend
+      run: |
+        echo "Frontend deployment would happen here"
+        # e.g., Deploy to Vercel, Netlify, etc.
