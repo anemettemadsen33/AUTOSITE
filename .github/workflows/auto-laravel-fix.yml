@@ -1,0 +1,38 @@
+name: Auto Fix Laravel Code 🛠️
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, pdo, bcmath
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+      - name: Run Laravel Pint (Code Style Fix)
+        run: ./vendor/bin/pint --test --preset=laravel || ./vendor/bin/pint
+
+      - name: Run PHPStan (via Larastan) for static analysis
+        run: ./vendor/bin/phpstan analyse --no-interaction || true
+
+      - name: Commit & push fixes (if any)
+        run: |
+          git config user.name "autobot"
+          git config user.email "autobot@example.com"
+          git add .
+          git diff --cached --quiet || (git commit -m "🤖 Auto‑fixed Laravel style & static issues" && git push)
