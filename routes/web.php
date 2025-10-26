@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\TranslationController;
+use App\Http\Controllers\Api\VehicleImageController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -61,6 +62,12 @@ Route::prefix('api')->group(function () {
         Route::post('/vehicles', [VehicleController::class, 'store']);
         Route::match(['put', 'patch'], '/vehicles/{vehicle}', [VehicleController::class, 'update']);
         Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
+
+        // Vehicle Images
+        Route::get('/vehicles/{vehicle}/images', [VehicleImageController::class, 'index']);
+        Route::post('/vehicles/{vehicle}/images', [VehicleImageController::class, 'store']);
+        Route::delete('/vehicles/{vehicle}/images/{mediaId}', [VehicleImageController::class, 'destroy']);
+        Route::post('/vehicles/{vehicle}/images/reorder', [VehicleImageController::class, 'reorder']);
 
         // Favorites
         Route::get('/favorites', [FavoriteController::class, 'index']);
