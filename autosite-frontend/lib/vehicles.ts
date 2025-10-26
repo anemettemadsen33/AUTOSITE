@@ -1,4 +1,5 @@
 import api from './api';
+import { VehicleClass, VehicleSubCategoryCode } from './vehicleSubCategories';
 
 export interface Vehicle {
   id: number;
@@ -16,6 +17,8 @@ export interface Vehicle {
   description?: Record<string, string>;
   meta_title?: string;
   meta_description?: string;
+  main_category?: VehicleClass;
+  sub_category?: VehicleSubCategoryCode;
   price: {
     amount: number;
     currency: string;
@@ -55,6 +58,8 @@ export interface VehicleFilters {
   color?: string;
   country?: string;
   city?: string;
+  main_category?: VehicleClass;
+  sub_category?: VehicleSubCategoryCode;
   sort?: string;
   page?: number;
   per_page?: number;

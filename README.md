@@ -40,6 +40,8 @@ cd frontend && npm run dev
 ✅ **Homepage** - Hero, search bar, featured vehicles, categorii  
 ✅ **Lista Vehicule** - Grid responsive, 21 vehicule  
 ✅ **Filtre Avansate** - Marcă, preț, an, combustibil, transmisie, stare  
+✅ **Categorii Vehicule** - 8 categorii principale + subcategorii (Car.Cabrio, VanUpTo7500, etc.)  
+✅ **Filtre Dependente** - Dropdown-uri categorie → subcategorie  
 ✅ **Detalii Vehicul** - Galerie foto, specs complete, info dealer  
 ✅ **Autentificare** - Login, Register, Logout  
 ✅ **Design Modern** - Tailwind CSS 4, animații, transitions  
@@ -105,6 +107,11 @@ cd frontend && npm run dev
 - Browse vehicule cu paginare
 - Search global în homepage
 - Advanced filters (6 tipuri)
+- **Vehicle categories** cu 8 clase principale (Car, Motorbike, Van, Truck, etc.)
+- **Vehicle subcategories** conform mobile.de (90+ subcategorii)
+- **Dependent dropdowns** pentru selectare categorie → subcategorie
+- **Persistent filters** cu localStorage
+- **Validation schemas** cu Zod pentru categorii
 - Vehicle details cu gallery
 - Authentication complete
 - Dealer info cu badge verificat
@@ -205,6 +212,31 @@ FRONTEND_URL=http://localhost:3000
 **Pentru**: **PREZENTARE MÂINE**  
 **Timp dezvoltare**: ~4 ore  
 **Calitate**: EXCELENTĂ  
+
+---
+
+## 📑 Vehicle Categories
+
+The platform supports **8 main vehicle classes** with **90+ subcategories** based on mobile.de standards:
+
+### Main Categories
+- **Car** - Passenger vehicles (Sedan, Cabrio, SUV, Coupe, etc.)
+- **Motorbike** - Motorcycles (Touring, Bagger, Sport, Cruiser, etc.)
+- **VanUpTo7500** - Utility vehicles (Box Van, Pickup, Panel Van, etc.)
+- **Truck** - Heavy trucks (Box Truck, Flatbed, Tipper, etc.)
+- **ConstructionMachine** - Construction equipment (Excavator, Bulldozer, Crane, etc.)
+- **Trailer** - Trailers (Box Trailer, Flatbed, Lowloader, etc.)
+- **Caravan** - Motorhomes (Caravan, Motorhome, Camper Van, etc.)
+- **AgriculturalVehicle** - Farm equipment (Tractor, Harvester, etc.)
+
+### Features
+✅ Dependent dropdowns (main category → subcategory)  
+✅ Mobile.de compatible category codes  
+✅ Validation with Zod schemas  
+✅ LocalStorage persistence  
+✅ Bilingual labels (EN/DE)  
+
+For detailed documentation, see [docs/vehicleCategories.md](docs/vehicleCategories.md)
 
 ---
 
