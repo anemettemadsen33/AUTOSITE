@@ -1,12 +1,11 @@
-name: Test Self-Hosted Runner
+name: Self-hosted Runner Test 🖥️
 
 on:
-  push:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   test-runner:
-    runs-on: self-hosted
+    runs-on: [self-hosted, windows]
     steps:
-      - name: Hello from your PC!
-        run: echo "✅ Self-hosted runner funcționează corect!"
+      - name: ✅ Runner funcționează!
+        run: echo "Salut de pe PC-8406! Workflow-ul rulează cu succes pe self-hosted runner 🟢"
