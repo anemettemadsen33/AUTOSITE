@@ -1,0 +1,21 @@
+name: 🤖 AI Reviewer PR Comments
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🔄 Checkout PR code
+      uses: actions/checkout@v3
+
+    - name: 🧠 Analyze PR with AI
+      uses: muan/ai-pr-reviewer@v1
+      with:
+        openai-key: ${{ secrets.OPENAI_API_KEY }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        language: php
+        mode: comment
+        summarization: true
