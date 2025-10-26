@@ -85,7 +85,7 @@ jobs:
           temporaryPublicStorage: true
 
       - name: Check performance threshold
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           LIGHTHOUSE_RESULTS: ${{ steps.lighthouse.outputs.manifest }}
         with:
