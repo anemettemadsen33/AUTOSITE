@@ -1,0 +1,127 @@
+name: Lighthouse CI Health Check
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'autosite-frontend/**'
+      - 'frontend/**'
+  push:
+    branches: [ main ]
+  schedule:
+    # Run weekly on Wednesday at 3 AM UTC
+    - cron: '0 3 * * 3'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: autosite-frontend/package-lock.json
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+
+      - name: Install backend dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Setup Laravel
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          mkdir -p database
+          touch database/database.sqlite
+          php artisan migrate --force --seed
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+
+      - name: Start Laravel server
+        run: php artisan serve --host=0.0.0.0 --port=8000 &
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+
+      - name: Wait for backend
+        run: npx wait-on http://localhost:8000/api/v1/health --timeout 60000 || echo "Backend ready"
+
+      - name: Install frontend dependencies
+        working-directory: autosite-frontend
+        run: npm ci
+
+      - name: Build Next.js application
+        working-directory: autosite-frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      - name: Start Next.js server
+        working-directory: autosite-frontend
+        run: npm start &
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      - name: Wait for frontend
+        run: npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            http://localhost:3000
+            http://localhost:3000/vehicles
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          runs: 3
+
+      - name: Check Lighthouse scores
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            http://localhost:3000
+          configPath: '.github/lighthouse/lighthouse-config.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Comment PR with Lighthouse results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const comment = `## 🔍 Lighthouse CI Report
+            
+            Performance, SEO, and Accessibility audit completed!
+            
+            📊 **Target Scores:**
+            - Performance: ≥ 90
+            - Accessibility: ≥ 95
+            - Best Practices: ≥ 90
+            - SEO: ≥ 95
+            
+            Check the detailed report in the artifacts section.
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

@@ -1,0 +1,169 @@
+name: Monthly Dependency Report
+
+on:
+  schedule:
+    # Run on the 1st day of every month at 9 AM UTC
+    - cron: '0 9 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  dependency-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Check backend dependencies
+        id: backend-audit
+        run: |
+          cd backend 2>/dev/null || cd .
+          
+          echo "## Backend Dependencies (Composer)" > ../dependency-report.md
+          echo "" >> ../dependency-report.md
+          
+          # Check for outdated packages
+          composer outdated --direct --strict > outdated.txt 2>&1 || true
+          
+          if [ -s outdated.txt ]; then
+            echo "### Outdated Packages" >> ../dependency-report.md
+            echo "\`\`\`" >> ../dependency-report.md
+            cat outdated.txt >> ../dependency-report.md
+            echo "\`\`\`" >> ../dependency-report.md
+          else
+            echo "✅ All packages are up to date!" >> ../dependency-report.md
+          fi
+          
+          echo "" >> ../dependency-report.md
+          
+          # Security audit
+          composer audit --format=plain > audit.txt 2>&1 || true
+          
+          if [ -s audit.txt ]; then
+            echo "### Security Vulnerabilities" >> ../dependency-report.md
+            echo "\`\`\`" >> ../dependency-report.md
+            cat audit.txt >> ../dependency-report.md
+            echo "\`\`\`" >> ../dependency-report.md
+          else
+            echo "✅ No known security vulnerabilities!" >> ../dependency-report.md
+          fi
+        continue-on-error: true
+
+      - name: Check frontend dependencies
+        id: frontend-audit
+        run: |
+          cd autosite-frontend
+          
+          echo "" >> ../dependency-report.md
+          echo "## Frontend Dependencies (npm)" >> ../dependency-report.md
+          echo "" >> ../dependency-report.md
+          
+          # Check for outdated packages
+          npm outdated > outdated.txt 2>&1 || true
+          
+          if [ -s outdated.txt ]; then
+            echo "### Outdated Packages" >> ../dependency-report.md
+            echo "\`\`\`" >> ../dependency-report.md
+            head -20 outdated.txt >> ../dependency-report.md
+            echo "\`\`\`" >> ../dependency-report.md
+          else
+            echo "✅ All packages are up to date!" >> ../dependency-report.md
+          fi
+          
+          echo "" >> ../dependency-report.md
+          
+          # Security audit
+          npm audit --audit-level=moderate > audit.txt 2>&1 || true
+          
+          if [ -s audit.txt ]; then
+            echo "### Security Vulnerabilities" >> ../dependency-report.md
+            echo "\`\`\`" >> ../dependency-report.md
+            head -50 audit.txt >> ../dependency-report.md
+            echo "\`\`\`" >> ../dependency-report.md
+          else
+            echo "✅ No known security vulnerabilities!" >> ../dependency-report.md
+          fi
+        continue-on-error: true
+
+      - name: Create dependency report issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const reportContent = fs.readFileSync('dependency-report.md', 'utf8');
+            
+            const date = new Date();
+            const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+            
+            const issueBody = `# 📦 Monthly Dependency Report - ${monthYear}
+            
+            This is an automated report of dependency status and security vulnerabilities.
+            
+            ${reportContent}
+            
+            ## Recommended Actions
+            
+            1. **Review outdated packages**: Evaluate if updates are needed
+            2. **Check security vulnerabilities**: Prioritize fixing high/critical issues
+            3. **Test updates**: Update in a separate branch and run full test suite
+            4. **Update Dependabot config**: Ensure automated updates are working
+            
+            ## Update Priority
+            
+            - 🔴 **Critical**: Security vulnerabilities (fix immediately)
+            - 🟠 **High**: Major version updates with breaking changes
+            - 🟡 **Medium**: Minor version updates
+            - 🟢 **Low**: Patch version updates
+            
+            ---
+            
+            *This report was automatically generated on ${date.toISOString().split('T')[0]}*
+            `;
+            
+            // Close previous month's report
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'monthly-report,dependencies'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+            
+            // Create new report
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `📦 Dependency Report - ${monthYear}`,
+              body: issueBody,
+              labels: ['monthly-report', 'dependencies', 'maintenance']
+            });
+
+      - name: Upload detailed report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-report
+          path: dependency-report.md
+          retention-days: 90

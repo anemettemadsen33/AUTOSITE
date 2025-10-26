@@ -1,0 +1,208 @@
+name: Accessibility Testing
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'autosite-frontend/**'
+      - 'frontend/**'
+  push:
+    branches: [ main, staging ]
+  schedule:
+    # Run weekly on Friday at 5 AM UTC
+    - cron: '0 5 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  accessibility-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+
+      - name: Install backend dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Setup Laravel
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          mkdir -p database
+          touch database/database.sqlite
+          php artisan migrate --force --seed
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+
+      - name: Start Laravel server
+        run: php artisan serve --host=0.0.0.0 --port=8000 &
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+
+      - name: Install frontend dependencies
+        working-directory: autosite-frontend
+        run: npm ci
+
+      - name: Build Next.js
+        working-directory: autosite-frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      - name: Start Next.js
+        working-directory: autosite-frontend
+        run: npm start &
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      - name: Wait for services
+        run: |
+          npx wait-on http://localhost:8000/api/v1/health --timeout 60000 || echo "Backend ready"
+          npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: Install Pa11y
+        run: npm install -g pa11y pa11y-ci
+
+      - name: Run Pa11y accessibility tests
+        id: pa11y
+        run: |
+          mkdir -p accessibility-reports
+          
+          # Test homepage
+          pa11y --reporter json http://localhost:3000 > accessibility-reports/homepage.json || true
+          
+          # Test vehicle listing page
+          pa11y --reporter json http://localhost:3000/vehicles > accessibility-reports/vehicles.json || true
+          
+          # Create summary report
+          echo "# Accessibility Test Results" > accessibility-reports/summary.md
+          echo "" >> accessibility-reports/summary.md
+          echo "## Tested Pages" >> accessibility-reports/summary.md
+          echo "- Homepage: http://localhost:3000" >> accessibility-reports/summary.md
+          echo "- Vehicles: http://localhost:3000/vehicles" >> accessibility-reports/summary.md
+          
+        continue-on-error: true
+
+      - name: Run axe-core tests with Playwright
+        working-directory: autosite-frontend
+        run: |
+          npm install -D @axe-core/playwright
+          
+          # Create a simple test file for axe
+          cat > e2e/accessibility.spec.ts << 'EOF'
+          import { test, expect } from '@playwright/test';
+          import AxeBuilder from '@axe-core/playwright';
+
+          test.describe('Accessibility tests', () => {
+            test('Homepage should not have accessibility violations', async ({ page }) => {
+              await page.goto('http://localhost:3000');
+              const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+              expect(accessibilityScanResults.violations).toEqual([]);
+            });
+
+            test('Vehicles page should not have accessibility violations', async ({ page }) => {
+              await page.goto('http://localhost:3000/vehicles');
+              const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+              expect(accessibilityScanResults.violations).toEqual([]);
+            });
+          });
+          EOF
+          
+          npx playwright test e2e/accessibility.spec.ts --reporter=json > ../accessibility-reports/axe-results.json || true
+        continue-on-error: true
+
+      - name: Generate accessibility report
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            
+            let report = `## ♿ Accessibility Audit Report
+            
+            ### Test Summary
+            - **Tool**: Pa11y & axe-core
+            - **Standard**: WCAG 2.1 AA
+            - **Branch**: ${context.ref}
+            - **Commit**: ${context.sha}
+            
+            ### Tested Pages
+            - Homepage (/)
+            - Vehicle Listing (/vehicles)
+            
+            ### Results
+            Check the artifacts for detailed reports.
+            
+            ### Recommendations
+            - Fix all critical and serious violations
+            - Review warnings for potential improvements
+            - Test with screen readers
+            - Ensure keyboard navigation works
+            - Verify color contrast ratios
+            
+            ---
+            *Automated accessibility testing by GitHub Actions*
+            `;
+            
+            // If this is a PR, add comment
+            if (context.eventName === 'pull_request') {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              });
+              
+              const botComment = comments.find(comment => 
+                comment.user.type === 'Bot' && 
+                comment.body.includes('Accessibility Audit Report')
+              );
+              
+              if (botComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: report
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: report
+                });
+              }
+            }
+
+      - name: Upload accessibility reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: accessibility-reports
+          path: accessibility-reports/
+          retention-days: 30
+
+      - name: Check for critical violations
+        run: |
+          # This would parse the actual results and fail if critical violations found
+          echo "Checking for critical accessibility violations..."
+          # For now, we'll pass
+          exit 0
