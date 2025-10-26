@@ -10,6 +10,10 @@ on:
     - cron: '0 4 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   performance-audit:
     runs-on: ubuntu-latest
