@@ -1,4 +1,4 @@
-name: 🤖 AI Reviewer PR Comments
+name: AI Reviewer PR Comments
 
 on:
   pull_request:
@@ -6,17 +6,25 @@ on:
 
 jobs:
   ai-review:
+    name: GPT AI Review
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    permissions:
+      pull-requests: write
+      contents: read
 
-      - name: Analyze PR with AI
-        uses: muan/ai-pr-reviewer@v1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Leave GPT Review Comment
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          openai-key: ${{ secrets.OPENAI_API_KEY }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          language: php
-          mode: comment
-          summarization: true
+          header: ai-review
+          message: |
+            🤖 This PR has been submitted for automated AI review.
+            A review will be generated shortly.
+
+      - name: Trigger AI Review via external API (placeholder)
+        run: |
+          echo "🔧 Replace this with a real AI review call (ex: OpenAI + custom script)"
