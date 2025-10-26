@@ -5,15 +5,22 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ExchangeRateController;
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\TranslationController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// SEO routes
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap']);
+Route::get('/robots.txt', [SeoController::class, 'robots']);
 
 // API routes
 Route::prefix('api')->group(function () {
@@ -38,6 +45,14 @@ Route::prefix('api')->group(function () {
     // Export endpoints (public with token auth)
     Route::get('/export/vehicles.xml', [ExportController::class, 'xml']);
     Route::get('/export/vehicles.csv', [ExportController::class, 'csv']);
+
+    // Currency / Exchange Rates (public)
+    Route::get('/exchange-rates', [ExchangeRateController::class, 'index']);
+    Route::post('/currency/convert', [ExchangeRateController::class, 'convert']);
+
+    // Languages / Translations (public)
+    Route::get('/languages', [TranslationController::class, 'languages']);
+    Route::get('/translations/{locale}', [TranslationController::class, 'getTranslations']);
 
     // Protected endpoints
     Route::middleware('auth:sanctum')->group(function () {

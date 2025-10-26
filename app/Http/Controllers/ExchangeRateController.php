@@ -3,63 +3,80 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExchangeRate;
+use App\Services\CurrencyService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ExchangeRateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected $currencyService;
+
+    public function __construct(CurrencyService $currencyService)
     {
-        //
+        $this->currencyService = $currencyService;
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Get latest exchange rates
      */
-    public function create()
+    public function index(): JsonResponse
     {
-        //
+        $rates = $this->currencyService->getLatestRates();
+
+        return response()->json([
+            'base_currency' => 'EUR',
+            'rates' => $rates,
+            'supported_currencies' => $this->currencyService->getSupportedCurrencies(),
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Convert currency
      */
-    public function store(Request $request)
+    public function convert(Request $request): JsonResponse
     {
-        //
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'from' => 'required|string|size:3',
+            'to' => 'required|string|size:3',
+        ]);
+
+        try {
+            $convertedAmount = $this->currencyService->convert(
+                $validated['amount'],
+                strtoupper($validated['from']),
+                strtoupper($validated['to'])
+            );
+
+            return response()->json([
+                'original_amount' => $validated['amount'],
+                'from_currency' => strtoupper($validated['from']),
+                'to_currency' => strtoupper($validated['to']),
+                'converted_amount' => $convertedAmount,
+                'formatted' => $this->currencyService->format($convertedAmount, strtoupper($validated['to'])),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 400);
+        }
     }
 
     /**
-     * Display the specified resource.
+     * Update exchange rates manually
      */
-    public function show(ExchangeRate $exchangeRate)
+    public function update(): JsonResponse
     {
-        //
-    }
+        $success = $this->currencyService->updateRates();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ExchangeRate $exchangeRate)
-    {
-        //
-    }
+        if ($success) {
+            return response()->json([
+                'message' => 'Exchange rates updated successfully',
+            ]);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ExchangeRate $exchangeRate)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ExchangeRate $exchangeRate)
-    {
-        //
+        return response()->json([
+            'message' => 'Failed to update exchange rates',
+        ], 500);
     }
 }
