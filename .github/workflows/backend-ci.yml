@@ -53,6 +53,12 @@ jobs:
         cd backend
         php artisan migrate --force
         
+    - name: Run Laravel Pint (Linting)
+      run: |
+        cd backend
+        ./vendor/bin/pint --test
+      continue-on-error: true
+        
     - name: Run Tests
       run: |
         cd backend

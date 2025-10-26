@@ -1,0 +1,352 @@
+name: Feature Issue Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      feature_name:
+        description: 'Feature name (e.g., messaging-buyer-dealer)'
+        required: true
+      milestone:
+        description: 'Milestone name'
+        required: false
+        default: 'Feature Completion for Production'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  create-feature-issue:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create feature issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const featureName = '${{ github.event.inputs.feature_name }}';
+            const milestone = '${{ github.event.inputs.milestone }}';
+            
+            // Feature templates
+            const templates = {
+              'messaging-buyer-dealer': {
+                title: '💬 Implement Messaging System (Buyer-Dealer)',
+                body: `## Feature: Messaging System
+                
+                ### Description
+                Implement real-time messaging between buyers and dealers for vehicle inquiries.
+                
+                ### Requirements
+                - [ ] Backend API endpoints for messaging
+                - [ ] Real-time notifications (Laravel Reverb)
+                - [ ] Message persistence (database)
+                - [ ] Frontend messaging UI
+                - [ ] Unread message indicators
+                - [ ] Message threading by vehicle
+                - [ ] File/image attachments support
+                
+                ### Backend Tasks
+                - [ ] Create Message model and migration
+                - [ ] Create MessageController with CRUD operations
+                - [ ] Implement real-time broadcasting
+                - [ ] Add message validation and sanitization
+                - [ ] Create API endpoints (/api/v1/messages)
+                - [ ] Add tests for messaging functionality
+                
+                ### Frontend Tasks
+                - [ ] Create messaging components
+                - [ ] Implement real-time updates (Socket.io)
+                - [ ] Add message input form
+                - [ ] Create message list view
+                - [ ] Add notification system
+                - [ ] Implement file upload for attachments
+                
+                ### API Specification
+                \`\`\`
+                POST   /api/v1/messages          - Send message
+                GET    /api/v1/messages          - List messages
+                GET    /api/v1/messages/{id}     - Get message
+                PATCH  /api/v1/messages/{id}     - Mark as read
+                DELETE /api/v1/messages/{id}     - Delete message
+                GET    /api/v1/messages/unread   - Get unread count
+                \`\`\`
+                
+                ### Testing
+                - [ ] Unit tests for backend
+                - [ ] Integration tests for API
+                - [ ] E2E tests for messaging flow
+                - [ ] Real-time functionality tests
+                
+                ### Documentation
+                - [ ] API documentation
+                - [ ] User guide
+                - [ ] Technical documentation
+                `,
+                labels: ['feature', 'messaging', 'backend', 'frontend']
+              },
+              'test-drive-scheduling': {
+                title: '📅 Implement Test Drive Scheduling',
+                body: `## Feature: Test Drive Scheduling
+                
+                ### Description
+                Allow buyers to schedule test drives with dealers for specific vehicles.
+                
+                ### Requirements
+                - [ ] Calendar integration
+                - [ ] Appointment booking system
+                - [ ] Email notifications
+                - [ ] SMS notifications (optional)
+                - [ ] Dealer availability management
+                - [ ] Booking confirmation/cancellation
+                
+                ### Backend Tasks
+                - [ ] Create TestDrive model and migration
+                - [ ] Create TestDriveController
+                - [ ] Implement booking logic
+                - [ ] Add notification system
+                - [ ] Create API endpoints
+                - [ ] Add tests
+                
+                ### Frontend Tasks
+                - [ ] Create calendar component
+                - [ ] Implement booking form
+                - [ ] Add confirmation UI
+                - [ ] Create dealer schedule view
+                - [ ] Add notification display
+                
+                ### API Specification
+                \`\`\`
+                POST   /api/v1/test-drives           - Schedule test drive
+                GET    /api/v1/test-drives           - List test drives
+                GET    /api/v1/test-drives/{id}      - Get test drive
+                PATCH  /api/v1/test-drives/{id}      - Update test drive
+                DELETE /api/v1/test-drives/{id}      - Cancel test drive
+                GET    /api/v1/dealers/{id}/availability - Get dealer availability
+                \`\`\`
+                
+                ### Testing
+                - [ ] Unit tests
+                - [ ] Integration tests
+                - [ ] E2E tests
+                
+                ### Documentation
+                - [ ] API documentation
+                - [ ] User guide
+                `,
+                labels: ['feature', 'test-drive', 'backend', 'frontend']
+              },
+              'image-upload': {
+                title: '📸 Implement Real Image Upload System',
+                body: `## Feature: Real Image Upload System
+                
+                ### Description
+                Implement comprehensive image upload and management for vehicle listings.
+                
+                ### Requirements
+                - [ ] Multiple image upload
+                - [ ] Image optimization (WebP, AVIF)
+                - [ ] Thumbnail generation
+                - [ ] Image ordering/reordering
+                - [ ] Primary image selection
+                - [ ] Image deletion
+                - [ ] Drag-and-drop interface
+                
+                ### Backend Tasks
+                - [ ] Configure Spatie Media Library
+                - [ ] Add image processing pipeline
+                - [ ] Implement upload validation
+                - [ ] Add storage management
+                - [ ] Create image API endpoints
+                - [ ] Add tests
+                
+                ### Frontend Tasks
+                - [ ] Create image upload component
+                - [ ] Implement drag-and-drop
+                - [ ] Add image preview
+                - [ ] Create image gallery
+                - [ ] Add image reordering
+                - [ ] Implement progressive loading
+                
+                ### API Specification
+                \`\`\`
+                POST   /api/v1/vehicles/{id}/images    - Upload images
+                GET    /api/v1/vehicles/{id}/images    - List images
+                PATCH  /api/v1/vehicles/{id}/images/{imageId} - Update image
+                DELETE /api/v1/vehicles/{id}/images/{imageId} - Delete image
+                POST   /api/v1/vehicles/{id}/images/reorder - Reorder images
+                \`\`\`
+                
+                ### Testing
+                - [ ] Upload tests
+                - [ ] Validation tests
+                - [ ] Storage tests
+                - [ ] E2E tests
+                
+                ### Documentation
+                - [ ] API documentation
+                - [ ] User guide
+                `,
+                labels: ['feature', 'images', 'backend', 'frontend']
+              },
+              'wishlist-compare': {
+                title: '⭐ Implement Wishlist & Vehicle Comparison',
+                body: `## Feature: Wishlist & Vehicle Comparison
+                
+                ### Description
+                Allow users to save favorite vehicles and compare up to 4 vehicles side-by-side.
+                
+                ### Requirements
+                - [ ] Add to wishlist functionality
+                - [ ] Wishlist management
+                - [ ] Compare up to 4 vehicles
+                - [ ] Side-by-side comparison view
+                - [ ] Spec comparison table
+                - [ ] Print/export comparison
+                
+                ### Backend Tasks
+                - [ ] Create Wishlist model and migration
+                - [ ] Create WishlistController
+                - [ ] Add comparison logic
+                - [ ] Create API endpoints
+                - [ ] Add tests
+                
+                ### Frontend Tasks
+                - [ ] Create wishlist button
+                - [ ] Implement wishlist page
+                - [ ] Create comparison component
+                - [ ] Add comparison controls
+                - [ ] Implement comparison table
+                - [ ] Add export functionality
+                
+                ### API Specification
+                \`\`\`
+                POST   /api/v1/wishlist              - Add to wishlist
+                GET    /api/v1/wishlist              - Get wishlist
+                DELETE /api/v1/wishlist/{id}         - Remove from wishlist
+                GET    /api/v1/vehicles/compare      - Compare vehicles (query params: ids[])
+                \`\`\`
+                
+                ### Testing
+                - [ ] Unit tests
+                - [ ] Integration tests
+                - [ ] E2E tests
+                
+                ### Documentation
+                - [ ] API documentation
+                - [ ] User guide
+                `,
+                labels: ['feature', 'wishlist', 'comparison', 'frontend']
+              },
+              'multi-currency-language': {
+                title: '🌍 Implement Multi-Currency & Multi-Language Support',
+                body: `## Feature: Multi-Currency & Multi-Language Support
+                
+                ### Description
+                Complete implementation of 8 languages and multiple currencies with real-time exchange rates.
+                
+                ### Requirements
+                - [ ] 8 language support (EN, DE, FR, ES, IT, PT, RO, PL)
+                - [ ] Currency conversion (EUR, USD, RON, GBP, etc.)
+                - [ ] ECB exchange rate integration
+                - [ ] Language switcher
+                - [ ] Currency switcher
+                - [ ] Persistent user preferences
+                
+                ### Backend Tasks
+                - [ ] Complete translation files
+                - [ ] Implement exchange rate fetching
+                - [ ] Add currency conversion logic
+                - [ ] Create preferences API
+                - [ ] Add caching for rates
+                - [ ] Add tests
+                
+                ### Frontend Tasks
+                - [ ] Complete all translations
+                - [ ] Implement language switcher
+                - [ ] Implement currency switcher
+                - [ ] Add price formatting
+                - [ ] Create preference persistence
+                - [ ] Add language detection
+                
+                ### API Specification
+                \`\`\`
+                GET    /api/v1/exchange-rates        - Get current rates
+                GET    /api/v1/languages             - List supported languages
+                GET    /api/v1/currencies            - List supported currencies
+                PATCH  /api/v1/user/preferences      - Update user preferences
+                \`\`\`
+                
+                ### Testing
+                - [ ] Translation completeness tests
+                - [ ] Currency conversion tests
+                - [ ] Exchange rate tests
+                - [ ] E2E tests
+                
+                ### Documentation
+                - [ ] Translation guide
+                - [ ] API documentation
+                - [ ] User guide
+                `,
+                labels: ['feature', 'i18n', 'l10n', 'backend', 'frontend']
+              }
+            };
+            
+            const template = templates[featureName] || {
+              title: `🚀 Implement ${featureName}`,
+              body: `## Feature: ${featureName}
+              
+              ### Description
+              [Add feature description]
+              
+              ### Requirements
+              - [ ] Requirement 1
+              - [ ] Requirement 2
+              
+              ### Backend Tasks
+              - [ ] Task 1
+              - [ ] Task 2
+              
+              ### Frontend Tasks
+              - [ ] Task 1
+              - [ ] Task 2
+              
+              ### Testing
+              - [ ] Unit tests
+              - [ ] Integration tests
+              - [ ] E2E tests
+              
+              ### Documentation
+              - [ ] API documentation
+              - [ ] User guide
+              `,
+              labels: ['feature']
+            };
+            
+            // Create the issue
+            const { data: issue } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: template.title,
+              body: template.body,
+              labels: template.labels,
+              milestone: milestone ? (await github.rest.issues.listMilestones({
+                owner: context.repo.owner,
+                repo: context.repo.repo
+              })).data.find(m => m.title === milestone)?.number : undefined
+            });
+            
+            console.log(`Created issue #${issue.number}: ${issue.title}`);
+            core.setOutput('issue_number', issue.number);
+
+      - name: Create feature branch
+        run: |
+          FEATURE_NAME="${{ github.event.inputs.feature_name }}"
+          BRANCH_NAME="feature/${FEATURE_NAME}"
+          git checkout -b "$BRANCH_NAME"
+          git push -u origin "$BRANCH_NAME"
+          echo "Created branch: $BRANCH_NAME"

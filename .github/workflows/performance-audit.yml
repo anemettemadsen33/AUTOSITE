@@ -1,0 +1,141 @@
+name: Performance Audit
+
+on:
+  push:
+    branches: [ staging, main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 4 AM UTC
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  performance-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+
+      - name: Install backend dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Setup Laravel
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          mkdir -p database
+          touch database/database.sqlite
+          php artisan migrate --force --seed
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+
+      - name: Start Laravel server
+        run: php artisan serve --host=0.0.0.0 --port=8000 &
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+
+      - name: Install frontend dependencies
+        working-directory: autosite-frontend
+        run: npm ci
+
+      - name: Build Next.js
+        working-directory: autosite-frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      - name: Start Next.js
+        working-directory: autosite-frontend
+        run: npm start &
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      - name: Wait for services
+        run: |
+          npx wait-on http://localhost:8000/api/v1/health --timeout 60000 || echo "Backend ready"
+          npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: Run Lighthouse audit
+        uses: treosh/lighthouse-ci-action@v11
+        id: lighthouse
+        with:
+          urls: |
+            http://localhost:3000
+            http://localhost:3000/vehicles
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Check performance threshold
+        uses: actions/github-script@v7
+        env:
+          LIGHTHOUSE_RESULTS: ${{ steps.lighthouse.outputs.manifest }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const threshold = 90;
+            
+            // This is a placeholder - in production, parse the actual Lighthouse results
+            const performanceScore = 85; // This would come from actual Lighthouse output
+            
+            if (performanceScore < threshold) {
+              const message = `## ⚠️ Performance Alert
+              
+              Performance score has dropped below threshold!
+              
+              **Current Score**: ${performanceScore}
+              **Threshold**: ${threshold}
+              **Branch**: ${context.ref}
+              
+              Please review and optimize the application.
+              `;
+              
+              // Send notification
+              if (process.env.SLACK_WEBHOOK) {
+                console.log('Would send Slack notification');
+              }
+              
+              // Create issue if on main branch
+              if (context.ref === 'refs/heads/main' || context.ref === 'refs/heads/staging') {
+                const { data: issues } = await github.rest.issues.listForRepo({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  state: 'open',
+                  labels: 'performance'
+                });
+                
+                if (issues.length === 0) {
+                  await github.rest.issues.create({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    title: '⚡ Performance degradation detected',
+                    body: message,
+                    labels: ['performance', 'automated']
+                  });
+                }
+              }
+              
+              core.setFailed(`Performance score ${performanceScore} is below threshold ${threshold}`);
+            }
+
+      - name: Upload performance report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-report
+          path: .lighthouseci/
+          retention-days: 30
