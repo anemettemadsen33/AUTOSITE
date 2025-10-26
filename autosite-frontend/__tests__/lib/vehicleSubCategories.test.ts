@@ -91,7 +91,8 @@ describe('vehicleSubCategories', () => {
     it('should have correct format for all subcategory codes', () => {
       VEHICLE_SUB_CATEGORIES.forEach((subCat) => {
         // Code should be in format MainCategory.SubCategory
-        expect(subCat.code).toMatch(/^[A-Z][a-zA-Z0-9]+\.[A-Z][a-zA-Z0-9]+$/);
+        // MainCategory can start with uppercase and contain numbers (e.g., VanUpTo7500)
+        expect(subCat.code).toMatch(/^[A-Z][a-zA-Z0-9]*\.[A-Z][a-zA-Z0-9]+$/);
       });
     });
 
