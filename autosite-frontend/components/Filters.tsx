@@ -36,7 +36,7 @@ export default function Filters({ onFilterChange, initialFilters = {} }: Filters
   const t = useTranslations('filters');
   const tVehicle = useTranslations('vehicle');
   const { settings } = useSettingsStore();
-  const { mainCategory, subCategory, setMainCategory, setSubCategory } = useFilterStore();
+  const { mainCategory, setMainCategory, setSubCategory } = useFilterStore();
   const [filters, setFilters] = useState<VehicleFilterValues>(initialFilters);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
