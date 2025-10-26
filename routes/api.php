@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\VehiclePdfController;
 use App\Http\Controllers\Api\WebhookController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\Api\TwoFactorController;
+use App\Http\Controllers\Api\TestDriveAppointmentController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes - PDF/QR with rate limiting
@@ -38,6 +39,12 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::delete('/vehicle-comparisons/{vehicleComparison}', [VehicleComparisonController::class, 'destroy']);
     Route::post('/vehicle-comparisons/{vehicleComparison}/add', [VehicleComparisonController::class, 'addVehicle']);
     Route::post('/vehicle-comparisons/{vehicleComparison}/remove', [VehicleComparisonController::class, 'removeVehicle']);
+    
+    // Test Drive Appointments
+    Route::apiResource('test-drive-appointments', TestDriveAppointmentController::class);
+    Route::post('/test-drive-appointments/{appointment}/confirm', [TestDriveAppointmentController::class, 'confirm']);
+    Route::post('/test-drive-appointments/{appointment}/cancel', [TestDriveAppointmentController::class, 'cancel']);
+    Route::post('/test-drive-appointments/{appointment}/complete', [TestDriveAppointmentController::class, 'complete']);
 });
 
 // Webhooks - Lower rate limit

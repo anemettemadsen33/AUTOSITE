@@ -84,3 +84,4 @@ coverage/
 # Cache
 .cache/
 >>>>>>> eed7d9bb5e609e3b5446f3164246c4d942c5d26d
+.env

@@ -5,15 +5,23 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ExchangeRateController;
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\TranslationController;
+use App\Http\Controllers\Api\VehicleImageController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// SEO routes
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap']);
+Route::get('/robots.txt', [SeoController::class, 'robots']);
 
 // API routes
 Route::prefix('api')->group(function () {
@@ -39,6 +47,14 @@ Route::prefix('api')->group(function () {
     Route::get('/export/vehicles.xml', [ExportController::class, 'xml']);
     Route::get('/export/vehicles.csv', [ExportController::class, 'csv']);
 
+    // Currency / Exchange Rates (public)
+    Route::get('/exchange-rates', [ExchangeRateController::class, 'index']);
+    Route::post('/currency/convert', [ExchangeRateController::class, 'convert']);
+
+    // Languages / Translations (public)
+    Route::get('/languages', [TranslationController::class, 'languages']);
+    Route::get('/translations/{locale}', [TranslationController::class, 'getTranslations']);
+
     // Protected endpoints
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -46,6 +62,12 @@ Route::prefix('api')->group(function () {
         Route::post('/vehicles', [VehicleController::class, 'store']);
         Route::match(['put', 'patch'], '/vehicles/{vehicle}', [VehicleController::class, 'update']);
         Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
+
+        // Vehicle Images
+        Route::get('/vehicles/{vehicle}/images', [VehicleImageController::class, 'index']);
+        Route::post('/vehicles/{vehicle}/images', [VehicleImageController::class, 'store']);
+        Route::delete('/vehicles/{vehicle}/images/{mediaId}', [VehicleImageController::class, 'destroy']);
+        Route::post('/vehicles/{vehicle}/images/reorder', [VehicleImageController::class, 'reorder']);
 
         // Favorites
         Route::get('/favorites', [FavoriteController::class, 'index']);
