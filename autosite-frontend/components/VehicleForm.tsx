@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { createVehicle, updateVehicle, type Vehicle } from '@/lib/vehicles';
 import { Button, Input, Select } from '@/components/ui';
+import { useVehicleSubCategories } from '@/hooks/useVehicleSubCategories';
+import { VehicleClass, VehicleSubCategoryCode } from '@/lib/vehicleSubCategories';
 
 interface VehicleFormProps {
   vehicle?: Vehicle;
@@ -34,6 +36,8 @@ interface VehicleFormData {
   description_ro?: string;
   meta_title?: string;
   meta_description?: string;
+  main_category?: VehicleClass;
+  sub_category?: VehicleSubCategoryCode;
 }
 
 export default function VehicleForm({ vehicle, mode }: VehicleFormProps) {
@@ -46,10 +50,21 @@ export default function VehicleForm({ vehicle, mode }: VehicleFormProps) {
   const [imagePreviews, setImagePreviews] = useState<string[]>(
     vehicle?.images?.map(img => img.url) || []
   );
+  const [selectedMainCategory, setSelectedMainCategory] = useState<VehicleClass | undefined>(
+    undefined
+  );
+
+  // Get subcategory options based on selected main category
+  const { mainCategoryOptions, subCategoryOptions } = useVehicleSubCategories({
+    mainCategory: selectedMainCategory,
+    locale: 'en',
+  });
 
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<VehicleFormData>({
     defaultValues: vehicle ? {
@@ -78,6 +93,16 @@ export default function VehicleForm({ vehicle, mode }: VehicleFormProps) {
       status: 'available',
     }
   });
+
+  const mainCategoryValue = watch('main_category');
+
+  const handleMainCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value as VehicleClass | '';
+    setSelectedMainCategory(value || undefined);
+    setValue('main_category', value || undefined);
+    // Reset subcategory when main category changes
+    setValue('sub_category', undefined);
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -122,6 +147,8 @@ export default function VehicleForm({ vehicle, mode }: VehicleFormProps) {
         if (data.vin) formData.append('vin', data.vin);
         if (data.country) formData.append('country', data.country);
         if (data.city) formData.append('city', data.city);
+        if (data.main_category) formData.append('main_category', data.main_category);
+        if (data.sub_category) formData.append('sub_category', data.sub_category);
 
         // Multilingual fields (as JSON)
         const title: Record<string, string> = {};
@@ -206,6 +233,38 @@ export default function VehicleForm({ vehicle, mode }: VehicleFormProps) {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Main Category */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Vehicle Category
+            </label>
+            <select
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              value={mainCategoryValue || ''}
+              onChange={handleMainCategoryChange}
+            >
+              <option value="">Select Category</option>
+              {mainCategoryOptions.map((cat) => (
+                <option key={cat.value} value={cat.value}>
+                  {cat.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sub Category */}
+          {selectedMainCategory && subCategoryOptions.length > 0 && (
+            <Select
+              label="Sub-Category"
+              options={[
+                { value: '', label: 'Select Sub-Category' },
+                ...subCategoryOptions.map((sub) => ({ value: sub.value, label: sub.label })),
+              ]}
+              fullWidth
+              {...register('sub_category')}
+            />
+          )}
+
           <Input
             label="Make"
             placeholder="e.g. BMW"

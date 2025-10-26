@@ -2,8 +2,11 @@
 
 import { useTranslations } from 'next-intl';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useFilterStore } from '@/stores/filterStore';
 import { Button, Input, Select } from '@/components/ui';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useVehicleSubCategories } from '@/hooks/useVehicleSubCategories';
+import { VehicleClass, VehicleSubCategoryCode } from '@/lib/vehicleSubCategories';
 
 export interface VehicleFilterValues {
   make?: string;
@@ -20,6 +23,8 @@ export interface VehicleFilterValues {
   color?: string;
   country?: string;
   city?: string;
+  main_category?: VehicleClass;
+  sub_category?: VehicleSubCategoryCode;
 }
 
 interface FiltersProps {
@@ -31,13 +36,46 @@ export default function Filters({ onFilterChange, initialFilters = {} }: Filters
   const t = useTranslations('filters');
   const tVehicle = useTranslations('vehicle');
   const { settings } = useSettingsStore();
+  const { mainCategory, subCategory, setMainCategory, setSubCategory } = useFilterStore();
   const [filters, setFilters] = useState<VehicleFilterValues>(initialFilters);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // Get subcategory options based on selected main category
+  const { mainCategoryOptions, subCategoryOptions } = useVehicleSubCategories({
+    mainCategory: mainCategory || filters.main_category,
+    locale: 'en', // You can make this dynamic based on user locale
+  });
+
   const availableFilters = settings?.available_filters;
+
+  // Sync filter store with local filters on mount
+  useEffect(() => {
+    if (initialFilters.main_category) {
+      setMainCategory(initialFilters.main_category);
+    }
+    if (initialFilters.sub_category) {
+      setSubCategory(initialFilters.sub_category);
+    }
+  }, [initialFilters.main_category, initialFilters.sub_category, setMainCategory, setSubCategory]);
 
   const handleChange = (key: keyof VehicleFilterValues, value: string | number | undefined) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleMainCategoryChange = (value: string) => {
+    const category = value as VehicleClass | '';
+    setMainCategory(category || undefined);
+    setFilters((prev) => ({
+      ...prev,
+      main_category: category || undefined,
+      sub_category: undefined, // Reset subcategory when main category changes
+    }));
+  };
+
+  const handleSubCategoryChange = (value: string) => {
+    const subCat = value as VehicleSubCategoryCode | '';
+    setSubCategory(subCat || undefined);
+    setFilters((prev) => ({ ...prev, sub_category: subCat || undefined }));
   };
 
   const handleApply = () => {
@@ -46,6 +84,8 @@ export default function Filters({ onFilterChange, initialFilters = {} }: Filters
 
   const handleReset = () => {
     setFilters({});
+    setMainCategory(undefined);
+    setSubCategory(undefined);
     onFilterChange({});
   };
 
@@ -63,6 +103,32 @@ export default function Filters({ onFilterChange, initialFilters = {} }: Filters
 
       {/* Basic Filters */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Main Category */}
+        <Select
+          label="Vehicle Category"
+          options={[
+            { value: '', label: 'All Categories' },
+            ...mainCategoryOptions.map((cat) => ({ value: cat.value, label: cat.label })),
+          ]}
+          value={filters.main_category || ''}
+          onChange={(e) => handleMainCategoryChange(e.target.value)}
+          fullWidth
+        />
+
+        {/* Sub Category - Only show when main category is selected */}
+        {filters.main_category && subCategoryOptions.length > 0 && (
+          <Select
+            label="Sub-Category"
+            options={[
+              { value: '', label: 'All Sub-Categories' },
+              ...subCategoryOptions.map((sub) => ({ value: sub.value, label: sub.label })),
+            ]}
+            value={filters.sub_category || ''}
+            onChange={(e) => handleSubCategoryChange(e.target.value)}
+            fullWidth
+          />
+        )}
+
         {/* Make */}
         {availableFilters?.makes && (
           <Select
