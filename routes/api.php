@@ -7,6 +7,9 @@ use App\Http\Controllers\Api\VehiclePdfController;
 use App\Http\Controllers\Api\WebhookController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\Api\TwoFactorController;
+use App\Http\Controllers\VehicleConfigurationController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ChatMessageController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes - PDF/QR with rate limiting
@@ -38,6 +41,20 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::delete('/vehicle-comparisons/{vehicleComparison}', [VehicleComparisonController::class, 'destroy']);
     Route::post('/vehicle-comparisons/{vehicleComparison}/add', [VehicleComparisonController::class, 'addVehicle']);
     Route::post('/vehicle-comparisons/{vehicleComparison}/remove', [VehicleComparisonController::class, 'removeVehicle']);
+    
+    // Vehicle Configurations
+    Route::apiResource('vehicle-configurations', VehicleConfigurationController::class);
+    Route::get('/vehicles/{vehicle}/options', [VehicleConfigurationController::class, 'getOptions']);
+    
+    // Bookings
+    Route::apiResource('bookings', BookingController::class);
+    Route::get('/bookings/available-slots', [BookingController::class, 'getAvailableSlots']);
+    
+    // Chat Messages
+    Route::get('/chat/messages', [ChatMessageController::class, 'index']);
+    Route::post('/chat/messages', [ChatMessageController::class, 'store']);
+    Route::get('/chat/messages/{sessionId}', [ChatMessageController::class, 'show']);
+    Route::post('/chat/messages/mark-read', [ChatMessageController::class, 'markAsRead']);
 });
 
 // Webhooks - Lower rate limit

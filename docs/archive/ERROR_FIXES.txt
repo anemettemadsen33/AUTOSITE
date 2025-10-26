@@ -1,0 +1,26 @@
+=== ERORI GĂSITE ȘI REZOLVATE ===
+
+✅ Eroare 1: metadata în client component (dashboard)
+   - Rezolvat: șters export metadata din client component
+
+✅ Eroare 2: Import greșit messagesApi în ContactClient
+   - Rezolvat: schimbat la api.post direct
+
+✅ Eroare 3: Import greșit vehiclesApi în CompareClient
+   - Rezolvat: schimbat la getVehicles
+
+⚠️ Eroare 4: @tailwindcss/postcss lipsește (pentru production build)
+   - Status: Instalat, dar Turbopack build încă are probleme
+   - Workaround: Dev mode funcționează OK
+   - Soluție: postcss.config.js creat
+
+📝 NOTE:
+- Development mode (npm run dev) funcționează
+- Build-ul production are probleme cu Tailwind CSS v4
+- Tailwind CSS v4 este încă în alpha/beta
+- Recomandat: downgrade la Tailwind CSS v3 pentru production
+
+=== REZUMAT ===
+Erori rezolvate: 3/4
+Eroare rămăsă: Tailwind v4 incompatibilitate cu Turbopack build
+

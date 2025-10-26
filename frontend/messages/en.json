@@ -1,0 +1,103 @@
+{
+  "navigation": {
+    "home": "Home",
+    "search": "Search Cars",
+    "favorites": "Favorites",
+    "messages": "Messages",
+    "account": "My Account",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "sellCar": "Sell Your Car"
+  },
+  "homepage": {
+    "hero": {
+      "title": "Find Your Dream Car",
+      "subtitle": "Browse thousands of cars from trusted sellers",
+      "searchPlaceholder": "Search by make, model or keyword..."
+    },
+    "features": {
+      "verified": "Verified Sellers",
+      "support": "24/7 Support",
+      "secure": "Secure Payments"
+    }
+  },
+  "search": {
+    "filters": "Filters",
+    "results": "{count} cars found",
+    "sortBy": "Sort by",
+    "priceAsc": "Price: Low to High",
+    "priceDesc": "Price: High to Low",
+    "newest": "Newest First",
+    "oldest": "Oldest First"
+  },
+  "vehicle": {
+    "details": "Details",
+    "specifications": "Specifications",
+    "features": "Features",
+    "description": "Description",
+    "contactSeller": "Contact Seller",
+    "saveFavorite": "Save to Favorites",
+    "share": "Share",
+    "price": "Price",
+    "year": "Year",
+    "mileage": "Mileage",
+    "fuel": "Fuel Type",
+    "transmission": "Transmission",
+    "condition": "Condition"
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "empty": "No saved favorites yet",
+    "removed": "Removed from favorites",
+    "added": "Added to favorites"
+  },
+  "chat": {
+    "title": "Messages",
+    "typeMessage": "Type your message...",
+    "send": "Send",
+    "noConversations": "No conversations yet",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "auth": {
+    "login": {
+      "title": "Login to Your Account",
+      "email": "Email Address",
+      "password": "Password",
+      "remember": "Remember me",
+      "forgot": "Forgot password?",
+      "submit": "Login",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "register": {
+      "title": "Create an Account",
+      "name": "Full Name",
+      "email": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Register",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "apply": "Apply",
+    "reset": "Reset",
+    "close": "Close"
+  }
+}

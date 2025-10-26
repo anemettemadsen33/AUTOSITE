@@ -157,7 +157,8 @@
     "mileageRange": "Mileage Range",
     "from": "From",
     "to": "To",
-    "km": "km"
+    "km": "km",
+    "reset": "Reset Filters"
   },
   "dashboard": {
     "dashboard": "Dashboard",

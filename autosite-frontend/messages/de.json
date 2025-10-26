@@ -58,7 +58,8 @@
     "mileageRange": "Kilometerbereich",
     "from": "Von",
     "to": "Bis",
-    "km": "km"
+    "km": "km",
+    "reset": "Filter zurücksetzen"
   },
   "dashboard": {
     "myVehicles": "Meine Fahrzeuge",

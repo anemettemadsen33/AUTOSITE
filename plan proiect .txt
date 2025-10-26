@@ -1,48 +1,196 @@
-✅ PHASE 1: FOUNDATION (CE AI DEJA)
+🚀 PROMPT FINAL — Refacere completă proiect AUTOSITE (Frontend + Integrare Backend)
 
-🧱 Stare actuală (excelentă):
-✅ Frontend: Next.js 16 + Tailwind + Zustand + Turbopack ✔️
-✅ Backend: Laravel 11 + Sanctum + Filament Admin ✔️
-✅ Auth + API documentat cu Swagger
-✅ i18n basic (next-intl)
+Titlu: 🔧 Refacere completă AUTOSITE — implementare totală frontend & integrare backend până la lansare
 
-📌 Următorul mic pas:
-🔹 Full i18n complet + fallback logic pe frontend
-🔹 Îmbunătățiri Swagger: grupare resurse, token preview
+Descriere:
+Proiectul AUTOSITE a fost deteriorat în faza inițială („Current Phase: Phase 1 – Analysis & Design ✅”). În acest moment lipsesc componente funcționale majore, diferențierea clară între categorii de vehicule, testele și CI/CD‑ul. Acest task trebuie să reconstruiască complet proiectul frontend + backend integration, să îl ducă până la un MVP complet funcțional, fără întrerupere, până la finalizare.
 
-✨ PHASE 2: USER-FOCUSED FEATURES (Q4 2024)
-Prioritate	Funcționalitate	Tehnologie
-🔥 High	Favorite/Saved Ads	Zustand + Laravel
-🔥 High	Filtrare dinamică fără reload	URL Params + Zustand
-🔥 High	Upload multiple imagini Drag&Drop	Tailwind UI + Laravel Media
-⭐ Mid	PDF Generator: "Fișă ofertă auto"	DomPDF + Axios
-⭐ Mid	Chat în timp real	Laravel WebSockets / Pusher
-⭐ Mid	Notificări toast + badge (UI)	Zustand + HeadlessUI
+Scop:
+Reconstrucția completă a platformei AUTOSITE, tip marketplace auto multi‑categorie (gen mobile.de), cu un frontend profesional, scalabil și conectat complet la backend (Laravel API).
 
-📌 Obiectiv: MVP solid, funcțional pentru buyer & seller
+Probleme identificate:
 
-🎨 PHASE 3: UX/UI WOW DESIGN (Q1 2025)
-Prioritate	Îmbunătățire	Tool-uri
-🔥 High	Homepage cinematic (hero video/slider)	Tailwind + motion
-🔥 High	Carduri cu efect hover, flip, tag-uri	Tailwind + Framer Motion
-🔥 High	Page transitions animate	Framer Motion + App Router
-⭐ Mid	Dark/Light Mode toggle elegant	next-themes
-⭐ Mid	Lazy loading + blur pentru imagini	next/image
-⭐ Mid	Dashboard elegant (stats + sidebar)	Filament API + custom UI
+Commit‑ul curent arată doar începutul fazei de analiză, fără implementare completă.
 
-📌 Obiectiv: WOW feeling & engagement mare pe orice device
+Lipsesc componente frontend funcționale (UI + logică).
 
-🧠 PHASE 4: SCALING + AI SMART STUFF (Q2-Q3 2025)
-Prioritate	Funcționalitate	Tool-uri
-🔥 High	Sistem Promovare Anunțuri + Stripe	Stripe / MobilPay
-⭐ Mid	Import anunțuri CSV/Excel pentru dealeri	Laravel Excel
-⭐ Mid	AI descriere auto	OpenAI API
-⭐ Mid	Semantic search cu NLP / Embeddings	OpenAI + Weaviate
-⭐ Mid	SEO Rich Snippets / Schema.org	JSON-LD injectat
+Nu există diferențiere clară între categorii multiple de vehicule (mașini, moto, camioane, piese etc.).
 
-📌 Obiectiv: platformă avansată, scalabilă, pregătită de growth 🚀
+Lipsesc integrări API reale.
 
-🧭 TO-DO STARTER KIT (azi ↘️)
- Setup i18n complet (next-intl)
- Începem cu Favorite Ads + UI state toggle
- Refactor homepage pentru look cinematic
+Lipsesc teste unitare, e2e și CI/CD pipelines.
+
+Claritatea funcțiilor este parțială, documentația trebuie actualizată.
+
+Obiectiv general:
+Reface complet frontend‑ul, conectează-l cu backend‑ul și finalizează implementarea tuturor funcțiilor planificate pentru un MVP complet, stabil și pregătit pentru producție.
+
+🧱 Cerințe tehnice și funcționale
+
+Frontend (Next.js + TypeScript):
+
+Refactorizare totală structură.
+
+Implementare Layout global (Header, Footer, Navbar).
+
+Pagină principală (homepage) cu selectare categorie și căutare rapidă.
+
+Categorii dinamice (mașini, motociclete, camioane, rulote, piese etc.) cu rute /vanzari/:categorie.
+
+Listare anunțuri cu filtre dinamice (marcă, model, preț, an, km, locație etc.).
+
+Pagină detaliu anunț cu galerie imagini, specificații, contact vânzător.
+
+Pagini user: login/register/reset password, dashboard, favorite, mesaje, anunțuri proprii.
+
+Formular adăugare anunț (dinamic pe categorie, validare + upload imagini/video).
+
+Integrare completă cu backend API (Laravel): login/register, CRUD anunțuri, favorite, mesaje.
+
+Pagini SEO: despre, termeni, confidențialitate, 404.
+
+Dark mode + design responsiv complet.
+
+Backend (Laravel):
+
+Endpoint‑uri REST pentru toate funcțiile frontend‑ului.
+
+Validări și autentificare JWT.
+
+Management anunțuri, imagini, categorii, utilizatori.
+
+API upload imagini (Cloudinary / local storage).
+
+Filtrare avansată la nivel de query.
+
+Funcționalități cheie:
+
+Căutare globală și filtrare avansată.
+
+Autentificare și dashboard utilizator.
+
+Favorite și mesagerie între utilizatori.
+
+Upload media (imagini + video).
+
+Internaționalizare (RO/EN/DE) + multi‑monedă (RON/EUR/USD).
+
+SEO + performanță (Lazy load, optimizare imagini, meta dinamic).
+
+Teste unitare + e2e.
+
+CI/CD pipelines automate (GitHub Actions).
+
+⚙️ Stack Tehnologic Recomandat
+
+Frontend:
+
+Next.js 15+ (App Router, TypeScript)
+
+TailwindCSS
+
+Zustand sau Redux Toolkit
+
+React Hook Form + Yup
+
+Axios
+
+React Query (TanStack)
+
+next‑intl (traducei)
+
+Backend:
+
+Laravel 11
+
+Sanctum / Passport pentru autentificare
+
+MySQL / PostgreSQL
+
+Cloudinary SDK pentru upload media
+
+Testare:
+
+Jest + React Testing Library (frontend)
+
+PHPUnit (backend)
+
+Cypress (end‑to‑end)
+
+CI/CD:
+
+GitHub Actions: lint + test + build + deploy
+
+📁 Structură de fișiere sugerată (Frontend)
+frontend/
+├── app/                   # Next.js App Router
+│   ├── (public-pages)/    # Homepage, 404, despre, etc.
+│   ├── (auth)/            # login, register
+│   ├── (user)/            # dashboard, favorite, mesaje
+│   ├── (listings)/        # categorii + listare + detaliu
+│   └── layout.tsx
+├── components/
+├── features/
+│   ├── auth/
+│   ├── listings/
+│   ├── filters/
+│   ├── user/
+│   └── categories/
+├── services/              # API
+├── store/                 # Zustand/Redux
+├── utils/
+├── types/
+└── i18n/
+
+🧩 Etape de lucru (automatizate)
+
+🧱 Refactorizare structură frontend complet.
+
+🎨 Implementare layout, navigație, homepage.
+
+🧭 Adăugare categorii multiple și rutare dinamică.
+
+🔍 Implementare filtrare și listare anunțuri.
+
+📄 Pagina detaliu anunț.
+
+👤 Autentificare și dashboard utilizator.
+
+✍️ Formular adăugare/editare anunț.
+
+💬 Mesagerie și favorite.
+
+🌍 Internaționalizare + multi‑monedă.
+
+🧪 Testare (unit + e2e).
+
+🚀 CI/CD + deploy automat.
+
+🕒 Deadline și execuție automată
+
+Începe execuția imediat după aprobarea issue‑ului.
+
+Rulează procesele secvențial (fără pauză) până la finalizare.
+
+Verifică și validează fiecare etapă automat (test pipeline).
+
+Termen limită: mâine la ora 23:59 (finalizare completă, build funcțional, fără erori).
+
+Rezultat așteptat:
+✅ Site complet funcțional, 100% responsive, cu toate funcțiile active, conectat la backend și pregătit de lansare (demo build + deploy).
+
+Criterii de succes:
+
+Fără erori în console și build.
+
+Toate paginile funcționale.
+
+API‑urile funcționează integral.
+
+CI/CD rulează automat.
+
+Lighthouse ≥ 90.
+
+🔧 Notă finală:
+Acest task trebuie rulat automat până la final, fără oprire, utilizând GitHub Actions sau un agent CI configurat.
+După terminare, va fi generat build‑ul final și un raport cu stadiul tuturor funcțiilor.

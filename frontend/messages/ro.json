@@ -1,0 +1,103 @@
+{
+  "navigation": {
+    "home": "Acasă",
+    "search": "Caută Mașini",
+    "favorites": "Favorite",
+    "messages": "Mesaje",
+    "account": "Contul Meu",
+    "login": "Autentificare",
+    "register": "Înregistrare",
+    "logout": "Deconectare",
+    "sellCar": "Vinde Mașina Ta"
+  },
+  "homepage": {
+    "hero": {
+      "title": "Găsește Mașina Visurilor Tale",
+      "subtitle": "Răsfoiește mii de mașini de la vânzători verificați",
+      "searchPlaceholder": "Caută după marcă, model sau cuvânt cheie..."
+    },
+    "features": {
+      "verified": "Vânzători Verificați",
+      "support": "Suport 24/7",
+      "secure": "Plăți Securizate"
+    }
+  },
+  "search": {
+    "filters": "Filtre",
+    "results": "{count} mașini găsite",
+    "sortBy": "Sortează după",
+    "priceAsc": "Preț: Crescător",
+    "priceDesc": "Preț: Descrescător",
+    "newest": "Cele Mai Noi",
+    "oldest": "Cele Mai Vechi"
+  },
+  "vehicle": {
+    "details": "Detalii",
+    "specifications": "Specificații",
+    "features": "Caracteristici",
+    "description": "Descriere",
+    "contactSeller": "Contactează Vânzătorul",
+    "saveFavorite": "Salvează la Favorite",
+    "share": "Distribuie",
+    "price": "Preț",
+    "year": "An",
+    "mileage": "Kilometraj",
+    "fuel": "Tip Combustibil",
+    "transmission": "Transmisie",
+    "condition": "Condiție"
+  },
+  "favorites": {
+    "title": "Favoritele Mele",
+    "empty": "Nicio mașină salvată încă",
+    "removed": "Șters din favorite",
+    "added": "Adăugat la favorite"
+  },
+  "chat": {
+    "title": "Mesaje",
+    "typeMessage": "Scrie mesajul tău...",
+    "send": "Trimite",
+    "noConversations": "Nicio conversație încă",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "auth": {
+    "login": {
+      "title": "Autentifică-te în Cont",
+      "email": "Adresă Email",
+      "password": "Parolă",
+      "remember": "Ține-mă minte",
+      "forgot": "Ai uitat parola?",
+      "submit": "Autentificare",
+      "noAccount": "Nu ai un cont?",
+      "signUp": "Înregistrează-te"
+    },
+    "register": {
+      "title": "Creează un Cont",
+      "name": "Nume Complet",
+      "email": "Adresă Email",
+      "password": "Parolă",
+      "confirmPassword": "Confirmă Parola",
+      "submit": "Înregistrare",
+      "hasAccount": "Ai deja un cont?",
+      "signIn": "Autentifică-te"
+    }
+  },
+  "common": {
+    "loading": "Se încarcă...",
+    "error": "A apărut o eroare",
+    "success": "Succes",
+    "cancel": "Anulează",
+    "save": "Salvează",
+    "delete": "Șterge",
+    "edit": "Editează",
+    "view": "Vizualizează",
+    "back": "Înapoi",
+    "next": "Următorul",
+    "previous": "Anteriorul",
+    "search": "Caută",
+    "filter": "Filtrează",
+    "apply": "Aplică",
+    "reset": "Resetează",
+    "close": "Închide"
+  }
+}

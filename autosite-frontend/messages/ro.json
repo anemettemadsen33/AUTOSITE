@@ -58,7 +58,8 @@
     "mileageRange": "Interval Kilometraj",
     "from": "De la",
     "to": "Până la",
-    "km": "km"
+    "km": "km",
+    "reset": "Resetează Filtrele"
   },
   "dashboard": {
     "myVehicles": "Vehiculele Mele",
