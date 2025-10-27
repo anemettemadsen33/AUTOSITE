@@ -3,7 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { Button, Input, Select } from '@/components/ui';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { debounce } from '@/lib/utils';
 
 export interface VehicleFilterValues {
   make?: string;
@@ -36,8 +37,18 @@ export default function Filters({ onFilterChange, initialFilters = {} }: Filters
 
   const availableFilters = settings?.available_filters;
 
+  // Debounce filter changes to reduce API calls
+  const debouncedFilterChange = useCallback(
+    debounce((newFilters: VehicleFilterValues) => {
+      onFilterChange(newFilters);
+    }, 500),
+    [onFilterChange]
+  );
+
   const handleChange = (key: keyof VehicleFilterValues, value: string | number | undefined) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    debouncedFilterChange(newFilters);
   };
 
   const handleApply = () => {
@@ -45,24 +56,25 @@ export default function Filters({ onFilterChange, initialFilters = {} }: Filters
   };
 
   const handleReset = () => {
-    setFilters({});
-    onFilterChange({});
+    const emptyFilters = {};
+    setFilters(emptyFilters);
+    onFilterChange(emptyFilters);
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6 space-y-3 md:space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('title')}</h2>
+        <h2 className="text-base md:text-lg font-bold text-gray-900 dark:text-white">{t('title')}</h2>
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+          className="text-xs md:text-sm text-blue-600 dark:text-blue-400 hover:underline"
         >
           {showAdvanced ? 'Hide Advanced' : 'Show Advanced'}
         </button>
       </div>
 
       {/* Basic Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         {/* Make */}
         {availableFilters?.makes && (
           <Select
