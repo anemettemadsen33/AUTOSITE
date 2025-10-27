@@ -11,8 +11,49 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "AutoSite - Platformă Premium Auto",
-  description: "Găsește mașina perfectă din mii de anunțuri verificate",
+  title: {
+    default: "AutoSite - Platformă Premium Auto",
+    template: "%s | AutoSite",
+  },
+  description: "Găsește mașina perfectă din peste 10,000 vehicule de la dealeri verificați. Compară prețuri, programează test drive și cumpără online.",
+  keywords: ["mașini second hand", "dealeri auto", "vehicule noi", "marketplace auto", "test drive", "leasing auto"],
+  authors: [{ name: "AutoSite Team" }],
+  creator: "AutoSite",
+  publisher: "AutoSite",
+  openGraph: {
+    type: "website",
+    locale: "ro_RO",
+    url: "https://autosite.com",
+    siteName: "AutoSite",
+    title: "AutoSite - Marketplace Auto Premium",
+    description: "Platformă modernă pentru cumpărarea și vânzarea de vehicule",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "AutoSite - Marketplace Auto",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AutoSite - Marketplace Auto Premium",
+    description: "Găsește mașina perfectă",
+    images: ["/twitter-image.jpg"],
+    creator: "@autosite",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
