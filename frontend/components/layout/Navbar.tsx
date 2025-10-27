@@ -44,8 +44,6 @@ export default function Navbar() {
             >
               Dealeri
             </Link>
-              Dealeri
-            </Link>
           </div>
 
           {/* Right Side - Search & Auth */}
