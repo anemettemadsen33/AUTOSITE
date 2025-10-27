@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
+// Temporarily disabled - install with: npm install --save-dev @next/bundle-analyzer
+// const withBundleAnalyzer = require('@next/bundle-analyzer')({
+//   enabled: process.env.ANALYZE === 'true',
+// });
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
@@ -51,4 +52,6 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
 };
 
-export default withBundleAnalyzer(nextConfig);
+// Export with bundle analyzer when installed, otherwise plain config
+export default nextConfig;
+// export default withBundleAnalyzer(nextConfig);
