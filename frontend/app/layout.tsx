@@ -11,6 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_METADATA_BASE || 'http://localhost:3001'),
   title: {
     default: "AutoSite - Platformă Premium Auto",
     template: "%s | AutoSite",

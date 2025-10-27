@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+
+  // Metadata configuration
+  env: {
+    NEXT_PUBLIC_METADATA_BASE: process.env.NEXT_PUBLIC_METADATA_BASE || 'http://localhost:3001',
+  },
   
   // Enhanced image optimization
   images: {
