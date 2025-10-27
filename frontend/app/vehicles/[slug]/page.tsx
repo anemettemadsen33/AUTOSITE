@@ -1,18 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
-import api from '@/lib/api';
-import { Vehicle } from '@/lib/types';
+import { useVehicle } from '@/lib/hooks/useVehicles';
+import { useToggleFavorite, useCheckFavorite } from '@/lib/hooks/useFavorites';
 import { formatPrice, formatMileage } from '@/lib/utils';
 import { useAuthStore } from '@/lib/store';
 import BuyNowModal from '@/components/BuyNowModal';
 import LeasingModal from '@/components/LeasingModal';
 import {
-  CalendarIcon,
-  CogIcon,
   MapPinIcon,
   PhoneIcon,
   EnvelopeIcon,
@@ -24,52 +21,22 @@ import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 export default function VehicleDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [showBuyNowModal, setShowBuyNowModal] = useState(false);
   const [showLeasingModal, setShowLeasingModal] = useState(false);
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
-  useEffect(() => {
-    if (slug) {
-      fetchVehicle();
-      checkIfFavorite();
-    }
-  }, [slug]);
+  const { data: vehicle, isLoading } = useVehicle(slug);
+  const { data: favoriteStatus } = useCheckFavorite(vehicle?.id);
+  const toggleFavorite = useToggleFavorite();
 
-  const fetchVehicle = async () => {
-    try {
-      const response = await api.get(`/vehicles/${slug}`);
-      setVehicle(response.data.data);
-    } catch (error) {
-      console.error('Error fetching vehicle:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const isFavorite = favoriteStatus?.is_favorite || false;
 
-  const checkIfFavorite = () => {
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    setIsFavorite(favorites.some((v: Vehicle) => v.slug === slug));
-  };
-
-  const toggleFavorite = () => {
+  const handleToggleFavorite = () => {
     if (!vehicle) return;
-    
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    if (isFavorite) {
-      const newFavorites = favorites.filter((v: Vehicle) => v.id !== vehicle.id);
-      localStorage.setItem('favorites', JSON.stringify(newFavorites));
-      setIsFavorite(false);
-    } else {
-      favorites.push(vehicle);
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-      setIsFavorite(true);
-    }
+    toggleFavorite.mutate(vehicle.id);
   };
 
   const handleMessage = () => {
@@ -104,7 +71,7 @@ export default function VehicleDetailPage() {
     setShowLeasingModal(true);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -260,8 +227,9 @@ export default function VehicleDetailPage() {
                   {formatPrice(vehicle.price, vehicle.currency)}
                 </div>
                 <button
-                  onClick={toggleFavorite}
-                  className="p-2 rounded-full hover:bg-gray-100 transition"
+                  onClick={handleToggleFavorite}
+                  disabled={toggleFavorite.isPending}
+                  className="p-2 rounded-full hover:bg-gray-100 transition disabled:opacity-50"
                 >
                   {isFavorite ? (
                     <HeartIconSolid className="w-7 h-7 text-red-600" />

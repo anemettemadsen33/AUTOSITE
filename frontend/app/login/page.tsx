@@ -1,44 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import api from '@/lib/api';
-import { useAuthStore } from '@/lib/store';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { EnvelopeIcon, LockClosedIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 export default function LoginPage() {
-  const router = useRouter();
-  const login = useAuthStore((state) => state.login);
+  const { loginMutation } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    remember: false,
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const response = await api.post('/auth/login', formData);
-      const { token, user } = response.data.data;
-      
-      login(token, user);
-      router.push('/');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Email sau parolă incorecte');
-    } finally {
-      setLoading(false);
-    }
+    loginMutation.mutate(formData);
   };
 
   const handleSocialLogin = (provider: string) => {
     console.log('Social login:', provider);
+    // TODO: Implement OAuth
   };
 
   return (
@@ -91,12 +74,6 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-lg font-medium">
-                {error}
-              </div>
-            )}
-
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
               <div className="relative">
@@ -142,8 +119,8 @@ export default function LoginPage() {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
+                  checked={formData.remember}
+                  onChange={(e) => setFormData({ ...formData, remember: e.target.checked })}
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <span className="ml-2 text-sm text-gray-700">Ține-mă minte</span>
@@ -154,12 +131,18 @@ export default function LoginPage() {
               </Link>
             </div>
 
+            {loginMutation.error && (
+              <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-lg font-medium">
+                {loginMutation.error.message || 'Email sau parolă incorecte'}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loginMutation.isPending}
               className="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-bold text-lg hover:from-blue-700 hover:to-cyan-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
-              {loading ? (
+              {loginMutation.isPending ? (
                 <div className="flex items-center justify-center gap-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   Se încarcă...

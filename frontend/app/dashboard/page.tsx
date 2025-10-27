@@ -1,53 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import api from '@/lib/api';
-import { useAuthStore } from '@/lib/store';
-import { Vehicle } from '@/lib/types';
-import VehicleCard from '@/components/ui/VehicleCard';
-import { PlusIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useVehicles } from '@/lib/hooks/useVehicles';
+import AuthGuard from '@/components/AuthGuard';
+import VehicleCard from '@/components/VehicleCard';
+import { 
+  PlusIcon, 
+  Cog6ToothIcon,
+  TruckIcon,
+  HeartIcon,
+  ChartBarIcon,
+  EnvelopeIcon
+} from '@heroicons/react/24/outline';
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { isAuthenticated, user } = useAuthStore();
-  const [myVehicles, setMyVehicles] = useState<Vehicle[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-    fetchMyVehicles();
-  }, [isAuthenticated]);
-
-  const fetchMyVehicles = async () => {
-    try {
-      const response = await api.get('/vehicles?user_id=' + user?.id);
-      setMyVehicles(response.data.data || []);
-    } catch (error) {
-      console.error('Error fetching vehicles:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return null;
-  }
+  const { user } = useAuth();
+  const { data, isLoading } = useVehicles({ dealer_id: user?.dealer?.id });
+  
+  const myVehicles = data?.data || [];
+  const isDealerRole = user?.role === 'dealer';
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
-      <div className="container mx-auto px-4">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Dashboard
-          </h1>
-          <p className="text-gray-600">
-            Bine ai venit, {user?.name}!
-          </p>
+    <AuthGuard requireAuth>
+      <div className="bg-gray-50 min-h-screen py-8">
+        <div className="container mx-auto px-4">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Dashboard
+            </h1>
+            <p className="text-gray-600">
+              Bine ai venit, {user?.name}! 👋
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
