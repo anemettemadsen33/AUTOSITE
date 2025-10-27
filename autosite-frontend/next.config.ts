@@ -3,10 +3,17 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
-// Bundle analyzer
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
+// Bundle analyzer - optional, only when ANALYZE=true
+let withBundleAnalyzer = (config: NextConfig) => config;
+try {
+  if (process.env.ANALYZE === 'true') {
+    withBundleAnalyzer = require('@next/bundle-analyzer')({
+      enabled: true,
+    });
+  }
+} catch (e) {
+  console.log('Bundle analyzer not available, skipping...');
+}
 
 const nextConfig: NextConfig = {
   /* config options here */
