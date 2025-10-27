@@ -2,10 +2,18 @@ import useSWR from 'swr';
 import type { Vehicle } from './vehicles';
 import type { PublicSettings } from './settings';
 
+// API Base URL - use Mock API for now
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Failed to fetch');
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE}${url}`;
+  const res = await fetch(fullUrl);
+  if (!res.ok) {
+    // Return empty data on error instead of throwing
+    console.warn(`API Error ${res.status}: ${url}`);
+    return { data: [], pagination: null };
+  }
   return res.json();
 };
 
