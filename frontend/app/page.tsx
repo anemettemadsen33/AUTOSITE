@@ -3,6 +3,10 @@
 import { useState, useCallback, memo } from 'react';
 import Link from 'next/link';
 import { MagnifyingGlassIcon, CheckCircleIcon, TruckIcon, ShieldCheckIcon, ClockIcon } from '@heroicons/react/24/outline';
+import FeaturedVehicles from '@/components/FeaturedVehicles';
+import Testimonials from '@/components/Testimonials';
+import NewsletterSignup from '@/components/NewsletterSignup';
+import StatCounter from '@/components/StatCounter';
 
 // Memoized Category Card Component pentru performance
 const CategoryCard = memo(({ category }: { category: any }) => (
@@ -223,24 +227,18 @@ export default function Home() {
               </div>
             </form>
 
-            {/* Stats */}
+            {/* Stats with Animated Counters */}
             <div className="grid grid-cols-3 gap-6 mt-8 max-w-xl mx-auto" role="region" aria-label="Statistici platformă">
-              <div>
-                <div className="text-xl md:text-2xl font-black mb-0.5">1000+</div>
-                <div className="text-blue-200 text-xs">Vehicule</div>
-              </div>
-              <div>
-                <div className="text-xl md:text-2xl font-black mb-0.5">100+</div>
-                <div className="text-blue-200 text-xs">Dealeri</div>
-              </div>
-              <div>
-                <div className="text-xl md:text-2xl font-black mb-0.5">500+</div>
-                <div className="text-blue-200 text-xs">Clienți</div>
-              </div>
+              <StatCounter end={1250} suffix="+" label="Vehicule" />
+              <StatCounter end={150} suffix="+" label="Dealeri" />
+              <StatCounter end={850} suffix="+" label="Clienți" />
             </div>
           </div>
         </div>
       </section>
+
+      {/* Featured Vehicles Section */}
+      <FeaturedVehicles />
 
       {/* Categories Grid */}
       <section className="py-12" aria-labelledby="categories-heading">
@@ -298,6 +296,12 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <Testimonials />
+
+      {/* Newsletter Signup */}
+      <NewsletterSignup />
 
       {/* CTA Section for Dealers */}
       <section className="py-12 bg-gradient-to-br from-gray-900 to-gray-800 text-white relative overflow-hidden" aria-labelledby="cta-heading">
