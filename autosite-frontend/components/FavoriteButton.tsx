@@ -40,7 +40,7 @@ export default function FavoriteButton({ vehicleId, className = '' }: FavoriteBu
     <button
       onClick={handleToggle}
       disabled={loading}
-      className={`p-2 rounded-full transition-all ${
+      className={`p-1.5 rounded-full transition-all ${
         favorited
           ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
           : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
@@ -53,7 +53,7 @@ export default function FavoriteButton({ vehicleId, className = '' }: FavoriteBu
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-6 h-6"
+        className="w-5 h-5"
       >
         <path
           strokeLinecap="round"
