@@ -5,9 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { getVehicles, type Vehicle } from '@/lib/vehicles';
-import { getPublicSettings } from '@/lib/settings';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useVehicles, usePublicSettings } from '@/lib/hooks';
 import { Spinner, VehicleCardSkeleton } from '@/components/ui';
 import { categories } from '@/lib/categories';
 
@@ -19,33 +18,30 @@ const VehicleCard = dynamic(() => import('@/components/VehicleCard'), {
 export default function Home() {
   const t = useTranslations('common');
   const router = useRouter();
-  const { settings, setSettings } = useSettingsStore();
+  const { setSettings } = useSettingsStore();
 
-  const [featuredVehicles, setFeaturedVehicles] = useState<Vehicle[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Use SWR for data fetching
+  const { vehicles, isLoading: vehiclesLoading } = useVehicles({ 
+    page: 1, 
+    per_page: 6, 
+    featured: true 
+  });
+  const { settings, isLoading: settingsLoading } = usePublicSettings();
+
   const [searchQuery, setSearchQuery] = useState({
     category: '',
     make: '',
     priceMax: '',
   });
 
+  // Update settings store when loaded
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [settingsData, vehiclesData] = await Promise.all([
-          getPublicSettings(),
-          getVehicles({ page: 1, per_page: 6, featured: true }),
-        ]);
-        setSettings(settingsData);
-        setFeaturedVehicles(vehiclesData.data);
-      } catch (err) {
-        console.error('Failed to load data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, [setSettings]);
+    if (settings) {
+      setSettings(settings);
+    }
+  }, [settings, setSettings]);
+
+  const loading = vehiclesLoading || settingsLoading;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
