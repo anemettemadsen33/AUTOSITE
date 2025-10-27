@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 import { CheckCircleIcon, UserGroupIcon, ChartBarIcon, TrophyIcon } from '@heroicons/react/24/outline';
+import { Card, CardContent, Button, Badge } from '@/components/ui';
 
 export const metadata: Metadata = {
   title: 'Despre Noi',
@@ -47,12 +49,16 @@ export default function AboutPage() {
               conectează cumpărători cu cei mai buni dealeri din România
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a href="/vehicles" className="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition">
-                Explorează Vehicule
-              </a>
-              <a href="/contact" className="px-8 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-400 transition">
-                Contactează-ne
-              </a>
+              <Link href="/vanzari">
+                <Button variant="primary" size="lg">
+                  Explorează Vehicule
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button variant="secondary" size="lg">
+                  Contactează-ne
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -62,13 +68,15 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="bg-white rounded-xl p-6 text-center shadow-lg hover:shadow-xl transition">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                  <stat.icon className="w-8 h-8 text-blue-600" />
-                </div>
-                <div className="text-3xl font-black text-gray-900 mb-2">{stat.value}</div>
-                <div className="text-gray-600">{stat.label}</div>
-              </div>
+              <Card key={index} variant="hover" hoverable className="text-center">
+                <CardContent>
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <stat.icon className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <div className="text-3xl font-black text-gray-900 mb-2">{stat.value}</div>
+                  <div className="text-gray-600">{stat.label}</div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
@@ -154,12 +162,16 @@ export default function AboutPage() {
             Fie că vrei să cumperi, să vinzi sau pur și simplu să explorezi, suntem aici pentru tine.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="/register" className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
-              Creează Cont Gratuit
-            </a>
-            <a href="/dealers" className="px-8 py-3 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition">
-              Vezi Dealeri Parteneri
-            </a>
+            <Link href="/register">
+              <Button variant="primary" size="lg">
+                Creează Cont Gratuit
+              </Button>
+            </Link>
+            <Link href="/dealers">
+              <Button variant="secondary" size="lg">
+                Vezi Dealeri Parteneri
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
