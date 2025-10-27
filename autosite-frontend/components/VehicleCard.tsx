@@ -41,7 +41,9 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             alt={vehicleTitle}
             fill
             className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            loading="lazy"
+            quality={85}
           />
           {vehicle.status && (
             <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-0.5 rounded">
