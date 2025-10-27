@@ -1,53 +1,26 @@
 'use client';
 
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   StarIcon,
   MapPinIcon,
   PhoneIcon,
   EnvelopeIcon,
-  ClockIcon,
   CheckBadgeIcon,
+  BuildingStorefrontIcon,
+  TruckIcon,
 } from '@heroicons/react/24/outline';
-import VehicleCard from '@/components/ui/VehicleCard';
-import { mockVehicles } from '@/lib/mockData';
-import { useFavoritesStore } from '@/stores/favoritesStore';
+import { useDealer } from '@/lib/hooks/useDealers';
+import { useVehicles } from '@/lib/hooks/useVehicles';
+import VehicleCard from '@/components/VehicleCard';
 
-const mockDealers = [
-  {
-    id: 1,
-    name: 'AutoElite Motors',
-    slug: 'autoelite-motors',
-    city: 'București',
-    address: 'Șos. Pipera nr. 42',
-    phone: '+40 721 234 567',
-    email: 'contact@autoelite.ro',
-    rating: 4.8,
-    reviews: 156,
-    vehiclesCount: 45,
-    logo: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=200&h=200&fit=crop',
-    coverImage: 'https://images.unsplash.com/photo-1562911791-c7a97b729ec5?w=1200&h=400&fit=crop',
-    description: 'Dealer autorizat de mărci premium. Peste 15 ani de experiență în vânzarea de vehicule second-hand certificate.',
-    longDescription: 'AutoElite Motors este unul dintre cei mai de încredere dealeri auto din București. Cu o experiență de peste 15 ani în domeniu, ne-am construit o reputație solidă bazată pe profesionalism, transparență și calitate. Oferim doar vehicule certificate, verificate tehnic și cu istoric complet documentat.',
-    brands: ['BMW', 'Mercedes-Benz', 'Audi'],
-    verified: true,
-    features: [
-      'Vehicule certificate RAR',
-      'Garanție extinsă disponibilă',
-      'Service autorizat',
-      'Finanțare și leasing',
-      'Test drive gratuit',
-      'Trade-in evaluat corect',
-    ],
-    schedule: {
-      monday: '09:00 - 18:00',
-      tuesday: '09:00 - 18:00',
-      wednesday: '09:00 - 18:00',
-      thursday: '09:00 - 18:00',
-      friday: '09:00 - 18:00',
-      saturday: '10:00 - 14:00',
+export default function DealerDetailPage() {
+  const params = useParams();
+  const dealerId = params.slug as string;
+  
+  const { data: dealer, isLoading: dealerLoading } = useDealer(dealerId);
+  const { data: vehiclesData, isLoading: vehiclesLoading } = useVehicles({ dealer_id: dealerId });
       sunday: 'Închis',
     },
   },
