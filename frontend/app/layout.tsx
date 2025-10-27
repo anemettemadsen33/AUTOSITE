@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Providers from "@/components/Providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -12,13 +13,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "AutoSite - Platformă Premium Auto",
   description: "Găsește mașina perfectă din mii de anunțuri verificate",
-  manifest: "/manifest.json",
-  themeColor: "#3b82f6",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "AutoSite",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#3b82f6",
 };
 
 export default function RootLayout({
@@ -28,22 +31,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ro">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#3b82f6" />
-        <link rel="apple-touch-icon" href="/icon-192x192.png" />
-      </head>
       <body className={`${inter.variable} font-sans flex flex-col min-h-screen`}>
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
+        <Providers>
+          <Navbar />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
+        </Providers>
         <script dangerouslySetInnerHTML={{
           __html: `
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js');
+                navigator.serviceWorker.register('/sw.js').then(
+                  (registration) => {
+                    console.log('SW registered:', registration);
+                  },
+                  (err) => {
+                    console.log('SW registration failed:', err);
+                  }
+                );
               });
             }
           `

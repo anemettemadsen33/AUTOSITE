@@ -1,8 +1,16 @@
 import { notFound } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { getVehicle } from '@/lib/vehicles';
-import ImageCarousel from '@/components/ImageCarousel';
-import ContactDealerButton from '@/components/ContactDealerButton';
 import type { Metadata } from 'next';
+
+// Lazy load heavy components
+const ImageCarousel = dynamic(() => import('@/components/ImageCarousel'), {
+  loading: () => (
+    <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-96"></div>
+  ),
+});
+
+const ContactDealerButton = dynamic(() => import('@/components/ContactDealerButton'));
 
 interface VehiclePageProps {
   params: {

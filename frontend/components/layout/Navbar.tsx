@@ -1,135 +1,111 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { useAuthStore } from '@/lib/store';
-import { useThemeStore } from '@/lib/theme-store';
-import { MagnifyingGlassIcon, UserIcon, HeartIcon, Bars3Icon, XMarkIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline';
-import { useState, useEffect } from 'react';
+import { MagnifyingGlassIcon, Bars3Icon, XMarkIcon, UserIcon, HeartIcon, ScaleIcon } from '@heroicons/react/24/outline';
+import { useCompareStore } from '@/stores/compareStore';
+import { useFavoritesStore } from '@/stores/favoritesStore';
 
 export default function Navbar() {
-  const { isAuthenticated, user, logout } = useAuthStore();
-  const { theme, toggleTheme } = useThemeStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    // Apply theme on mount
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
+  const [searchOpen, setSearchOpen] = useState(false);
+  
+  // Zustand stores
+  const compareList = useCompareStore(state => state.compareList);
+  const favorites = useFavoritesStore(state => state.favorites);
 
   return (
-    <nav className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 shadow-2xl border-b border-blue-800/50 dark:border-blue-900/50 sticky top-0 z-50 backdrop-blur-lg bg-opacity-95">
+    <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+        {/* Main Navbar */}
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/50 group-hover:shadow-xl group-hover:shadow-blue-500/70 transition-all duration-300 group-hover:scale-110">
-              <span className="text-white font-black text-2xl">A</span>
+          <Link href="/" className="flex items-center space-x-2 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+              <span className="text-white font-black text-xl">A</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-black bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-                AutoSite
-              </span>
-              <span className="text-xs text-blue-300/70 -mt-1">Premium Motors</span>
-            </div>
+            <span className="text-xl font-black bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent hidden md:block">
+              AutoSite
+            </span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
             <Link 
               href="/vehicles" 
-              className="px-6 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 font-medium backdrop-blur-sm"
+              className="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
             >
-              Vehicule
+              Toate vehiculele
             </Link>
             <Link 
               href="/dealers" 
-              className="px-6 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 font-medium backdrop-blur-sm"
+              className="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
             >
               Dealeri
             </Link>
-            <Link 
-              href="/leasing" 
-              className="px-6 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 font-medium backdrop-blur-sm"
-            >
-              Leasing
-            </Link>
-            <Link 
-              href="/about" 
-              className="px-6 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 font-medium backdrop-blur-sm"
-            >
-              Despre Noi
+              Dealeri
             </Link>
           </div>
 
-          {/* Right side */}
-          <div className="flex items-center space-x-3">
-            {/* Theme Toggle */}
+          {/* Right Side - Search & Auth */}
+          <div className="flex items-center space-x-2">
+            {/* Search Button */}
             <button
-              onClick={toggleTheme}
-              className="hidden md:flex p-2.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300"
-              aria-label="Toggle theme"
-            >
-              {theme === 'light' ? (
-                <MoonIcon className="w-6 h-6" />
-              ) : (
-                <SunIcon className="w-6 h-6" />
-              )}
-            </button>
-
-            <Link 
-              href="/vehicles" 
-              className="hidden md:flex p-2.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300"
+              onClick={() => setSearchOpen(!searchOpen)}
+              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors"
+              aria-label="Search"
             >
               <MagnifyingGlassIcon className="w-6 h-6" />
-            </Link>
-            
-            {isAuthenticated ? (
-              <>
-                <Link 
-                  href="/favorites" 
-                  className="hidden md:flex p-2.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300"
-                >
-                  <HeartIcon className="w-6 h-6" />
-                </Link>
-                <div className="hidden md:flex items-center space-x-3">
-                  <Link 
-                    href="/dashboard" 
-                    className="flex items-center space-x-2 px-4 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300"
-                  >
-                    <UserIcon className="w-5 h-5" />
-                    <span className="font-medium">{user?.name}</span>
-                  </Link>
-                  <button
-                    onClick={logout}
-                    className="text-sm text-white/70 hover:text-red-400 transition-all duration-300 px-4 py-2"
-                  >
-                    Ieșire
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="hidden md:flex items-center space-x-3">
-                <Link
-                  href="/login"
-                  className="px-6 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 font-medium"
-                >
-                  Autentificare
-                </Link>
-                <Link
-                  href="/register"
-                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg hover:from-blue-700 hover:to-cyan-600 transition-all duration-300 font-semibold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/50 hover:scale-105"
-                >
-                  Înregistrare
-                </Link>
-              </div>
-            )}
+            </button>
 
-            {/* Mobile menu button */}
+            {/* Favorites */}
+            <Link
+              href="/favorites"
+              className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors hidden md:block"
+              aria-label="Favorites"
+            >
+              <HeartIcon className="w-6 h-6" />
+              {favorites.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {favorites.length}
+                </span>
+              )}
+            </Link>
+
+            {/* Compare */}
+            <Link
+              href="/compare"
+              className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors hidden md:block"
+              aria-label="Compară"
+            >
+              <ScaleIcon className="w-6 h-6" />
+              {compareList.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {compareList.length}
+                </span>
+              )}
+            </Link>
+
+            {/* User Menu / Auth Buttons */}
+            <Link
+              href="/user"
+              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors hidden md:block"
+              aria-label="Contul meu"
+            >
+              <UserIcon className="w-6 h-6" />
+            </Link>
+            <Link
+              href="/auth"
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-600 transition-all shadow-md hover:shadow-lg hidden md:block"
+            >
+              Login / Register
+            </Link>
+
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+              className="p-2 text-gray-600 hover:text-blue-600 md:hidden"
+              aria-label="Toggle menu"
             >
               {mobileMenuOpen ? (
                 <XMarkIcon className="w-6 h-6" />
@@ -140,55 +116,82 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-white/10">
-            <div className="flex flex-col space-y-2">
-              <Link href="/vehicles" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
-                Vehicule
-              </Link>
-              <Link href="/dealers" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
-                Dealeri
-              </Link>
-              <Link href="/leasing" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
-                Leasing
-              </Link>
-              <Link href="/about" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
-                Despre Noi
-              </Link>
-              <button
-                onClick={toggleTheme}
-                className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition text-left flex items-center"
-              >
-                {theme === 'light' ? <MoonIcon className="w-5 h-5 mr-2" /> : <SunIcon className="w-5 h-5 mr-2" />}
-                {theme === 'light' ? 'Mod Întunecat' : 'Mod Luminos'}
-              </button>
-              {isAuthenticated ? (
-                <>
-                  <Link href="/favorites" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
-                    Favorite
-                  </Link>
-                  <Link href="/dashboard" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
-                    Dashboard
-                  </Link>
-                  <button onClick={logout} className="px-4 py-3 text-left text-red-400 hover:bg-white/10 rounded-lg transition">
-                    Ieșire
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" className="px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition">
-                    Autentificare
-                  </Link>
-                  <Link href="/register" className="px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg transition text-center font-semibold">
-                    Înregistrare
-                  </Link>
-                </>
-              )}
+        {/* Search Bar (Expandable) */}
+        {searchOpen && (
+          <div className="py-3 border-t">
+            <div className="max-w-2xl mx-auto">
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Caută după marcă, model sau tip..."
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
+                  autoFocus
+                />
+              </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t bg-white">
+          <div className="container mx-auto px-4 py-4 space-y-2">
+            <Link 
+              href="/vanzari/masini" 
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Mașini
+            </Link>
+            <Link 
+              href="/vanzari/motociclete" 
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Motociclete
+            </Link>
+            <Link 
+              href="/vanzari/camioane" 
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Camioane
+            </Link>
+            <Link 
+              href="/dealers" 
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Dealeri
+            </Link>
+            <div className="pt-2 border-t space-y-2">
+              <Link
+                href="/favorites"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Favorite
+              </Link>
+              <Link
+                href="/login"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                className="block px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg text-center font-semibold"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Înregistrează-te
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

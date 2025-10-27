@@ -4,12 +4,17 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { getVehicles, type Vehicle } from '@/lib/vehicles';
 import { getPublicSettings } from '@/lib/settings';
 import { useSettingsStore } from '@/stores/settingsStore';
-import VehicleCard from '@/components/VehicleCard';
-import { Spinner } from '@/components/ui';
+import { Spinner, VehicleCardSkeleton } from '@/components/ui';
 import { categories } from '@/lib/categories';
+
+// Lazy load VehicleCard component with skeleton
+const VehicleCard = dynamic(() => import('@/components/VehicleCard'), {
+  loading: () => <VehicleCardSkeleton />,
+});
 
 export default function Home() {
   const t = useTranslations('common');

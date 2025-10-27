@@ -1,9 +1,15 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+interface Vehicle {
+  id: number;
+  // Add other vehicle properties as needed
+  [key: string]: unknown;
+}
+
 interface FavoriteVehicle {
   id: number;
-  vehicle: any;
+  vehicle: Vehicle;
   created_at: string;
 }
 
@@ -43,7 +49,7 @@ export const useFavoritesStore = create<FavoritesState>()(
           if (!response.ok) throw new Error('Failed to fetch favorites');
 
           const data = await response.json();
-          const favoriteIds = new Set(data.data.map((f: any) => f.vehicle.id));
+          const favoriteIds = new Set<number>(data.data.map((f: FavoriteVehicle) => f.vehicle.id));
 
           set({
             favorites: data.data,
