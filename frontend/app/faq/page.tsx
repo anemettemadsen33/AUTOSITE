@@ -1,9 +1,9 @@
-import { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Întrebări Frecvente',
-  description: 'Răspunsuri la cele mai frecvente întrebări despre AutoSite',
-};
+import { useState } from 'react';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { Accordion, AccordionItem, Button, Input, Card } from '@/components/ui';
+import Link from 'next/link';
 
 const faqs = [
   {
@@ -48,56 +48,96 @@ const faqs = [
 ];
 
 export default function FAQPage() {
-  return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Întrebări Frecvente
-          </h1>
-          <p className="text-lg text-gray-600">
-            Găsește răspunsuri la cele mai frecvente întrebări
-          </p>
-        </div>
+  const [searchQuery, setSearchQuery] = useState('');
 
-        <div className="space-y-12">
-          {faqs.map((section) => (
-            <div key={section.category}>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                {section.category}
-              </h2>
-              <div className="space-y-6">
-                {section.questions.map((faq, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-white rounded-lg shadow-sm p-6"
-                  >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                      {faq.q}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">{faq.a}</p>
+  const filteredFaqs = faqs.map(section => ({
+    ...section,
+    questions: section.questions.filter(faq =>
+      faq.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faq.a.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
+  })).filter(section => section.questions.length > 0);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600 text-white py-16">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-black mb-4">
+              Întrebări Frecvente
+            </h1>
+            <p className="text-xl text-blue-100 mb-6">
+              Găsește rapid răspunsuri la întrebările tale
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Search Bar */}
+      <section className="py-8 -mt-6">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <Input
+              placeholder="Caută în întrebările frecvente..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              leftIcon={<MagnifyingGlassIcon className="w-5 h-5" />}
+              fullWidth
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Content */}
+      <section className="py-8">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            {filteredFaqs.length > 0 ? (
+              <div className="space-y-8">
+                {filteredFaqs.map((section) => (
+                  <div key={section.category}>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                      {section.category}
+                    </h2>
+                    <Accordion>
+                      {section.questions.map((faq, idx) => (
+                        <AccordionItem key={idx} title={faq.q} defaultOpen={idx === 0}>
+                          {faq.a}
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
                   </div>
                 ))}
               </div>
-            </div>
-          ))}
-        </div>
+            ) : (
+              <Card className="text-center py-12">
+                <p className="text-gray-600 mb-4">
+                  Nu am găsit rezultate pentru căutarea ta.
+                </p>
+                <Button variant="primary" onClick={() => setSearchQuery('')}>
+                  Resetează căutarea
+                </Button>
+              </Card>
+            )}
 
-        <div className="mt-12 bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">
-            Nu ai găsit răspunsul?
-          </h3>
-          <p className="text-blue-700 mb-4">
-            Contactează-ne și te vom ajuta cu plăcere!
-          </p>
-          <a
-            href="/contact"
-            className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            Contactează-ne
-          </a>
+            {/* Contact CTA */}
+            <Card variant="gradient" className="mt-12 text-center">
+              <h3 className="text-xl font-bold text-white mb-2">
+                Nu ai găsit răspunsul?
+              </h3>
+              <p className="text-blue-100 mb-6">
+                Contactează-ne și te vom ajuta cu plăcere!
+              </p>
+              <Link href="/contact">
+                <Button variant="secondary" size="lg">
+                  Contactează-ne
+                </Button>
+              </Link>
+            </Card>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

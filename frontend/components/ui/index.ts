@@ -20,4 +20,7 @@ export type { AlertProps } from './Alert';
 export { default as Modal } from './Modal';
 export type { ModalProps } from './Modal';
 
+export { default as Accordion, AccordionItem } from './Accordion';
+export type { AccordionProps, AccordionItemProps } from './Accordion';
+
 export { default as Skeleton, SkeletonCard, SkeletonVehicleCard, SkeletonList } from './Skeleton';
