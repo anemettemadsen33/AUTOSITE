@@ -69,7 +69,7 @@ export default function Filters({ onFilterChange, initialFilters = {} }: Filters
           onClick={() => setShowAdvanced(!showAdvanced)}
           className="text-xs md:text-sm text-blue-600 dark:text-blue-400 hover:underline"
         >
-          {showAdvanced ? 'Hide Advanced' : 'Show Advanced'}
+          {showAdvanced ? 'Hide' : 'Show'} Advanced
         </button>
       </div>
 
@@ -77,35 +77,43 @@ export default function Filters({ onFilterChange, initialFilters = {} }: Filters
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         {/* Make */}
         {availableFilters?.makes && (
-          <Select
-            label={tVehicle('make')}
-            options={[
-              { value: '', label: 'All Makes' },
-              ...availableFilters.makes.map((m) => ({ value: m, label: m })),
-            ]}
-            value={filters.make || ''}
-            onChange={(e) => handleChange('make', e.target.value)}
-            fullWidth
-          />
+          <div>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              {tVehicle('make')}
+            </label>
+            <Select
+              options={[
+                { value: '', label: 'All Makes' },
+                ...availableFilters.makes.map((m) => ({ value: m, label: m })),
+              ]}
+              value={filters.make || ''}
+              onChange={(e) => handleChange('make', e.target.value)}
+              fullWidth
+            />
+          </div>
         )}
 
         {/* Model */}
         {availableFilters?.models && (
-          <Select
-            label={tVehicle('model')}
-            options={[
-              { value: '', label: 'All Models' },
-              ...availableFilters.models.map((m) => ({ value: m, label: m })),
-            ]}
-            value={filters.model || ''}
-            onChange={(e) => handleChange('model', e.target.value)}
-            fullWidth
-          />
+          <div>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              {tVehicle('model')}
+            </label>
+            <Select
+              options={[
+                { value: '', label: 'All Models' },
+                ...availableFilters.models.map((m) => ({ value: m, label: m })),
+              ]}
+              value={filters.model || ''}
+              onChange={(e) => handleChange('model', e.target.value)}
+              fullWidth
+            />
+          </div>
         )}
 
         {/* Year Range */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <div className="space-y-1">
+          <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
             {tVehicle('year')}
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -245,11 +253,11 @@ export default function Filters({ onFilterChange, initialFilters = {} }: Filters
       )}
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-3 pt-4">
-        <Button onClick={handleApply} variant="primary" fullWidth>
-          {t('title')}
+      <div className="flex gap-2 pt-2">
+        <Button onClick={handleApply} size="sm" fullWidth>
+          Apply Filters
         </Button>
-        <Button onClick={handleReset} variant="outline" fullWidth>
+        <Button onClick={handleReset} variant="outline" size="sm" fullWidth>
           {t('reset')}
         </Button>
       </div>
