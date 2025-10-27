@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { MagnifyingGlassIcon, Bars3Icon, XMarkIcon, UserIcon, HeartIcon, ScaleIcon } from '@heroicons/react/24/outline';
 import { useCompareStore } from '@/stores/compareStore';
 import { useFavoritesStore } from '@/stores/favoritesStore';
+import SearchModal from '@/components/SearchModal';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -116,23 +117,10 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Search Bar (Expandable) */}
-        {searchOpen && (
-          <div className="py-3 border-t">
-            <div className="max-w-2xl mx-auto">
-              <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Caută după marcă, model sau tip..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
-                  autoFocus
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Search Modal */}
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (

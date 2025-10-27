@@ -1,196 +1,95 @@
-🚀 PROMPT FINAL — Refacere completă proiect AUTOSITE (Frontend + Integrare Backend)
-
-Titlu: 🔧 Refacere completă AUTOSITE — implementare totală frontend & integrare backend până la lansare
-
-Descriere:
-Proiectul AUTOSITE a fost deteriorat în faza inițială („Current Phase: Phase 1 – Analysis & Design ✅”). În acest moment lipsesc componente funcționale majore, diferențierea clară între categorii de vehicule, testele și CI/CD‑ul. Acest task trebuie să reconstruiască complet proiectul frontend + backend integration, să îl ducă până la un MVP complet funcțional, fără întrerupere, până la finalizare.
-
-Scop:
-Reconstrucția completă a platformei AUTOSITE, tip marketplace auto multi‑categorie (gen mobile.de), cu un frontend profesional, scalabil și conectat complet la backend (Laravel API).
-
-Probleme identificate:
-
-Commit‑ul curent arată doar începutul fazei de analiză, fără implementare completă.
-
-Lipsesc componente frontend funcționale (UI + logică).
-
-Nu există diferențiere clară între categorii multiple de vehicule (mașini, moto, camioane, piese etc.).
-
-Lipsesc integrări API reale.
-
-Lipsesc teste unitare, e2e și CI/CD pipelines.
-
-Claritatea funcțiilor este parțială, documentația trebuie actualizată.
-
-Obiectiv general:
-Reface complet frontend‑ul, conectează-l cu backend‑ul și finalizează implementarea tuturor funcțiilor planificate pentru un MVP complet, stabil și pregătit pentru producție.
-
-🧱 Cerințe tehnice și funcționale
-
-Frontend (Next.js + TypeScript):
-
-Refactorizare totală structură.
-
-Implementare Layout global (Header, Footer, Navbar).
-
-Pagină principală (homepage) cu selectare categorie și căutare rapidă.
-
-Categorii dinamice (mașini, motociclete, camioane, rulote, piese etc.) cu rute /vanzari/:categorie.
-
-Listare anunțuri cu filtre dinamice (marcă, model, preț, an, km, locație etc.).
-
-Pagină detaliu anunț cu galerie imagini, specificații, contact vânzător.
-
-Pagini user: login/register/reset password, dashboard, favorite, mesaje, anunțuri proprii.
-
-Formular adăugare anunț (dinamic pe categorie, validare + upload imagini/video).
-
-Integrare completă cu backend API (Laravel): login/register, CRUD anunțuri, favorite, mesaje.
-
-Pagini SEO: despre, termeni, confidențialitate, 404.
-
-Dark mode + design responsiv complet.
-
-Backend (Laravel):
-
-Endpoint‑uri REST pentru toate funcțiile frontend‑ului.
-
-Validări și autentificare JWT.
-
-Management anunțuri, imagini, categorii, utilizatori.
-
-API upload imagini (Cloudinary / local storage).
-
-Filtrare avansată la nivel de query.
-
-Funcționalități cheie:
-
-Căutare globală și filtrare avansată.
-
-Autentificare și dashboard utilizator.
-
-Favorite și mesagerie între utilizatori.
-
-Upload media (imagini + video).
-
-Internaționalizare (RO/EN/DE) + multi‑monedă (RON/EUR/USD).
-
-SEO + performanță (Lazy load, optimizare imagini, meta dinamic).
-
-Teste unitare + e2e.
-
-CI/CD pipelines automate (GitHub Actions).
-
-⚙️ Stack Tehnologic Recomandat
-
-Frontend:
-
-Next.js 15+ (App Router, TypeScript)
-
-TailwindCSS
-
-Zustand sau Redux Toolkit
-
-React Hook Form + Yup
-
-Axios
-
-React Query (TanStack)
-
-next‑intl (traducei)
-
-Backend:
-
-Laravel 11
-
-Sanctum / Passport pentru autentificare
-
-MySQL / PostgreSQL
-
-Cloudinary SDK pentru upload media
-
-Testare:
-
-Jest + React Testing Library (frontend)
-
-PHPUnit (backend)
-
-Cypress (end‑to‑end)
-
-CI/CD:
-
-GitHub Actions: lint + test + build + deploy
-
-📁 Structură de fișiere sugerată (Frontend)
-frontend/
-├── app/                   # Next.js App Router
-│   ├── (public-pages)/    # Homepage, 404, despre, etc.
-│   ├── (auth)/            # login, register
-│   ├── (user)/            # dashboard, favorite, mesaje
-│   ├── (listings)/        # categorii + listare + detaliu
-│   └── layout.tsx
-├── components/
-├── features/
-│   ├── auth/
-│   ├── listings/
-│   ├── filters/
-│   ├── user/
-│   └── categories/
-├── services/              # API
-├── store/                 # Zustand/Redux
-├── utils/
-├── types/
-└── i18n/
-
-🧩 Etape de lucru (automatizate)
-
-🧱 Refactorizare structură frontend complet.
-
-🎨 Implementare layout, navigație, homepage.
-
-🧭 Adăugare categorii multiple și rutare dinamică.
-
-🔍 Implementare filtrare și listare anunțuri.
-
-📄 Pagina detaliu anunț.
-
-👤 Autentificare și dashboard utilizator.
-
-✍️ Formular adăugare/editare anunț.
-
-💬 Mesagerie și favorite.
-
-🌍 Internaționalizare + multi‑monedă.
-
-🧪 Testare (unit + e2e).
-
-🚀 CI/CD + deploy automat.
-
-🕒 Deadline și execuție automată
-
-Începe execuția imediat după aprobarea issue‑ului.
-
-Rulează procesele secvențial (fără pauză) până la finalizare.
-
-Verifică și validează fiecare etapă automat (test pipeline).
-
-Termen limită: mâine la ora 23:59 (finalizare completă, build funcțional, fără erori).
-
-Rezultat așteptat:
-✅ Site complet funcțional, 100% responsive, cu toate funcțiile active, conectat la backend și pregătit de lansare (demo build + deploy).
-
-Criterii de succes:
-
-Fără erori în console și build.
-
-Toate paginile funcționale.
-
-API‑urile funcționează integral.
-
-CI/CD rulează automat.
-
-Lighthouse ≥ 90.
-
-🔧 Notă finală:
-Acest task trebuie rulat automat până la final, fără oprire, utilizând GitHub Actions sau un agent CI configurat.
-După terminare, va fi generat build‑ul final și un raport cu stadiul tuturor funcțiilor.
+Copilot said: Analiză completă a proiectului AUTOSITE și plan
+Analiză completă a proiectului AUTOSITE și plan detaliat pentru integrarea funcției „runner” la performanță maximă:
+
+1. Analiză Stare Actuală
+Stack tehnologic:
+
+Frontend: Next.js 16, Tailwind, Zustand, Turbopack, next-intl (i18n)
+Backend: Laravel 11, Sanctum, Filament Admin, Swagger API
+Securitate: Middleware, Rate limiting, CORS, CSRF, XSS, SQL injection, Bcrypt
+Database: Structură completă, relații, 21 vehicule, 16 users, 10 dealeri
+Deployment: Recomandat Vercel (frontend) & Railway/Render/DigitalOcean (backend); DB - Supabase/PlanetScale/RDS
+Ce funcționează 100%:
+
+Marketplace, autentificare, forms (Buy Now, Leasing), API endpoints, admin panel, design responsive
+Teste backend (18 tests, 45 assertions)
+Securitate avansată
+MVP aproape complet (95-100%), ready for production/demo
+Ce lipsește/poate fi îmbunătățit:
+
+End-to-end testing complet, email notifications, PDF generator, AI search, monitoring, backup, advanced analytics, SEO, multi-language/currency
+2. Integrarea Runner pentru Performanță Maximă
+Funcția „runner” se poate referi la un sistem backend care procesează task-uri (cronjobs, queue workers, background jobs), sau la orchestrarea task-urilor intensive (ex. upload/process imagini, AI, importuri, notificări etc).
+
+A. Analiză Cerințe Runner
+Task-uri cu volum mare: procesare imagini, AI analytics, importuri CSV/Excel, notificări, generare PDF, backup
+Necesită scalabilitate, asincronizare, prioritate, retry, monitorizare
+B. Plan de Integrare Runner
+1. Alegere Tehnologie
+Pentru Laravel: Folosește Laravel Queues (Redis/SQS/Database driver) + Supervisor pentru procese persistente
+Pentru task-uri AI/externe: Poți integra dedicat microservice (ex. Node.js/Go/Python worker) conectat prin API/Queue
+2. Structură Recomandată
+Job Dispatching: Fiecare acțiune intensă (ex. upload imagini, generare PDF, AI search) să fie un Job pus în coadă
+Queue System: Redis (cel mai rapid) sau SQS dacă vrei cloud scaling
+Workers: 1+ procese Supervisor pe server, separate pentru job-uri critice vs. job-uri non-critice
+Retry Logic: Setează număr de retry & fallback pentru erori
+Prioritizare: Folosește mai multe queue-uri (high, default, low priority)
+Monitoring: Laravel Horizon (pentru queue monitoring, statistici, health checks)
+Scaling: Poți adăuga workers oricând crește traficul/task-urile
+3. Implementare Pas-cu-Pas
+Setup Laravel Queue în .env/config:
+
+Code
+QUEUE_CONNECTION=redis
+Definește Job-uri pentru fiecare task intens:
+
+App\Jobs\ProcessImage
+App\Jobs\GeneratePDF
+App\Jobs\SendNotification
+App\Jobs\ImportVehicles
+App\Jobs\AIAnalyzeDescription
+Dispatch din controller/service:
+
+PHP
+ProcessImage::dispatch($image)->onQueue('high');
+Configurează Supervisor:
+
+Procese multiple, restart automată, logare erori
+Exemplu config:
+Code
+[program:laravel-worker]
+command=php /path/to/artisan queue:work redis --sleep=3 --tries=3
+numprocs=3
+autostart=true
+autorestart=true
+Monitorizare cu Laravel Horizon:
+
+Instalează: composer require laravel/horizon
+Config: php artisan horizon:install
+Acces UI: /horizon
+Testing Jobs: Folosește test coverage pentru fiecare job + test de stres
+
+Scaling: Dacă ai spike de task-uri, crește numărul de workers/queues
+
+4. Optimizare Avansată
+Batch Jobs: Pentru importuri/AI, folosește batch processing
+Event Driven: Pentru acțiuni post-user (upload, import), folosește events & listeners
+Failover: Set fallback pentru erori critice (ex. email la admin)
+Externalization: Dacă task-ul e foarte heavy, poți muta runner-ul pe alt server/container (Docker/Kubernetes)
+5. Best Practices pentru Performanță
+Nu bloca request-urile: Tot ce durează >500ms trimite în job
+Folosește caching: Pentru rezultate frecvent accesate
+Optimizează payload-ul: Trimite doar ce e necesar în job
+Monitorizează constant: Alertă la timeout/error rate mare
+3. Checklist Implementare Runner
+ Alege queue driver rapid (Redis/SQS)
+ Creează job-uri pentru fiecare task intens
+ Configurează Supervisor + restart automată
+ Monitorizează cu Horizon
+ Testează retry/failover
+ Scalează după trafic
+ Documentează flow-ul (schema & diagramă pentru devs)
+4. Resurse utile din repo
+Plan proiect .txt
+PRODUCTION_ASSESSMENT.md
+FINALIZARE_PERFECTA.md

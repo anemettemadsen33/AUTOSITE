@@ -3,8 +3,9 @@
 import { useState, useCallback, useMemo } from 'react';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import VehicleCard from '@/components/ui/VehicleCard';
-import { mockVehicles, brands, fuelTypes, transmissions, bodyTypes } from '@/lib/mockData';
+import { brands, fuelTypes, transmissions, bodyTypes } from '@/lib/mockData';
 import { useFavoritesStore } from '@/stores/favoritesStore';
+import { useVehicles } from '@/hooks/useVehicles';
 
 export default function VehiclesPage() {
   // Filters state
@@ -22,41 +23,18 @@ export default function VehiclesPage() {
   // Zustand stores
   const { toggleFavorite, isFavorite } = useFavoritesStore();
 
-  // Filter and sort vehicles
-  const filteredVehicles = useMemo(() => {
-    let filtered = [...mockVehicles];
-
-    // Apply filters
-    if (brand) filtered = filtered.filter(v => v.brand === brand);
-    if (fuelType) filtered = filtered.filter(v => v.fuel === fuelType);
-    if (transmission) filtered = filtered.filter(v => v.transmission === transmission);
-    if (bodyType) filtered = filtered.filter(v => v.bodyType === bodyType);
-    if (minPrice) filtered = filtered.filter(v => v.price >= parseInt(minPrice));
-    if (maxPrice) filtered = filtered.filter(v => v.price <= parseInt(maxPrice));
-    if (minYear) filtered = filtered.filter(v => v.year >= parseInt(minYear));
-    if (maxYear) filtered = filtered.filter(v => v.year <= parseInt(maxYear));
-
-    // Sort
-    switch (sortBy) {
-      case 'price-asc':
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-desc':
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      case 'year-desc':
-        filtered.sort((a, b) => b.year - a.year);
-        break;
-      case 'mileage-asc':
-        filtered.sort((a, b) => a.mileage - b.mileage);
-        break;
-      case 'newest':
-      default:
-        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
-
-    return filtered;
-  }, [brand, fuelType, transmission, bodyType, minPrice, maxPrice, minYear, maxYear, sortBy]);
+  // Fetch vehicles from API with filters
+  const { vehicles: filteredVehicles, loading, error, total } = useVehicles({
+    brand: brand || undefined,
+    fuelType: fuelType || undefined,
+    transmission: transmission || undefined,
+    bodyType: bodyType || undefined,
+    minPrice: minPrice ? parseInt(minPrice) : undefined,
+    maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
+    minYear: minYear ? parseInt(minYear) : undefined,
+    maxYear: maxYear ? parseInt(maxYear) : undefined,
+    sortBy: sortBy || undefined,
+  });
 
   const clearFilters = useCallback(() => {
     setBrand('');
@@ -259,7 +237,27 @@ export default function VehiclesPage() {
 
           {/* Vehicles Grid */}
           <main className="flex-1">
-            {filteredVehicles.length === 0 ? (
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[1, 2, 3, 4, 5, 6].map((n) => (
+                  <div key={n} className="bg-white rounded-lg p-4 animate-pulse">
+                    <div className="bg-gray-200 h-48 rounded-lg mb-4"></div>
+                    <div className="bg-gray-200 h-4 rounded w-3/4 mb-2"></div>
+                    <div className="bg-gray-200 h-4 rounded w-1/2"></div>
+                  </div>
+                ))}
+              </div>
+            ) : error ? (
+              <div className="bg-white rounded-lg p-12 text-center">
+                <p className="text-red-600 mb-4">{error}</p>
+                <button
+                  onClick={clearFilters}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  Încearcă din nou
+                </button>
+              </div>
+            ) : filteredVehicles.length === 0 ? (
               <div className="bg-white rounded-lg p-12 text-center">
                 <p className="text-gray-600 mb-4">Nu am găsit vehicule cu filtrele selectate.</p>
                 <button
