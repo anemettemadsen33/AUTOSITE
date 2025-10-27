@@ -14,28 +14,28 @@ export const DynamicSearchModal = dynamic(
     },
     ssr: false,
   }
-)
+);
 
 // Example: Lazy load vehicle comparison
 export const DynamicVehicleComparison = dynamic(
-  () => import('@/components/VehicleComparison'),
+  () => import('@/components/VehicleComparison').catch(() => () => null),
   {
     loading: () => <div className="text-center p-4">Loading comparison...</div>,
     ssr: false,
   }
-)
+);
 
 // Example: Lazy load chart/analytics
 export const DynamicAnalytics = dynamic(
-  () => import('@/components/Analytics'),
+  () => import('@/components/Analytics').catch(() => () => null),
   {
     loading: () => <div className="text-center p-4">Loading analytics...</div>,
     ssr: false,
   }
-)
+);
 
 export default {
   DynamicSearchModal,
   DynamicVehicleComparison,
   DynamicAnalytics,
-}
+};

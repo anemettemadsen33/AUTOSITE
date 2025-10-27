@@ -79,12 +79,12 @@ export default function FavoritesPage() {
             <p className="text-gray-600 mb-6">
               Salvează vehiculele preferate pentru a le găsi mai ușor
             </p>
-            <a
+            <Link
               href="/vehicles"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
             >
               Explorează vehicule
-            </a>
+            </Link>
           </div>
         )}
       </div>
