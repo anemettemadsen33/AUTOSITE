@@ -1,286 +1,192 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
-import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
-import VehicleCard from '@/components/ui/VehicleCard';
-import { brands, fuelTypes, transmissions, bodyTypes } from '@/lib/mockData';
-import { useFavoritesStore } from '@/stores/favoritesStore';
-import { useVehicles } from '@/hooks/useVehicles';
+import { useState } from 'react';
+import VehicleCard from '@/components/VehicleCard';
+import FilterPanel, { VehicleFilters } from '@/components/FilterPanel';
+import { 
+  FunnelIcon, 
+  Squares2X2Icon, 
+  ListBulletIcon,
+  MapIcon,
+  MagnifyingGlassIcon 
+} from '@heroicons/react/24/outline';
+
+// Mock data
+const mockVehicles = Array.from({ length: 24 }, (_, i) => ({
+  id: `vehicle-${i + 1}`,
+  title: ['BMW Seria 5', 'Mercedes C-Class', 'Audi A4', 'VW Golf', 'Ford Focus'][i % 5],
+  price: 15000 + (i * 2500),
+  year: 2018 + (i % 6),
+  km: 45000 + (i * 5000),
+  fuel: ['Diesel', 'Benzină', 'Hibrid', 'Electric'][i % 4],
+  transmission: ['Automată', 'Manuală'][i % 2],
+  power: 150 + (i * 10),
+  location: 'București',
+  dealer: 'Premium Motors',
+  images: [`/vehicles/car-${i % 5}.jpg`],
+  featured: i % 7 === 0,
+  verified: i % 3 === 0
+}));
+
+type ViewMode = 'grid' | 'list' | 'map';
 
 export default function VehiclesPage() {
-  // Filters state
-  const [brand, setBrand] = useState('');
-  const [fuelType, setFuelType] = useState('');
-  const [transmission, setTransmission] = useState('');
-  const [bodyType, setBodyType] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [minYear, setMinYear] = useState('');
-  const [maxYear, setMaxYear] = useState('');
-  const [sortBy, setSortBy] = useState('newest');
-  const [showFilters, setShowFilters] = useState(true);
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [sortBy, setSortBy] = useState('date-desc');
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<VehicleFilters | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [compareList, setCompareList] = useState<string[]>([]);
 
-  // Zustand stores
-  const { toggleFavorite, isFavorite } = useFavoritesStore();
+  const toggleCompare = (vehicleId: string) => {
+    setCompareList(prev => 
+      prev.includes(vehicleId)
+        ? prev.filter(id => id !== vehicleId)
+        : prev.length < 4 ? [...prev, vehicleId] : prev
+    );
+  };
 
-  // Fetch vehicles from API with filters
-  const { vehicles: filteredVehicles, loading, error, total } = useVehicles({
-    brand: brand || undefined,
-    fuelType: fuelType || undefined,
-    transmission: transmission || undefined,
-    bodyType: bodyType || undefined,
-    minPrice: minPrice ? parseInt(minPrice) : undefined,
-    maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-    minYear: minYear ? parseInt(minYear) : undefined,
-    maxYear: maxYear ? parseInt(maxYear) : undefined,
-    sortBy: sortBy || undefined,
-  });
-
-  const clearFilters = useCallback(() => {
-    setBrand('');
-    setFuelType('');
-    setTransmission('');
-    setBodyType('');
-    setMinPrice('');
-    setMaxPrice('');
-    setMinYear('');
-    setMaxYear('');
-  }, []);
-
-  const activeFiltersCount = useMemo(() => {
-    let count = 0;
-    if (brand) count++;
-    if (fuelType) count++;
-    if (transmission) count++;
-    if (bodyType) count++;
-    if (minPrice || maxPrice) count++;
-    if (minYear || maxYear) count++;
-    return count;
-  }, [brand, fuelType, transmission, bodyType, minPrice, maxPrice, minYear, maxYear]);
+  const activeFiltersCount = filters ? 
+    (filters.fuelType.length + filters.transmission.length + filters.bodyType.length + filters.brand.length) : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-black text-gray-900 mb-1">
-                Vehicule disponibile
-              </h1>
-              <p className="text-sm text-gray-600">
-                {filteredVehicles.length} {filteredVehicles.length === 1 ? 'vehicul găsit' : 'vehicule găsite'}
-              </p>
-            </div>
-
-            {/* Mobile Filter Toggle */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="md:hidden px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2"
-            >
-              <AdjustmentsHorizontalIcon className="w-5 h-5" />
-              Filtre {activeFiltersCount > 0 && `(${activeFiltersCount})`}
-            </button>
-          </div>
-
-          {/* Sort & View Options */}
-          <div className="flex items-center gap-3">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-            >
-              <option value="newest">Cele mai noi</option>
-              <option value="price-asc">Preț crescător</option>
-              <option value="price-desc">Preț descrescător</option>
-              <option value="year-desc">An fabricație (desc)</option>
-              <option value="mileage-asc">Kilometraj crescător</option>
-            </select>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
+            Vehicule Disponibile
+          </h1>
+          <p className="text-gray-600">
+            Găsește mașina perfectă din peste 1,200 de vehicule verificate
+          </p>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-6">
         <div className="flex gap-6">
-          {/* Filters Sidebar */}
-          <aside className={`${showFilters ? 'block' : 'hidden'} md:block w-full md:w-64 flex-shrink-0`}>
-            <div className="bg-white rounded-lg p-4 sticky top-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold text-gray-900">Filtre</h2>
-                {activeFiltersCount > 0 && (
-                  <button
-                    onClick={clearFilters}
-                    className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    Resetează
-                  </button>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                {/* Brand */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Marcă
-                  </label>
-                  <select
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  >
-                    <option value="">Toate</option>
-                    {brands.map(b => (
-                      <option key={b} value={b}>{b}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Fuel Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Combustibil
-                  </label>
-                  <select
-                    value={fuelType}
-                    onChange={(e) => setFuelType(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  >
-                    <option value="">Toate</option>
-                    {fuelTypes.map(f => (
-                      <option key={f} value={f}>{f}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Transmission */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Transmisie
-                  </label>
-                  <select
-                    value={transmission}
-                    onChange={(e) => setTransmission(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  >
-                    <option value="">Toate</option>
-                    {transmissions.map(t => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Body Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Caroserie
-                  </label>
-                  <select
-                    value={bodyType}
-                    onChange={(e) => setBodyType(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  >
-                    <option value="">Toate</option>
-                    {bodyTypes.map(bt => (
-                      <option key={bt} value={bt}>{bt}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Price Range */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Preț (EUR)
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
-                      placeholder="Min"
-                      className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
-                    <input
-                      type="number"
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                      placeholder="Max"
-                      className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
-                  </div>
-                </div>
-
-                {/* Year Range */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    An fabricație
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      value={minYear}
-                      onChange={(e) => setMinYear(e.target.value)}
-                      placeholder="Min"
-                      className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
-                    <input
-                      type="number"
-                      value={maxYear}
-                      onChange={(e) => setMaxYear(e.target.value)}
-                      placeholder="Max"
-                      className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
+          <aside className="hidden lg:block w-80 flex-shrink-0">
+            <div className="sticky top-4">
+              <FilterPanel onFilterChange={setFilters} />
             </div>
           </aside>
 
-          {/* Vehicles Grid */}
           <main className="flex-1">
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <div key={n} className="bg-white rounded-lg p-4 animate-pulse">
-                    <div className="bg-gray-200 h-48 rounded-lg mb-4"></div>
-                    <div className="bg-gray-200 h-4 rounded w-3/4 mb-2"></div>
-                    <div className="bg-gray-200 h-4 rounded w-1/2"></div>
-                  </div>
-                ))}
-              </div>
-            ) : error ? (
-              <div className="bg-white rounded-lg p-12 text-center">
-                <p className="text-red-600 mb-4">{error}</p>
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+              <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+                <div className="relative flex-1 max-w-md">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Caută vehicule..."
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
                 <button
-                  onClick={clearFilters}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                  onClick={() => setShowFilters(true)}
+                  className="lg:hidden flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Încearcă din nou
+                  <FunnelIcon className="w-5 h-5" />
+                  Filtre
+                  {activeFiltersCount > 0 && (
+                    <span className="bg-white text-blue-600 text-xs px-2 py-0.5 rounded-full font-bold">
+                      {activeFiltersCount}
+                    </span>
+                  )}
                 </button>
-              </div>
-            ) : filteredVehicles.length === 0 ? (
-              <div className="bg-white rounded-lg p-12 text-center">
-                <p className="text-gray-600 mb-4">Nu am găsit vehicule cu filtrele selectate.</p>
-                <button
-                  onClick={clearFilters}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
-                  Resetează filtrele
-                </button>
+                  <option value="date-desc">Cele mai noi</option>
+                  <option value="price-asc">Preț crescător</option>
+                  <option value="price-desc">Preț descrescător</option>
+                  <option value="km-asc">Kilometri crescător</option>
+                </select>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
+                  >
+                    <Squares2X2Icon className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
+                  >
+                    <ListBulletIcon className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredVehicles.map((vehicle) => (
+            </div>
+
+            <div className="mb-4 text-sm text-gray-600">
+              Afișăm <span className="font-semibold text-gray-900">{mockVehicles.length}</span> vehicule
+            </div>
+
+            {viewMode === 'grid' ? (
+              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {mockVehicles.map(vehicle => (
                   <VehicleCard
                     key={vehicle.id}
                     vehicle={vehicle}
-                    isFavorite={isFavorite(vehicle.id)}
-                    onToggleFavorite={toggleFavorite}
+                    onCompare={() => toggleCompare(vehicle.id)}
+                    isInCompare={compareList.includes(vehicle.id)}
                   />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {mockVehicles.map(vehicle => (
+                  <div key={vehicle.id} className="bg-white rounded-lg shadow-sm p-4 flex gap-4">
+                    <div className="w-48 h-32 bg-gray-200 rounded-lg flex-shrink-0 flex items-center justify-center text-gray-400">
+                      <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{vehicle.title}</h3>
+                      <div className="grid grid-cols-4 gap-4 text-sm mb-2">
+                        <div><span className="text-gray-500">An:</span> <span className="font-semibold">{vehicle.year}</span></div>
+                        <div><span className="text-gray-500">KM:</span> <span className="font-semibold">{vehicle.km.toLocaleString()}</span></div>
+                        <div><span className="text-gray-500">Combustibil:</span> <span className="font-semibold">{vehicle.fuel}</span></div>
+                        <div><span className="text-gray-500">Transmisie:</span> <span className="font-semibold">{vehicle.transmission}</span></div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-2xl font-black text-blue-600">€{vehicle.price.toLocaleString()}</div>
+                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                          Vezi Detalii
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
           </main>
         </div>
+
+        {compareList.length > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-50">
+            <div className="container mx-auto flex items-center justify-between">
+              <span className="font-semibold">{compareList.length} vehicule selectate</span>
+              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Compară ({compareList.length})
+              </button>
+            </div>
+          </div>
+        )}
+
+        {showFilters && (
+          <div className="fixed inset-0 bg-black/50 z-50 lg:hidden">
+            <div className="absolute inset-y-0 right-0 w-full max-w-sm bg-white">
+              <FilterPanel onFilterChange={setFilters} onClose={() => setShowFilters(false)} isMobile={true} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
