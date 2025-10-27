@@ -19,8 +19,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AutoMarket - International Auto Marketplace",
-  description: "Find your perfect vehicle from dealers across Europe",
+  title: {
+    default: "AutoMarket - International Auto Marketplace",
+    template: "%s | AutoMarket"
+  },
+  description: "Find quality vehicles from verified dealers across Europe. Browse thousands of cars, trucks, and motorcycles.",
+  keywords: ["cars", "vehicles", "auto marketplace", "used cars", "Europe"],
+  authors: [{ name: "AutoMarket" }],
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'AutoMarket',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default async function RootLayout({
