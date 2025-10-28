@@ -23,7 +23,7 @@ echo ========================================
 echo   AUTOSITE is starting...
 echo ========================================
 echo.
-echo Frontend:  http://localhost:3001
+echo Frontend:  http://localhost:3000
 echo Backend:   http://127.0.0.1:8000
 echo Admin:     http://127.0.0.1:8000/admin
 echo WebSocket: ws://127.0.0.1:8080
@@ -38,7 +38,7 @@ echo   Press any key to open browser...
 echo ========================================
 pause >nul
 
-start http://localhost:3001
+start http://localhost:3000
 
 echo.
 echo Servers are running in separate windows.
