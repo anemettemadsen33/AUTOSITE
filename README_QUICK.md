@@ -63,6 +63,25 @@ Then open: **http://localhost:3000**
 
 ## 🆘 Quick Troubleshooting
 
+### First Time Setup
+
+**Backend:**
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate:fresh --seed
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+cp .env.example .env.local
+```
+
 ### Backend won't start?
 ```bash
 cd backend

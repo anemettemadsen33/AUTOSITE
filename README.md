@@ -126,6 +126,26 @@ cd frontend && npm run dev
 
 ## 🆘 TROUBLESHOOTING
 
+### Prima Configurare (First Time Setup)
+
+**Backend:**
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate:fresh --seed
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+cp .env.example .env.local
+# Edit .env.local if needed (default: API on http://localhost:8000)
+```
+
 ### Backend nu pornește
 ```bash
 cd backend
