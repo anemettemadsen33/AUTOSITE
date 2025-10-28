@@ -2,6 +2,8 @@
 
 # AUTOSITE - Setup Verification Script
 # Checks if everything is configured correctly
+# Usage: ./verify-setup.sh
+# Make executable with: chmod +x verify-setup.sh
 
 echo "========================================="
 echo "  AUTOSITE - Setup Verification"
@@ -65,7 +67,12 @@ echo ""
 echo "Checking Documentation..."
 echo "-------------------------"
 
-DOCS=("README.md" "README_QUICK.md" "MVP_COMPLETE.md" "TESTING_GUIDE.md" "STATUS_FINAL.md" "START.bat")
+DOCS=("README.md" "README_QUICK.md" "MVP_COMPLETE.md" "TESTING_GUIDE.md" "STATUS_FINAL.md")
+
+# Check Windows-specific files only if they exist
+if [ -f "START.bat" ]; then
+    DOCS+=("START.bat")
+fi
 
 for doc in "${DOCS[@]}"; do
     if [ -f "$doc" ]; then

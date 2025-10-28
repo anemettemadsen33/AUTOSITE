@@ -143,7 +143,9 @@ php artisan migrate:fresh --seed
 cd frontend
 npm install
 cp .env.example .env.local
-# Edit .env.local if needed (default: API on http://localhost:8000)
+# The default settings should work. Only edit .env.local if:
+# - Your backend is on a different port (not 8000)
+# - Your backend is on a different host (not localhost)
 ```
 
 ### Backend nu pornește
