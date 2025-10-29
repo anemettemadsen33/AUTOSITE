@@ -57,6 +57,14 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:60,1'])->group(functi
     Route::get('/favorites/check/{vehicleId}', [\App\Http\Controllers\Api\V1\FavoriteController::class, 'check']);
     Route::delete('/favorites/{vehicleId}', [\App\Http\Controllers\Api\V1\FavoriteController::class, 'destroy']);
 
+    // Test Drive Booking routes
+    Route::post('/test-drives', [\App\Http\Controllers\Api\V1\TestDriveBookingController::class, 'store']);
+    Route::get('/test-drives', [\App\Http\Controllers\Api\V1\TestDriveBookingController::class, 'index']);
+    Route::get('/test-drives/{id}', [\App\Http\Controllers\Api\V1\TestDriveBookingController::class, 'show']);
+    Route::put('/test-drives/{id}', [\App\Http\Controllers\Api\V1\TestDriveBookingController::class, 'update']);
+    Route::delete('/test-drives/{id}', [\App\Http\Controllers\Api\V1\TestDriveBookingController::class, 'destroy']);
+    Route::get('/vehicles/{vehicleId}/available-slots', [\App\Http\Controllers\Api\V1\TestDriveBookingController::class, 'availableSlots']);
+
     // Vehicle Image Management (NEW)
     Route::post('/vehicles/{vehicle}/images', [\App\Http\Controllers\Api\V1\VehicleImageController::class, 'upload']);
     Route::post('/vehicles/{vehicle}/images/single', [\App\Http\Controllers\Api\V1\VehicleImageController::class, 'uploadSingle']);
