@@ -20,6 +20,12 @@ class VehicleController extends Controller
      */
     public function index(Request $request)
     {
+        // Set application locale from request (supports 8 EU languages)
+        $lang = $request->get('lang', 'en');
+        if (in_array($lang, ['en', 'de', 'fr', 'es', 'it', 'pt', 'ro', 'pl'])) {
+            app()->setLocale($lang);
+        }
+        
         $query = Vehicle::with(['dealer', 'user'])
             ->published()
             ->latest('published_at');
@@ -224,8 +230,14 @@ class VehicleController extends Controller
     /**
      * Get a single vehicle
      */
-    public function show($slug)
+    public function show(Request $request, $slug)
     {
+        // Set application locale from request
+        $lang = $request->get('lang', 'en');
+        if (in_array($lang, ['en', 'de', 'fr', 'es', 'it', 'pt', 'ro', 'pl'])) {
+            app()->setLocale($lang);
+        }
+        
         $vehicle = Vehicle::with(['dealer.user', 'user'])
             ->where('slug', $slug)
             ->firstOrFail();
