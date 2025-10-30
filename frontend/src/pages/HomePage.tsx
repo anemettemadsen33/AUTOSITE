@@ -117,6 +117,9 @@ export function HomePage({ onNavigate }: HomePageProps) {
     if (filters.condition) params.condition = filters.condition
     if (filters.location) params.location = filters.location
     
+    // Add flag to use API if enabled
+    if (useApi) params.useApi = 'true'
+    
     onNavigate('main-category', params)
   }
 
