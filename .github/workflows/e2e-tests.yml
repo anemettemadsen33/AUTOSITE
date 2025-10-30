@@ -41,7 +41,7 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           touch database/database.sqlite
-          php artisan migrate --force --seed
+          php artisan migrate --force
 
       - name: Start Laravel server
         working-directory: backend

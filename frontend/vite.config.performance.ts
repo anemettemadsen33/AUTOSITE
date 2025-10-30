@@ -37,8 +37,9 @@ export default defineConfig({
             '@radix-ui/react-tooltip',
           ],
           
-          // Chart libraries
-          'chart-vendor': ['recharts', 'd3'],
+          // Chart libraries (only if used across multiple routes)
+          // Consider dynamic imports for charts: const Chart = lazy(() => import('./Chart'))
+          // 'chart-vendor': ['recharts', 'd3'],
           
           // Utilities
           'utils': ['axios', 'clsx', 'date-fns', 'zod'],
