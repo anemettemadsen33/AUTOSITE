@@ -9,6 +9,7 @@ import { Listing } from '@/lib/types'
 import { useListings } from '@/lib/listings'
 import { useFavorites } from '@/lib/favorites'
 import { useAuth } from '@/lib/auth'
+import { useApiVehicleDetail } from '@/hooks/use-api-vehicle-detail'
 import { trackEvent, generateSessionId, getDeviceType } from '@/lib/analytics'
 import {
   ArrowLeft, Heart, Eye, MapPin, Calendar, 
@@ -29,9 +30,40 @@ export function ListingDetailPage({ listingId, onNavigate }: ListingDetailPagePr
   const { toggleFavorite, isFavorite: checkIsFavorite } = useFavorites(user?.id || null)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [showContactForm, setShowContactForm] = useState(false)
+  const [useApi, setUseApi] = useState(false)
+
+  // Fetch from API using listing ID as slug
+  const { vehicle: apiVehicle, loading: apiLoading } = useApiVehicleDetail(listingId)
 
   const allListings = [...SAMPLE_LISTINGS, ...listings]
-  const listing = allListings.find(l => l.id === listingId)
+  const sampleListing = allListings.find(l => l.id === listingId)
+
+  // Convert API vehicle to Listing format
+  const apiListing: Listing | undefined = apiVehicle ? {
+    id: apiVehicle.id.toString(),
+    title: apiVehicle.title,
+    price: apiVehicle.price,
+    currency: apiVehicle.currency,
+    mileage: apiVehicle.mileage,
+    year: apiVehicle.year,
+    make: apiVehicle.make || 'Unknown',
+    model: apiVehicle.model || '',
+    location: apiVehicle.location_city || apiVehicle.location_country || 'Unknown',
+    imageUrl: apiVehicle.images?.[0]?.url || '',
+    images: apiVehicle.images?.map(img => img.url) || [],
+    category: (apiVehicle.body_type as any) || 'cars',
+    dealer: apiVehicle.dealer?.name || 'Private Seller',
+    condition: apiVehicle.condition || 'used',
+    fuelType: apiVehicle.fuel || 'unknown',
+    transmission: apiVehicle.transmission || 'unknown',
+    description: apiVehicle.description || 'No description available.',
+    views: 0,
+    brand: apiVehicle.make,
+    isFeatured: false
+  } : undefined
+
+  // Use API listing if toggle is on and data is available, otherwise use sample
+  const listing = useApi && apiListing ? apiListing : sampleListing
 
   const isFavorite = checkIsFavorite(listingId)
 
@@ -112,14 +144,26 @@ export function ListingDetailPage({ listingId, onNavigate }: ListingDetailPagePr
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8">
-        <Button
-          variant="ghost"
-          className="mb-6 gap-2"
-          onClick={() => onNavigate('category', { category: listing.category })}
-        >
-          <ArrowLeft size={20} weight="bold" />
-          Back to {listing.category}
-        </Button>
+        <div className="flex items-center justify-between mb-6">
+          <Button
+            variant="ghost"
+            className="gap-2"
+            onClick={() => onNavigate('category', { category: listing.category })}
+          >
+            <ArrowLeft size={20} weight="bold" />
+            Back to {listing.category}
+          </Button>
+          
+          <Button
+            onClick={() => setUseApi(!useApi)}
+            variant={useApi ? "default" : "outline"}
+            size="sm"
+            className={useApi ? "bg-gradient-to-r from-accent to-purple-600" : ""}
+          >
+            {useApi ? '🔗 API Data' : '📦 Sample Data'}
+            {useApi && apiLoading && ' (loading...)'}
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
