@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { CATEGORIES, SAMPLE_LISTINGS } from '@/lib/data'
 import { Listing } from '@/lib/types'
 import { useListings } from '@/lib/listings'
+import { useApiVehicles } from '@/hooks/use-api-vehicles'
 import { Car, Motorcycle, Truck, Van, Wrench, TrendUp, Calculator, ChartBar, Bell, Sparkle } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import { EnhancedSearchBar } from '@/components/EnhancedSearchBar'
@@ -61,7 +62,33 @@ const PROMO_SLIDES = [
 
 export function HomePage({ onNavigate }: HomePageProps) {
   const { listings } = useListings()
-  const allListings = [...SAMPLE_LISTINGS, ...listings]
+  const { vehicles: apiVehicles, loading: apiLoading } = useApiVehicles({ perPage: 12 })
+  const [useApi, setUseApi] = useState(false)
+
+  // Convert API vehicles to Listing format for compatibility
+  const convertedApiVehicles: Listing[] = apiVehicles.map(vehicle => ({
+    id: vehicle.id.toString(),
+    title: vehicle.title,
+    price: vehicle.price,
+    currency: vehicle.currency || 'EUR',
+    mileage: vehicle.mileage,
+    year: vehicle.year,
+    make: vehicle.make || 'Unknown',
+    model: vehicle.model || '',
+    location: vehicle.location_city || vehicle.location_country || 'Unknown',
+    imageUrl: vehicle.images?.[0]?.url || 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&auto=format',
+    isFeatured: false,
+    category: (vehicle.body_type as any) || 'cars',
+    dealer: vehicle.dealer?.name || 'Private Seller',
+    condition: vehicle.condition || 'used',
+    fuelType: vehicle.fuel || 'unknown',
+    transmission: vehicle.transmission || 'unknown'
+  }))
+
+  // Use API vehicles if available and enabled, otherwise use sample data
+  const allListings = useApi && apiVehicles.length > 0 
+    ? convertedApiVehicles 
+    : [...SAMPLE_LISTINGS, ...listings]
   const featuredListings = allListings.filter(l => l.isFeatured).slice(0, 6)
 
   const categoryIcons = {
@@ -220,10 +247,25 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-12">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">Featured Listings</h2>
-                <p className="text-muted-foreground text-lg">Handpicked premium vehicles</p>
+                <h2 className="text-3xl md:text-4xl font-bold mb-2">
+                  {useApi ? 'Latest Vehicles from API' : 'Featured Listings'}
+                </h2>
+                <p className="text-muted-foreground text-lg">
+                  {useApi 
+                    ? `${apiVehicles.length} vehicles from Laravel backend ${apiLoading ? '(loading...)' : ''}`
+                    : 'Handpicked premium vehicles'}
+                </p>
               </div>
-              <TrendUp size={32} weight="duotone" className="text-accent hidden md:block" />
+              <div className="flex items-center gap-4">
+                <Button
+                  onClick={() => setUseApi(!useApi)}
+                  variant={useApi ? "default" : "outline"}
+                  className={useApi ? "bg-gradient-to-r from-accent to-purple-600" : ""}
+                >
+                  {useApi ? '🔗 Using API Data' : '📦 Using Sample Data'}
+                </Button>
+                <TrendUp size={32} weight="duotone" className="text-accent hidden md:block" />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
