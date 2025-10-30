@@ -14,7 +14,7 @@ describe('Vehicle Multi-Language Support', function () {
             'model' => 'X5',
             'year' => 2024,
             'price' => 65000,
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
             'title' => [
                 'en' => 'BMW X5 2024 Luxury SUV',
                 'de' => 'BMW X5 2024 Luxus-SUV',
@@ -29,7 +29,7 @@ describe('Vehicle Multi-Language Support', function () {
     });
     
     test('vehicle returns English translation by default', function () {
-        $response = getJson('/api/v1/vehicles');
+        $response = this()->getJson('/api/v1/vehicles');
         
         $response->assertStatus(200)
             ->assertJsonPath('data.0.title', 'BMW X5 2024 Luxury SUV')
@@ -37,7 +37,7 @@ describe('Vehicle Multi-Language Support', function () {
     });
     
     test('vehicle returns German translation when lang=de', function () {
-        $response = getJson('/api/v1/vehicles?lang=de');
+        $response = this()->getJson('/api/v1/vehicles?lang=de');
         
         $response->assertStatus(200)
             ->assertJsonPath('data.0.title', 'BMW X5 2024 Luxus-SUV')
@@ -45,7 +45,7 @@ describe('Vehicle Multi-Language Support', function () {
     });
     
     test('vehicle returns Romanian translation when lang=ro', function () {
-        $response = getJson('/api/v1/vehicles?lang=ro');
+        $response = this()->getJson('/api/v1/vehicles?lang=ro');
         
         $response->assertStatus(200)
             ->assertJsonPath('data.0.title', 'BMW X5 2024 SUV de Lux')
@@ -53,7 +53,7 @@ describe('Vehicle Multi-Language Support', function () {
     });
     
     test('vehicle detail returns correct translation', function () {
-        $response = getJson("/api/v1/vehicles/{$this->vehicle->slug}?lang=de");
+        $response = this()->getJson("/api/v1/vehicles/{$this->vehicle->slug}?lang=de");
         
         $response->assertStatus(200)
             ->assertJsonPath('data.title', 'BMW X5 2024 Luxus-SUV')
@@ -61,7 +61,7 @@ describe('Vehicle Multi-Language Support', function () {
     });
     
     test('vehicle falls back to English for unsupported language', function () {
-        $response = getJson('/api/v1/vehicles?lang=invalid');
+        $response = this()->getJson('/api/v1/vehicles?lang=invalid');
         
         // Should fall back to English
         $response->assertStatus(200)
@@ -71,7 +71,7 @@ describe('Vehicle Multi-Language Support', function () {
     test('all supported languages work correctly', function () {
         // Create vehicle with all 8 supported languages
         $vehicle = Vehicle::factory()->create([
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
             'title' => [
                 'en' => 'BMW X5 English',
                 'de' => 'BMW X5 Deutsch',
@@ -97,7 +97,7 @@ describe('Vehicle Multi-Language Support', function () {
         ];
         
         foreach ($languages as $lang) {
-            $response = getJson("/api/v1/vehicles?lang={$lang}");
+            $response = this()->getJson("/api/v1/vehicles?lang={$lang}");
             $response->assertStatus(200);
             
             // Find our vehicle in the response
@@ -111,14 +111,14 @@ describe('Vehicle Multi-Language Support', function () {
     test('vehicle without translation falls back to English', function () {
         // Create vehicle with only English translation
         $vehicle = Vehicle::factory()->create([
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
             'title' => [
                 'en' => 'BMW X5 English Only',
             ],
         ]);
         
         // Request in German - should fall back to English
-        $response = getJson('/api/v1/vehicles?lang=de');
+        $response = this()->getJson('/api/v1/vehicles?lang=de');
         
         $response->assertStatus(200);
         
@@ -133,7 +133,7 @@ describe('Vehicle Multi-Language Support', function () {
         // Create multiple vehicles with translations
         Vehicle::factory()->create([
             'make' => 'Audi',
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
             'title' => [
                 'en' => 'Audi Q7 English',
                 'de' => 'Audi Q7 Deutsch',
@@ -141,7 +141,7 @@ describe('Vehicle Multi-Language Support', function () {
         ]);
         
         // Filter by make with language parameter
-        $response = getJson('/api/v1/vehicles?make=BMW&lang=de');
+        $response = this()->getJson('/api/v1/vehicles?make=BMW&lang=de');
         
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
@@ -151,14 +151,14 @@ describe('Vehicle Multi-Language Support', function () {
     test('translation works with pagination', function () {
         // Create 5 more vehicles
         Vehicle::factory()->count(5)->create([
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
             'title' => [
                 'en' => 'Test Vehicle English',
                 'de' => 'Test Fahrzeug Deutsch',
             ],
         ]);
         
-        $response = getJson('/api/v1/vehicles?lang=de&per_page=3');
+        $response = this()->getJson('/api/v1/vehicles?lang=de&per_page=3');
         
         $response->assertStatus(200)
             ->assertJsonCount(3, 'data');
@@ -175,14 +175,14 @@ describe('Vehicle Multi-Language Support', function () {
     test('translation works with sorting', function () {
         Vehicle::factory()->create([
             'price' => 50000,
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
             'title' => [
                 'en' => 'Cheaper Vehicle English',
                 'de' => 'Günstigeres Fahrzeug',
             ],
         ]);
         
-        $response = getJson('/api/v1/vehicles?sort=price_asc&lang=de');
+        $response = this()->getJson('/api/v1/vehicles?sort=price_asc&lang=de');
         
         $response->assertStatus(200);
         
@@ -191,8 +191,8 @@ describe('Vehicle Multi-Language Support', function () {
     });
     
     test('language parameter is case insensitive', function () {
-        $response1 = getJson('/api/v1/vehicles?lang=DE');
-        $response2 = getJson('/api/v1/vehicles?lang=de');
+        $response1 = this()->getJson('/api/v1/vehicles?lang=DE');
+        $response2 = this()->getJson('/api/v1/vehicles?lang=de');
         
         // Both should work (if we implement toLowerCase in controller)
         $response1->assertStatus(200);
@@ -204,14 +204,14 @@ describe('Vehicle Multi-Language Support', function () {
         $similar = Vehicle::factory()->create([
             'make' => 'BMW',
             'body_type' => 'suv',
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
             'title' => [
                 'en' => 'Similar BMW English',
                 'de' => 'Ähnlicher BMW Deutsch',
             ],
         ]);
         
-        $response = getJson("/api/v1/vehicles/{$this->vehicle->slug}?lang=de");
+        $response = this()->getJson("/api/v1/vehicles/{$this->vehicle->slug}?lang=de");
         
         $response->assertStatus(200)
             ->assertJsonPath('data.title', 'BMW X5 2024 Luxus-SUV');

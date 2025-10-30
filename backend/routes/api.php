@@ -125,4 +125,12 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:60,1'])->group(functi
     Route::get('/leasing-applications/{id}', [\App\Http\Controllers\Api\V1\LeasingApplicationController::class, 'show']);
     Route::post('/leasing-applications/{id}/documents', [\App\Http\Controllers\Api\V1\LeasingApplicationController::class, 'uploadDocuments']);
     Route::delete('/leasing-applications/{id}', [\App\Http\Controllers\Api\V1\LeasingApplicationController::class, 'destroy']);
+    
+    // Messages & Conversations
+    Route::post('/messages', [\App\Http\Controllers\Api\V1\MessageController::class, 'store']);
+    Route::get('/conversations', [\App\Http\Controllers\Api\V1\MessageController::class, 'conversations']);
+    Route::get('/conversations/{userId}', [\App\Http\Controllers\Api\V1\MessageController::class, 'conversation']);
+    Route::put('/messages/{id}/read', [\App\Http\Controllers\Api\V1\MessageController::class, 'markAsRead']);
+    Route::delete('/messages/{id}', [\App\Http\Controllers\Api\V1\MessageController::class, 'destroy']);
+    Route::get('/messages/unread-count', [\App\Http\Controllers\Api\V1\MessageController::class, 'unreadCount']);
 });

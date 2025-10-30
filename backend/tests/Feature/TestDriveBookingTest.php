@@ -31,7 +31,7 @@ class TestDriveBookingTest extends TestCase
         // Create test vehicle
         $this->vehicle = Vehicle::factory()->create([
             'dealer_id' => $this->dealer->id,
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
         ]);
     }
 

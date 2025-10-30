@@ -130,7 +130,7 @@ describe('Notifications', function () {
             'make' => 'Tesla',
             'model' => 'Model 3',
             'price' => 45000,
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
         ]);
         
         $user->notify(new NewVehicleAlert($vehicle));
@@ -160,7 +160,7 @@ describe('Notifications', function () {
         Notification::fake();
         
         $user = User::factory()->create();
-        $vehicle = Vehicle::factory()->create(['status' => 'published']);
+        $vehicle = Vehicle::factory()->create(['is_published' => true, 'published_at' => now()]);
         
         $user->notify(new NewVehicleAlert($vehicle));
         
@@ -206,7 +206,7 @@ describe('Notifications', function () {
         Notification::fake();
         
         $users = User::factory()->count(5)->create();
-        $vehicle = Vehicle::factory()->create(['status' => 'published']);
+        $vehicle = Vehicle::factory()->create(['is_published' => true, 'published_at' => now()]);
         
         Notification::send($users, new NewVehicleAlert($vehicle));
         
@@ -247,7 +247,7 @@ describe('Email Registration Flow', function () {
     });
     
     test('welcome email is sent after successful registration', function () {
-        $response = postJson('/api/v1/auth/register', [
+        $response = this()->postJson('/api/v1/auth/register', [
             'name' => 'New User',
             'email' => 'newuser@example.com',
             'password' => 'password123',
@@ -274,7 +274,7 @@ describe('Email Inquiry Flow', function () {
         $vehicle = Vehicle::factory()->create([
             'dealer_id' => $dealerProfile->id,
             'user_id' => $dealer->id,
-            'status' => 'published',
+            'is_published' => true, 'published_at' => now(),
         ]);
         
         $inquiry = [

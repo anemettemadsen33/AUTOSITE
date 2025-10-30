@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode, useEffect, useState } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { authService, User as ApiUser } from '@/services/authService'
 import { User } from './types'
 
 interface AuthContextType {
@@ -14,63 +14,74 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [currentUserId, setCurrentUserId] = useKV<string | null>('current-user-id', null)
-  const [users, setUsers] = useKV<Record<string, User>>('users', {})
-  const [passwords, setPasswords] = useKV<Record<string, string>>('user-passwords', {})
+  const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  
-  const user = currentUserId && users ? users[currentUserId] || null : null
 
   useEffect(() => {
+    // Check if user is already logged in
+    const storedUser = authService.getUser()
+    if (storedUser) {
+      setUser({
+        id: storedUser.id.toString(),
+        email: storedUser.email,
+        name: storedUser.name,
+        createdAt: storedUser.created_at || new Date().toISOString()
+      })
+    }
     setIsLoading(false)
   }, [])
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    if (!users || !passwords) return false
-    
-    const userEntry = Object.entries(users).find(([_, u]) => u.email === email)
-    
-    if (!userEntry) {
+    try {
+      const response = await authService.login({ email, password })
+      if (response.success) {
+        setUser({
+          id: response.user.id.toString(),
+          email: response.user.email,
+          name: response.user.name,
+          createdAt: response.user.created_at || new Date().toISOString()
+        })
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error('Login error:', error)
       return false
     }
-    
-    const [userId, userData] = userEntry
-    
-    if (passwords[userId] !== password) {
-      return false
-    }
-    
-    setCurrentUserId(userId)
-    return true
   }
 
   const register = async (email: string, password: string, name: string): Promise<boolean> => {
-    const currentUsers = users || {}
-    const currentPasswords = passwords || {}
-    
-    const existingUser = Object.values(currentUsers).find(u => u.email === email)
-    
-    if (existingUser) {
+    try {
+      const response = await authService.register({
+        email,
+        password,
+        name,
+        password_confirmation: password
+      })
+      if (response.success) {
+        setUser({
+          id: response.user.id.toString(),
+          email: response.user.email,
+          name: response.user.name,
+          createdAt: response.user.created_at || new Date().toISOString()
+        })
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error('Register error:', error)
       return false
     }
-    
-    const userId = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-    const newUser: User = {
-      id: userId,
-      email,
-      name,
-      createdAt: new Date().toISOString()
-    }
-    
-    setUsers(current => ({ ...(current || {}), [userId]: newUser }))
-    setPasswords(current => ({ ...(current || {}), [userId]: password }))
-    setCurrentUserId(userId)
-    
-    return true
   }
 
-  const logout = () => {
-    setCurrentUserId(null)
+  const logout = async () => {
+    try {
+      await authService.logout()
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      setUser(null)
+    }
   }
 
   return (
