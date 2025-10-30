@@ -22,4 +22,35 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src')
     }
   },
+  build: {
+    // Enable minification for production
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    // Code splitting
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-hook-form'],
+          'ui-vendor': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tabs',
+          ],
+          'utils': ['axios', 'clsx', 'date-fns', 'zod'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+    sourcemap: false,
+    cssCodeSplit: true,
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-hook-form', 'axios', 'clsx', 'date-fns', 'zod'],
+  },
 });
