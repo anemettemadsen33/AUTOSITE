@@ -2,12 +2,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/lib/auth'
-import { useFavorites } from '@/lib/favorites'
-import { SAMPLE_LISTINGS } from '@/lib/data'
-import { useListings } from '@/lib/listings'
-import { Heart, Trash } from '@phosphor-icons/react'
+import { useApiFavorites } from '@/hooks/use-api-favorites'
+import { Heart, Trash, CircleNotch } from '@phosphor-icons/react'
 import { toast } from 'sonner'
-import { Listing } from '@/lib/types'
 
 interface FavoritesPageProps {
   onNavigate: (page: string, params?: Record<string, string>) => void
@@ -15,17 +12,28 @@ interface FavoritesPageProps {
 
 export function FavoritesPage({ onNavigate }: FavoritesPageProps) {
   const { user } = useAuth()
-  const { favorites, toggleFavorite } = useFavorites(user?.id || null)
-  const { listings } = useListings()
+  const { favorites, loading, toggleFavorite } = useApiFavorites()
 
-  const allListings = [...SAMPLE_LISTINGS, ...listings]
-  const favoriteListings = favorites
-    .map(fav => allListings.find(l => l.id === fav.listingId))
-    .filter((l): l is Listing => l !== undefined)
+  const handleRemove = async (vehicleId: number) => {
+    try {
+      await toggleFavorite(vehicleId)
+      toast.success('Removed from favorites')
+    } catch (error) {
+      toast.error('Failed to remove from favorites')
+    }
+  }
 
-  const handleRemove = (listingId: string) => {
-    toggleFavorite(listingId)
-    toast.success('Removed from favorites')
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="p-12 text-center max-w-md">
+          <Heart size={64} weight="duotone" className="mx-auto mb-4 text-muted-foreground" />
+          <h2 className="text-2xl font-semibold mb-2">Sign in to view favorites</h2>
+          <p className="text-muted-foreground mb-6">You need to be logged in to access your favorites</p>
+          <Button onClick={() => onNavigate('login')}>Sign In</Button>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -33,28 +41,33 @@ export function FavoritesPage({ onNavigate }: FavoritesPageProps) {
       <div className="bg-gradient-to-r from-primary to-purple-900 text-primary-foreground py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold mb-2">My Favorites</h1>
-          <p className="text-primary-foreground/80">{favoriteListings.length} saved listings</p>
+          <p className="text-primary-foreground/80">{favorites.length} saved vehicles</p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8">
-        {favoriteListings.length === 0 ? (
+        {loading ? (
+          <Card className="p-12 text-center">
+            <CircleNotch size={64} className="animate-spin mx-auto mb-4 text-muted-foreground" />
+            <p className="text-muted-foreground">Loading favorites...</p>
+          </Card>
+        ) : favorites.length === 0 ? (
           <Card className="p-12 text-center">
             <Heart size={64} weight="duotone" className="mx-auto mb-4 text-muted-foreground" />
             <h2 className="text-2xl font-semibold mb-2">No favorites yet</h2>
-            <p className="text-muted-foreground mb-6">Start saving listings you're interested in</p>
+            <p className="text-muted-foreground mb-6">Start saving vehicles you're interested in</p>
             <Button onClick={() => onNavigate('home')}>
-              Browse Listings
+              Browse Vehicles
             </Button>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {favoriteListings.map((listing) => (
+            {favorites.map((fav) => (
               <FavoriteCard
-                key={listing.id}
-                listing={listing}
-                onView={() => onNavigate('listing', { id: listing.id })}
-                onRemove={() => handleRemove(listing.id)}
+                key={fav.id}
+                vehicle={fav.vehicle}
+                onView={() => onNavigate('listing', { id: fav.vehicle.slug })}
+                onRemove={() => handleRemove(fav.vehicle.id)}
               />
             ))}
           </div>
@@ -65,40 +78,45 @@ export function FavoritesPage({ onNavigate }: FavoritesPageProps) {
 }
 
 function FavoriteCard({
-  listing,
+  vehicle,
   onView,
   onRemove
 }: {
-  listing: Listing
+  vehicle: any
   onView: () => void
   onRemove: () => void
 }) {
+  const imageUrl = vehicle.images?.[0]?.url || '/placeholder-vehicle.jpg';
+  
   return (
     <Card className="cursor-pointer group hover:border-accent hover:shadow-lg transition-all overflow-hidden">
       <div onClick={onView}>
         <div className="aspect-video relative overflow-hidden bg-muted">
-          {listing.images[0] && (
-            <img
-              src={listing.images[0]}
-              alt={listing.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          )}
-          {listing.isFeatured && (
+          <img
+            src={imageUrl}
+            alt={vehicle.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          {vehicle.is_featured && (
             <Badge className="absolute top-2 left-2 bg-gradient-to-r from-accent to-purple-600">
               Featured
             </Badge>
           )}
         </div>
         <CardContent className="p-4">
-          <h3 className="font-semibold text-lg mb-2 line-clamp-1">{listing.title}</h3>
-          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{listing.description}</p>
+          <h3 className="font-semibold text-lg mb-2 line-clamp-1">{vehicle.title}</h3>
+          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+            {vehicle.make} {vehicle.model} - {vehicle.condition}
+          </p>
           <div className="flex flex-wrap gap-2 mb-3">
-            {listing.year && <Badge variant="secondary">{listing.year}</Badge>}
-            {listing.mileage && <Badge variant="secondary">{listing.mileage.toLocaleString()} mi</Badge>}
+            {vehicle.year && <Badge variant="secondary">{vehicle.year}</Badge>}
+            {vehicle.mileage && <Badge variant="secondary">{vehicle.mileage.toLocaleString()} km</Badge>}
+            {vehicle.fuel && <Badge variant="secondary">{vehicle.fuel}</Badge>}
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-accent">${listing.price.toLocaleString()}</span>
+            <span className="text-2xl font-bold text-accent">
+              {vehicle.currency || '€'}{vehicle.price.toLocaleString()}
+            </span>
           </div>
         </CardContent>
       </div>
