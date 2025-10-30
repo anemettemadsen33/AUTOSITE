@@ -8,6 +8,7 @@ import { InfiniteScrollListings } from '@/components/InfiniteScrollListings'
 import { useListings } from '@/lib/listings'
 import { useLocalStorage } from '@/hooks/use-local-storage'
 import { useVehicleSubCategories } from '@/hooks/use-vehicle-sub-categories'
+import { useApiSearch } from '@/hooks/use-api-search'
 import { 
   type MainCategory, 
   type VehicleSubCategoryCode,
@@ -27,13 +28,20 @@ import {
   Check,
   Campfire
 } from '@phosphor-icons/react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { cn } from '@/lib/utils'
 
 interface MainCategoryPageProps {
   mainCategoryCode: MainCategory
   subCategoryCode?: VehicleSubCategoryCode
   onNavigate: (page: string, params?: Record<string, string>) => void
+  searchQuery?: string
+  priceFrom?: string
+  priceTo?: string
+  yearFrom?: string
+  yearTo?: string
+  make?: string
+  condition?: string
+  useApi?: string
+  page?: string
 }
 
 type ViewMode = 'grid' | 'list'
@@ -65,12 +73,47 @@ const CATEGORY_GRADIENTS: Record<MainCategory, string> = {
   'Parts': 'from-gray-500/20 via-slate-500/20 to-gray-600/20',
 }
 
-export function MainCategoryPage({ mainCategoryCode, subCategoryCode, onNavigate }: MainCategoryPageProps) {
+export function MainCategoryPage({ 
+  mainCategoryCode, 
+  subCategoryCode, 
+  onNavigate,
+  searchQuery,
+  priceFrom,
+  priceTo,
+  yearFrom,
+  yearTo,
+  make,
+  condition,
+  useApi: useApiParam,
+  page: pageParam
+}: MainCategoryPageProps) {
   const { listings } = useListings()
   const [selectedSubCategory, setSelectedSubCategory] = useState<VehicleSubCategoryCode | null>(subCategoryCode || null)
   const [viewMode, setViewMode] = useLocalStorage<ViewMode>('view-mode', 'grid')
   const [sortBy, setSortBy] = useState<SortOption>('newest')
   const [showFilters, setShowFilters] = useState(false)
+  const [currentPage, setCurrentPage] = useState(parseInt(pageParam || '1'))
+  const [useApiData, setUseApiData] = useState(useApiParam === 'true')
+
+  // API filters
+  const apiFilters = useMemo(() => ({
+    search: searchQuery,
+    priceFrom: priceFrom ? parseInt(priceFrom) : undefined,
+    priceTo: priceTo ? parseInt(priceTo) : undefined,
+    yearFrom: yearFrom ? parseInt(yearFrom) : undefined,
+    yearTo: yearTo ? parseInt(yearTo) : undefined,
+    make,
+    condition,
+    mainCategory: mainCategoryCode,
+    subCategory: selectedSubCategory || undefined,
+    page: currentPage,
+    perPage: 12
+  }), [searchQuery, priceFrom, priceTo, yearFrom, yearTo, make, condition, mainCategoryCode, selectedSubCategory, currentPage])
+
+  // Fetch from API if useApiData is true
+  const { vehicles: apiVehicles, loading: apiLoading, totalPages, totalCount } = useApiSearch(
+    useApiData ? apiFilters : { mainCategory: 'none' as any }
+  )
 
   const mainCategoryInfo = getMainCategoryByCode(mainCategoryCode)
   const subCategories = useVehicleSubCategories(mainCategoryCode)
@@ -80,7 +123,43 @@ export function MainCategoryPage({ mainCategoryCode, subCategoryCode, onNavigate
     setSelectedSubCategory(subCategoryCode || null)
   }, [subCategoryCode])
 
+  useEffect(() => {
+    setUseApiData(useApiParam === 'true')
+  }, [useApiParam])
+
+  // Convert API vehicles to Listing format
+  const convertedApiVehicles = useMemo(() => {
+    if (!useApiData || !apiVehicles) return []
+    
+    return apiVehicles.map((vehicle: any) => ({
+      id: vehicle.id?.toString() || '',
+      title: vehicle.title || '',
+      price: vehicle.price || 0,
+      currency: vehicle.currency || 'EUR',
+      mileage: vehicle.mileage,
+      year: vehicle.year,
+      make: vehicle.make || 'Unknown',
+      model: vehicle.model || '',
+      location: vehicle.location_city || vehicle.location_country || '',
+      imageUrl: vehicle.images?.[0]?.url || '/placeholder-car.jpg',
+      category: vehicle.body_type || 'cars',
+      mainCategory: vehicle.main_category || mainCategoryCode,
+      subCategory: vehicle.sub_category,
+      dealer: vehicle.dealer?.name || 'Private Seller',
+      condition: vehicle.condition || 'used',
+      fuelType: vehicle.fuel || 'unknown',
+      transmission: vehicle.transmission || 'unknown',
+      createdAt: vehicle.created_at || new Date().toISOString()
+    }))
+  }, [apiVehicles, useApiData, mainCategoryCode])
+
   const filteredListings = useMemo(() => {
+    // Use API data if enabled
+    if (useApiData) {
+      return convertedApiVehicles
+    }
+
+    // Otherwise use sample data
     let filtered = listings.filter(listing => listing.mainCategory === mainCategoryCode)
 
     if (selectedSubCategory) {
@@ -109,7 +188,7 @@ export function MainCategoryPage({ mainCategoryCode, subCategoryCode, onNavigate
     }
 
     return filtered
-  }, [listings, mainCategoryCode, selectedSubCategory, sortBy])
+  }, [listings, mainCategoryCode, selectedSubCategory, sortBy, useApiData, convertedApiVehicles])
 
   const handleSubCategoryClick = (subCode: VehicleSubCategoryCode | null) => {
     setSelectedSubCategory(subCode)
@@ -135,18 +214,29 @@ export function MainCategoryPage({ mainCategoryCode, subCategoryCode, onNavigate
             transition={{ duration: 0.5 }}
             className="max-w-4xl"
           >
-            <div className="flex items-center gap-4 mb-4">
-              <div className="p-4 bg-background/80 backdrop-blur-sm rounded-2xl border border-border/50 shadow-xl">
-                <Icon size={40} weight="duotone" className="text-accent" />
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <div className="p-4 bg-background/80 backdrop-blur-sm rounded-2xl border border-border/50 shadow-xl">
+                  <Icon size={40} weight="duotone" className="text-accent" />
+                </div>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+                    {mainCategoryInfo?.label || 'Category'}
+                  </h1>
+                  <p className="text-muted-foreground text-lg mt-1">
+                    {useApiData && apiLoading ? 'Loading...' : `${useApiData ? totalCount : filteredListings.length} listing${(useApiData ? totalCount : filteredListings.length) !== 1 ? 's' : ''} available`}
+                    {useApiData && searchQuery && ` for "${searchQuery}"`}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-                  {mainCategoryInfo?.label || 'Category'}
-                </h1>
-                <p className="text-muted-foreground text-lg mt-1">
-                  {filteredListings.length} listing{filteredListings.length !== 1 ? 's' : ''} available
-                </p>
-              </div>
+              <Button
+                variant={useApiData ? "default" : "outline"}
+                size="sm"
+                onClick={() => setUseApiData(!useApiData)}
+                className={useApiData ? "bg-gradient-to-r from-accent to-accent/80" : ""}
+              >
+                {useApiData ? '🔗 API Data' : '📦 Sample Data'}
+              </Button>
             </div>
 
             {selectedSubCategoryInfo && (
@@ -266,50 +356,126 @@ export function MainCategoryPage({ mainCategoryCode, subCategoryCode, onNavigate
           </div>
         </div>
 
-        <AnimatePresence mode="wait">
-          {filteredListings.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-center py-16"
-            >
-              <div className="p-6 bg-muted/50 rounded-2xl inline-block mb-4">
-                <Icon size={48} weight="duotone" className="text-muted-foreground" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">No listings found</h3>
-              <p className="text-muted-foreground mb-6">
-                {selectedSubCategory 
-                  ? `No listings in this sub-category yet.` 
-                  : `No listings in this category yet.`
-                }
-              </p>
-              <Button onClick={() => onNavigate('add-listing')}>
-                Create First Listing
-              </Button>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className={cn(
-                "grid gap-6",
-                viewMode === 'grid'
-                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                  : "grid-cols-1"
+        {apiLoading && useApiData ? (
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+            <p className="mt-4 text-muted-foreground">Loading vehicles from API...</p>
+          </div>
+        ) : (
+          <>
+            <AnimatePresence mode="wait">
+              {filteredListings.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-center py-16"
+                >
+                  <div className="p-6 bg-muted/50 rounded-2xl inline-block mb-4">
+                    <Icon size={48} weight="duotone" className="text-muted-foreground" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">No listings found</h3>
+                  <p className="text-muted-foreground mb-6">
+                    {selectedSubCategory 
+                      ? `No listings in this sub-category yet.` 
+                      : useApiData && searchQuery
+                      ? `No results found for "${searchQuery}". Try different search terms or filters.`
+                      : `No listings in this category yet.`
+                    }
+                  </p>
+                  {!useApiData && (
+                    <Button onClick={() => onNavigate('add-listing')}>
+                      Create First Listing
+                    </Button>
+                  )}
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className={cn(
+                    "grid gap-6",
+                    viewMode === 'grid'
+                      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                      : "grid-cols-1"
+                  )}
+                >
+                  {filteredListings.map((listing) => (
+                    <VehicleCard
+                      key={listing.id}
+                      listing={listing}
+                      onNavigate={onNavigate}
+                    />
+                  ))}
+                </motion.div>
               )}
-            >
-              {filteredListings.map((listing) => (
-                <VehicleCard
-                  key={listing.id}
-                  listing={listing}
-                  onNavigate={onNavigate}
-                />
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </AnimatePresence>
+
+            {/* Pagination */}
+            {useApiData && totalPages > 1 && (
+              <div className="mt-12 flex items-center justify-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    if (currentPage > 1) {
+                      setCurrentPage(currentPage - 1)
+                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }
+                  }}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                
+                <div className="flex items-center gap-1">
+                  {[...Array(Math.min(totalPages, 5))].map((_, idx) => {
+                    let pageNum
+                    if (totalPages <= 5) {
+                      pageNum = idx + 1
+                    } else if (currentPage <= 3) {
+                      pageNum = idx + 1
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + idx
+                    } else {
+                      pageNum = currentPage - 2 + idx
+                    }
+
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setCurrentPage(pageNum)
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }}
+                        className="w-10"
+                      >
+                        {pageNum}
+                      </Button>
+                    )
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    if (currentPage < totalPages) {
+                      setCurrentPage(currentPage + 1)
+                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }
+                  }}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   )

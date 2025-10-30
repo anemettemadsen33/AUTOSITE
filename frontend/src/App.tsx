@@ -89,7 +89,16 @@ function App() {
         return <MainCategoryPage 
           mainCategoryCode={route.params?.mainCategory as MainCategory}
           subCategoryCode={route.params?.subCategory as VehicleSubCategoryCode | undefined}
-          onNavigate={navigate} 
+          onNavigate={navigate}
+          searchQuery={route.params?.search}
+          priceFrom={route.params?.priceFrom}
+          priceTo={route.params?.priceTo}
+          yearFrom={route.params?.yearFrom}
+          yearTo={route.params?.yearTo}
+          make={route.params?.make}
+          condition={route.params?.condition}
+          useApi={route.params?.useApi}
+          page={route.params?.page}
         />
       case 'category':
         return <CategoryPageEnhanced category={route.params?.category as Category} params={route.params} onNavigate={navigate} />
