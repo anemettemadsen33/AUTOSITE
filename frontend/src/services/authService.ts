@@ -89,6 +89,16 @@ class AuthService {
       message: response.data.message
     };
   }
+
+  // Change password
+  async changePassword(data: { 
+    current_password: string; 
+    new_password: string; 
+    new_password_confirmation: string 
+  }): Promise<{ success: boolean; message: string }> {
+    const response = await api.put<{ success: boolean; message: string }>('/auth/password', data);
+    return response.data;
+  }
 }
 
 export const authService = new AuthService();

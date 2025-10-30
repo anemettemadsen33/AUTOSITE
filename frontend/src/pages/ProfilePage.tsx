@@ -84,8 +84,13 @@ export default function ProfilePage() {
 
     try {
       setLoading(true);
-      // Note: You'll need to add this endpoint to backend if it doesn't exist
-      toast.info('Password change feature coming soon');
+      await authService.changePassword({
+        current_password: passwordData.currentPassword,
+        new_password: passwordData.newPassword,
+        new_password_confirmation: passwordData.confirmPassword,
+      });
+      
+      toast.success('Password changed successfully');
       setPasswordData({
         currentPassword: '',
         newPassword: '',
