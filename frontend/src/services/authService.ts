@@ -80,6 +80,15 @@ class AuthService {
   isAuthenticated(): boolean {
     return !!localStorage.getItem('auth_token');
   }
+
+  // Update profile
+  async updateProfile(data: { name?: string; phone?: string; avatar?: string }): Promise<{ user: User; message: string }> {
+    const response = await api.put<{ data: User; message: string }>('/auth/profile', data);
+    return {
+      user: response.data.data,
+      message: response.data.message
+    };
+  }
 }
 
 export const authService = new AuthService();
